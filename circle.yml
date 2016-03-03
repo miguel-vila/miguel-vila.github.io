@@ -41,13 +41,15 @@ deployment:
   production:
     branch: hakyll
     commands:
-      - git config user.email circleci@circleci
-      - git config user.name CircleCI
+      - cd _site/ && git config user.email circleci@circleci
+      - cd _site/ && git config user.name CircleCI
       - cd _site/ && git status
       - cd _site/ && git add --all
       - cd _site/ && git commit --message "Update (`date '+%F %T %Z'`) [ci skip]"
       - cd _site/ && git push origin master
-      - git git
-      - status add _site/
+      - git config user.email circleci@circleci
+      - git config user.name CircleCI
+      - git status
+      - git add _site/
       - git commit --message "Update _site (`date '+%F %T %Z'`) [ci skip]"
       - git push origin hakyll
