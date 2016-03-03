@@ -2,5 +2,13 @@ flags: {}
 extra-package-dbs: []
 packages:
 - '.'
-extra-deps: []
+extra-deps:
+- cmark-0.4.1
+- conduit-extra-1.1.11
+- hslua-0.4.1
+- pandoc-1.15.2.1
+- primitive-0.6.1.0
+- texmath-0.8.4.2
+- vector-0.11.0.0
+- yaml-0.8.13
 resolver: lts-3.2
