@@ -2,10 +2,29 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
 import           Hakyll
-import 			 Control.Applicative
+import           Control.Applicative
+import           Data.Time.Format (TimeLocale(..), defaultTimeLocale)
+import           Data.Maybe
 
+import           Text.Pandoc.Definition
+import           Text.Pandoc.Shared
+import           Text.Pandoc.Options
 
 --------------------------------------------------------------------------------
+-- Used to specify whether to take all or some of an item list
+data ItemCount = All | Only Int
+--------------------------------------------------------------------------------
+
+siteUrl = "http://miguel-vila.github.io/"
+
+maybeTake :: ItemCount -> [a] -> [a]
+maybeTake All  = id
+maybeTake (Only n) = take n
+
+takeRecentFirst n = fmap (maybeTake n) . recentFirst
+
+--------------------------------------------------------------------------------
+
 main :: IO ()
 main = hakyll $ do
     match "images/*" $ do
@@ -16,16 +35,11 @@ main = hakyll $ do
         route   idRoute
         compile compressCssCompiler
 
-    match (fromList ["about.md"]) $ do
-        route   $ setExtension "html"
-        compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" siteCtx
-            >>= relativizeUrls
-
-    match "portfolio/*" $ do
+    match "posts/*" $ do
         route $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
+            >>= loadAndApplyTemplate "templates/disqus.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
 
@@ -47,10 +61,10 @@ main = hakyll $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "portfolio/*"
+            posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
                     listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Home"                `mappend`
+                    constField "title" "Inicio"              `mappend`
                     siteCtx
 
             getResourceBody
@@ -60,20 +74,66 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateCompiler
 
+    create ["blog/atom.xml"] $ do
+        route   $ idRoute
+        compile $ do
+          let feedCtx = postCtx
+          posts <- takeRecentFirst (Only 5) =<< loadAll "posts/*"
+          renderAtom feedConfig feedCtx posts
 
 --------------------------------------------------------------------------------
 postCtx :: Context String
 postCtx =
-    dateField "date" "%B %e, %Y" `mappend`
+    dateFieldWith esTimeLocale "date" "%e %B %Y" `mappend`
     siteCtx
 
 siteCtx :: Context String
 siteCtx = 
-	activeClassField `mappend`
-	defaultContext
+    activeClassField `mappend`
+    defaultContext
+
+esTimeLocale :: TimeLocale 
+esTimeLocale =  TimeLocale { 
+  wDays  = [("domingo", "dom"), ("lunes",     "lun"), 
+            ("martes",  "mar"), ("miercoles", "mie"), 
+            ("jueves",  "jue"), ("viernes",   "vie"), 
+            ("sábado",  "sab")], 
+
+  months = [("enero",   "ene"), ("febrero",  "feb"), 
+            ("marzo",      "mar"), ("abril",    "abr"), 
+            ("mayo",       "may"), ("junio",    "jun"), 
+            ("julio",  "jul"), ("agosto",    "ago"), 
+            ("septiembre", "sep"), ("octubre",  "oct"), 
+            ("noviembre",  "nov"), ("diciembre", "dic")], 
+{--
+  intervals = [ ("año","años") 
+              , ("mes", "meses") 
+              , ("día","días") 
+              , ("hora","horas") 
+              , ("min","mins") 
+              , ("seg","segs") 
+              , ("useg","usegs") 
+              ], 
+--}
+  amPm = (" de la mañana", " de la tarde"), 
+  dateTimeFmt = "%a %e %b %Y, %H:%M:%S %Z", 
+  dateFmt   = "%d/%m/%Y", 
+  timeFmt   = "%H:%M:%S", 
+  time12Fmt = "%I:%M:%S %p",
+  knownTimeZones = knownTimeZones defaultTimeLocale
+}
+
+feedConfig :: FeedConfiguration
+feedConfig = FeedConfiguration
+    { feedTitle       = "Miguel Vilá"
+    , feedDescription = "Blog personal de Miguel Vilá"
+    , feedAuthorName  = "Miguel Vilá"
+    , feedAuthorEmail = "miguelvilag@gmail.com"
+    , feedRoot        = siteUrl
+    }
 
 -- https://groups.google.com/forum/#!searchin/hakyll/if$20class/hakyll/WGDYRa3Xg-w/nMJZ4KT8OZUJ 
 activeClassField :: Context a 
 activeClassField = functionField "activeClass" $ \[p] _ -> do 
-	path <- toFilePath <$> getUnderlying 
-	return $ if path == p then "active" else path 
+    path <- toFilePath <$> getUnderlying 
+    return $ if path == p then "active" else path 
