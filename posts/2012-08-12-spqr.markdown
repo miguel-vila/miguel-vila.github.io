@@ -1,6 +1,7 @@
 ---
 title: Holaaaa
 description: blablabladescription
+tags: foo, bar
 ---
 
 # Holaaa
