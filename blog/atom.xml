@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>Miguel Vilá</title>
-    <link href="http://miguel-vila.github.io//blog/atom.xml" rel="self" />
-    <link href="http://miguel-vila.github.io/" />
-    <id>http://miguel-vila.github.io//blog/atom.xml</id>
+    <link href="http://miguel-vila.github.io/blog/atom.xml" rel="self" />
+    <link href="http://miguel-vila.github.io" />
+    <id>http://miguel-vila.github.io/blog/atom.xml</id>
     <author>
         <name>Miguel Vilá</name>
         <email>miguelvilag@gmail.com</email>
@@ -11,8 +11,8 @@
     <updated>2012-08-12T00:00:00Z</updated>
     <entry>
     <title>Holaaaa</title>
-    <link href="http://miguel-vila.github.io//posts/2012-08-12-spqr.html" />
-    <id>http://miguel-vila.github.io//posts/2012-08-12-spqr.html</id>
+    <link href="http://miguel-vila.github.io/posts/2012-08-12-spqr.html" />
+    <id>http://miguel-vila.github.io/posts/2012-08-12-spqr.html</id>
     <published>2012-08-12T00:00:00Z</published>
     <updated>2012-08-12T00:00:00Z</updated>
     <summary type="html"><![CDATA[blablabladescription]]></summary>
