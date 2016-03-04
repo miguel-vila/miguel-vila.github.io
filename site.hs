@@ -15,7 +15,7 @@ import           Text.Pandoc.Options
 data ItemCount = All | Only Int
 --------------------------------------------------------------------------------
 
-siteUrl = "http://miguel-vila.github.io/"
+siteUrl = "http://miguel-vila.github.io"
 
 maybeTake :: ItemCount -> [a] -> [a]
 maybeTake All  = id
@@ -39,7 +39,8 @@ main = hakyll $ do
         route $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
-            >>= loadAndApplyTemplate "templates/disqus.html"    postCtx
+            >>= saveSnapshot "content"
+            >>= loadAndApplyTemplate "templates/disqus.html"  postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
 
@@ -63,7 +64,7 @@ main = hakyll $ do
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
-                    listField "posts" postCtx (return posts) `mappend`
+                    listField "posts" postCtx (return $ maybeTake (Only 5) posts) `mappend`
                     constField "title" "Inicio"              `mappend`
                     siteCtx
 
@@ -77,14 +78,14 @@ main = hakyll $ do
     create ["blog/atom.xml"] $ do
         route   $ idRoute
         compile $ do
-          let feedCtx = postCtx
-          posts <- takeRecentFirst (Only 5) =<< loadAll "posts/*"
+          let feedCtx = postCtx `mappend` bodyField "description"
+          posts <- takeRecentFirst (Only 5) =<< loadAllSnapshots "posts/*" "content"
           renderAtom feedConfig feedCtx posts
 
 --------------------------------------------------------------------------------
 postCtx :: Context String
 postCtx =
-    dateFieldWith esTimeLocale "date" "%e %B %Y" `mappend`
+    dateFieldWith esTimeLocale "date" "%B %e de %Y" `mappend`
     siteCtx
 
 siteCtx :: Context String
@@ -99,12 +100,12 @@ esTimeLocale =  TimeLocale {
             ("jueves",  "jue"), ("viernes",   "vie"), 
             ("sábado",  "sab")], 
 
-  months = [("enero",   "ene"), ("febrero",  "feb"), 
-            ("marzo",      "mar"), ("abril",    "abr"), 
-            ("mayo",       "may"), ("junio",    "jun"), 
-            ("julio",  "jul"), ("agosto",    "ago"), 
-            ("septiembre", "sep"), ("octubre",  "oct"), 
-            ("noviembre",  "nov"), ("diciembre", "dic")], 
+  months = [("Enero",      "ene"), ("Febrero",  "feb"), 
+            ("Marzo",      "mar"), ("Abril",    "abr"), 
+            ("Mayo",       "may"), ("Junio",    "jun"), 
+            ("Julio",      "jul"), ("Agosto",    "ago"), 
+            ("Septiembre", "sep"), ("Octubre",  "oct"), 
+            ("Noviembre",  "nov"), ("Diciembre", "dic")], 
 {--
   intervals = [ ("año","años") 
               , ("mes", "meses") 

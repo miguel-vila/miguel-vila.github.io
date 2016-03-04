@@ -115,7 +115,21 @@ a img{ border:none; }
 	  Body
 -----------------------------------------------------------------------------------------------*/
 
+div.sourceCode {
+  background-color: #efefef;
+  margin: 0;
+  margin-bottom: 1.5em;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+pre.sourceCode {
+  padding: 1em;
+  margin: 0em;
+}
+
 .container-gallery {
+  padding: 0.25em;
   background: #fff;
   width: 960px;
   margin: 0 auto;
