@@ -51,6 +51,28 @@ main = hakyll $ do
                 >>= loadAndApplyTemplate "templates/default.html" ctx 
                 >>= relativizeUrls
 
+
+    match "drafts/*" $ do
+        route $ setExtension "html"
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/post.html" postCtx
+            >>= loadAndApplyTemplate "templates/default.html" postCtx
+            >>= relativizeUrls
+
+    create ["drafts.html"] $ do
+        route idRoute
+        compile $ do
+            drafts <- recentFirst =<< loadAll "drafts/*"
+            let archiveCtx =
+                    listField "posts" postCtx (return drafts) `mappend`
+                    constField "title" "Drafts"                `mappend`
+                    siteCtx
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/drafts.html" archiveCtx
+                >>= loadAndApplyTemplate "templates/default.html" archiveCtx
+                >>= relativizeUrls
+
     match "posts/*" $ do
         route $ setExtension "html"
         compile $ pandocCompiler
@@ -99,6 +121,9 @@ main = hakyll $ do
           renderAtom feedConfig feedCtx posts
 
 --------------------------------------------------------------------------------
+draftCtx :: Context String
+draftCtx = defaultContext `mappend` activeClassField
+
 postCtx :: Context String
 postCtx =
     dateFieldWith esTimeLocale "date" "%B %e de %Y" `mappend`
