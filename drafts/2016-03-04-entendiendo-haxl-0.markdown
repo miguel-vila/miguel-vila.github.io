@@ -68,6 +68,10 @@ La promesa de Haxl en este aspecto es hacer el _batching_ automáticamente (dado
 
 Ahora, ¿qué pasa si hay que consultar, de forma independiente, multiples fuentes de datos? Por ejemplo: un recurso `/usuarios` y otro `/blogs`. En estos casos, cuando las consultas son *independientes* (una no depende del resultado de la otra) se pueden paralelizar las consultas y posteriormente unir sus resultados para su procesamiento en conjunto. Tal vez reconozcan las promesas o futuros como una solución a estos problemas. En efecto estos mecanismos sirven para paralelizar, unir y secuenciar computaciones. Pero desafortunadamente 
 
+## Cacheo
+
+<img src="/images/sketch.png" width="40%"></img>
+
 ### Rompiendo reglas
 
 Por último me gustaría detallar las cosas que me parecen mas interesantes de Haxl. Por una parte Haxl es interesante por que hace uso de conceptos rimbonbantes como monadas, funtores aplicativos y monadas libres, entre otros. Pero más allá de eso lo más interesante es que en su construcción Haxl ha roto muchas "reglas" o "dogmas" usuales en programación funcional. 
