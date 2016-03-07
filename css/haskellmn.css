@@ -1,5 +1,10 @@
+h1 {
+  text-align: center;
+}
+
 body {
-  font-family: 'Georgia', serif;
+  font-family: 'Libre Baskerville', serif;
+  text-align: justify;
 }
 
 hr {
