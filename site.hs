@@ -38,7 +38,7 @@ main = hakyll $ do
     -- build up tags 
     tags <- buildTags "posts/*" (fromCapture "tags/*.html")
     tagsRules tags $ \tag pattern -> do 
-        let title = "Posts tagged \"" ++ tag ++ "\"" 
+        let title = "Posts etiquetados con \"" ++ tag ++ "\"" 
         route idRoute 
         compile $ do 
             posts <- recentFirst =<< loadAll pattern 
@@ -51,12 +51,12 @@ main = hakyll $ do
                 >>= loadAndApplyTemplate "templates/default.html" ctx 
                 >>= relativizeUrls
 
-
+    let tagsPostCtx = postCtxWithTags tags
     match "drafts/*" $ do
         route $ setExtension "html"
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/post.html" postCtx
-            >>= loadAndApplyTemplate "templates/default.html" postCtx
+            >>= loadAndApplyTemplate "templates/post.html" tagsPostCtx
+            >>= loadAndApplyTemplate "templates/default.html" tagsPostCtx
             >>= relativizeUrls
 
     create ["drafts.html"] $ do
@@ -65,7 +65,7 @@ main = hakyll $ do
             drafts <- recentFirst =<< loadAll "drafts/*"
             let archiveCtx =
                     listField "posts" postCtx (return drafts) `mappend`
-                    constField "title" "Drafts"                `mappend`
+                    constField "title" "Borradores"           `mappend`
                     siteCtx
 
             makeItem ""
@@ -76,10 +76,10 @@ main = hakyll $ do
     match "posts/*" $ do
         route $ setExtension "html"
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/post.html"    postCtx
+            >>= loadAndApplyTemplate "templates/post.html"    tagsPostCtx
             >>= saveSnapshot "content"
-            >>= loadAndApplyTemplate "templates/disqus.html"  postCtx
-            >>= loadAndApplyTemplate "templates/default.html" postCtx
+            >>= loadAndApplyTemplate "templates/disqus.html"  tagsPostCtx
+            >>= loadAndApplyTemplate "templates/default.html" tagsPostCtx
             >>= relativizeUrls
 
     create ["archive.html"] $ do
@@ -88,7 +88,7 @@ main = hakyll $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let archiveCtx =
                     listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Archives"            `mappend`
+                    constField "title" "Posts"               `mappend`
                     siteCtx
 
             makeItem ""

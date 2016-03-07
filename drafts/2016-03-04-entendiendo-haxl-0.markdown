@@ -4,8 +4,6 @@ description: Parte 0 de una serie de posts que intentan explicar Haxl usando Sca
 tags: Haxl, Haskell, Scala, Functional Programming, Free Monads, Monads, Applicative Functors, Concurrency, Data Fetching
 ---
 
-## Entendiendo Haxl usando Scala (Parte 0)
-
 [Haxl](https://github.com/facebook/Haxl) es una librería de Haskell usada para facilitar la obtención de datos de diferentes fuentes. Haxl fue desarrollada por Facebook y en 2014 publicaron un [artículo académico](http://community.haskell.org/~simonmar/papers/haxl-icfp14.pdf) explicándola. 
 
 [//]: <> (Podría ser tema para otra entrada, pero resulta muy curioso que una empresa como Facebook, que todos conocemos y usamos, decida invertir en un paradigma no tan usado como lo es la programación funcional. Por ahora esta inversión parece ser en infraestructura como es evidenciado por éste proyecto y por otro como [Flow](http://flowtype.org/).)
@@ -14,7 +12,9 @@ Hace poco ménos de un año leí ese artículo y, para mi sorpresa, entendí lo 
 
 Este es el inicio de una serie de posts en los que intentaré explicar qué hace Haxl y cómo está implementado. Para esto usaré código en Scala, que será una traducción más o ménos equivalente del mismo código en Haskell. 
 
-Nos toparemos con conceptos como "monadas" y "funtores aplicativos" que tienen nombres raros y hasta cierto punto podrían ser innecesarios. Desearía ni siquiera nombrarlos para no propagar la idea de que la programación funcional es un tema para ingenieros "superiores". Sin embargo una de las principales agudezas de Haxl es aprovechar la diferencia entre estos conceptos para implementar una librería eficiente. En este sentido los conceptos "monadas" y "funtores aplicativos", palabras decididamente raras, nos sirven para referirnos a dos tipos de computaciones diferentes. Y un lenguaje común, en el que llamemos al concepto X con la palabra monada
+Nos toparemos con conceptos como "monadas" y "funtores aplicativos" que tienen nombres raros y hasta cierto punto podrían ser innecesarios. Desearía ni siquiera nombrarlos para no propagar la idea de que la programación funcional es un tema para ingenieros "superiores". Sin embargo una de las principales agudezas de Haxl es aprovechar la diferencia entre estos conceptos para implementar una librería eficiente. En este sentido los conceptos "monadas" y "funtores aplicativos", palabras decididamente raras, nos sirven para referirnos a dos tipos de computaciones diferentes. Y el beneficio de usar esas extrañas denominaciones es poder integrar conceptualmente. 
+
+> You can capture abstractions as classes, interfaces, and functions that you can refer to in your actual programs. But the primary benefit is *conceptual integration*. When you recognize common structure among different solutions in different contexts, you unite all of those instances of the structure under a single definition and give it a *name*. The benefit, as you gain experience with this, is that you can look at the general shape of a problem and say, for example: “That looks like a *monad*!” You’re then already far along in finding the shape of the solution. A secondary benefit is that if other people have developed the same kind of vocabulary, you can communicate your designs to them with extraordinary efficiency.
 
 Intentaré proveer enlaces que introduzcan esos conceptos a medida que sea necesario.
 

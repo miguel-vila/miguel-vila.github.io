@@ -4,8 +4,6 @@ description: blablabladescription
 tags: foo, bar
 ---
 
-# Holaaa
-
 ```scala
 def fibonacci(x: Int) = {
     fibonacci(x-1) + fibonacci(x-2)
