@@ -1,0 +1,21 @@
+body {
+  font-family: 'Georgia', serif;
+}
+
+hr {
+  margin-top: 20px;
+  display: block;
+  height: 0;
+  border: 0;
+  border-top: 1px solid;
+  margin: 1em 0;
+  padding: 0;
+}
+
+.info {
+  font-size: 90%;
+}
+
+nav a {
+  margin-right:20px;
+}

@@ -28,7 +28,7 @@ Entonces empecemos:
 * Realizar consultas en paralelo sobre multiples fuentes de datos.
 * Cachear consultas anteriores.
 
-Esto le permite a un programador delegar el _batching_, paralelismo y cacheo a la librería y así concentrarse en la lógica de negocio. Esto permite escribir código que es mas entendible y que al mismo tiempo tiene buen rendimiento. Y dado que tendencias como microservicios exigen el uso de multiples fuentes de datos Haxl aparece como una excelente alternativa a hacer optimizaciones manualmente.
+Esto le permite a un programador delegar el _batching_, paralelismo y cacheo a la librería y así concentrarse en la lógica de negocio. Esto facilita escribir código que es mas entendible y que al mismo tiempo tiene buen rendimiento. Y dado que tendencias actuales como microservicios exigen el uso de multiples fuentes de datos Haxl aparece como una excelente alternativa a hacer optimizaciones manualmente.
 
 Veamos cada uno de los anteriores puntos en detalle:
 
@@ -54,7 +54,7 @@ GET /usuarios/usuario-2
 GET /usuarios/usuario-3
 ``` 
 
-Pero esto es costoso, aun cuando paralelicemos las consultas. Estámos abriendo y cerrando 3 conexiones HTTP a, posiblemente, la misma maquina. En cambio si el _endpoint_ ofrece un API en _batch_ podríamos en cambio solamente hacer una solicitud:
+Pero esto es costoso, aun cuando paralelicemos las consultas. Estámos abriendo y cerrando 3 conexiones HTTP a, posiblemente, la misma maquina. En cambio si el _endpoint_ ofrece un API en _batch_ podríamos solamente hacer una solicitud:
 
 ```
 GET /usuarios?ids=usuario-1,usuario-2,usuario-3
@@ -66,7 +66,7 @@ La promesa de Haxl en este aspecto es hacer el _batching_ automáticamente (dado
 
 ### Paralelismo
 
-Ahora, ¿qué pasa si hay que consultar, de forma independiente, multiples fuentes de datos? Por ejemplo: un recurso `/usuarios` y otro `/blogs`. En estos casos, cuando las consultas son *independientes* (una no depende del resultado de la otra) se pueden paralelizar las consultas y posteriormente unir sus resultados para su procesamiento en conjunto. Tal vez reconozcan las promesas o futuros como una solución a estos problemas. En efecto estos mecanismos sirven para paralelizar, unir y secuenciar computaciones. Pero desafortunadamente 
+Ahora, ¿qué pasa si hay que consultar, de forma independiente, multiples fuentes de datos? Por ejemplo: un recurso `/usuarios` y otro `/blogs`. En estos casos, cuando las consultas son *independientes* (una no depende del resultado de la otra) se pueden paralelizar las consultas y posteriormente unir sus resultados para su procesamiento en conjunto. Tal vez reconozcan las promesas o futuros como una solución a estos problemas. En efecto estos mecanismos sirven para paralelizar, unir y secuenciar computaciones. Pero desafortunadamente no proveen las otras ventajas de Haxl. Sin embargo, como verémos más adelante Haxl ofrece un API de combinadores funcionales muy similares a los de los futuros.
 
 ## Cacheo
 
@@ -80,4 +80,4 @@ Por ejemplo, la implementación de Haxl viola una propiedad que exige la consist
 
 Por otra parte en Haxl pululan las referencias mutables (como se debería de esperar dado el cacheo), que son una de las primeras cosas que uno aprende que son "malas" en programación funcional.
 
-Y por último uno de los dogmas mas comunes en programación funcional tipada es la idea de que el código, por construcción y buen uso de los tipos, debe evitar errores en tiempo de ejecución. En esencia: si el código pasa el chequeo de tipos no debería haber razón para que haya errores en tiempo de ejecución. Para garantizar esto uno tendría que evitar mecanismos que engañan al sistema de tipos como por ejemplo casteos. Haxl en su implementación utiliza dos mecanismos no seguros: casteos y un match no seguro (para los que sepan de Scala esto sería similar a invocar `Option#get`).
+Y por último uno de los dogmas mas comunes en programación funcional tipada es la idea de que el código, por construcción y buen uso de los tipos, debe evitar errores en tiempo de ejecución. En esencia: si el código pasa el chequeo de tipos no debería haber razón para que haya errores en tiempo de ejecución. Para garantizar esto uno tendría que evitar mecanismos que "engañan" al sistema de tipos como por ejemplo casteos. Haxl en su implementación utiliza dos mecanismos no seguros: casteos y un match no seguro (para los que sepan de Scala esto sería similar a invocar `Option#get`).

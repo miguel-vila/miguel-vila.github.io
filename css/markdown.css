@@ -1,0 +1,88 @@
+body {
+  width: 100%;
+  max-width: 1000px;
+
+  padding: 0;
+  margin: auto;
+  border: 0;
+
+  font-size: 200%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 300;
+}
+
+header, article, footer {
+  margin-right: 30px;
+  margin-left: 30px;
+}
+
+footer {
+  font-size: 80%;
+  margin-bottom: 30px;
+}
+
+a:link, a:visited, a:active {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+hr {
+  display: block;
+  height: 0;
+  border: 0;
+  border-top: 1px solid;
+  margin: 20px 0;
+  padding: 0;
+  width: 100%;
+}
+
+article, article * img {
+  max-width: 100%;
+}
+
+blockquote {
+  border-left: 1px solid;
+  margin-left: 20px;
+  padding-left: 20px;
+}
+
+@media (max-width: 1000px) {
+  body {
+    font-size: 190%;
+  }
+}
+
+@media (max-width: 800px) {
+  body {
+    font-size: 170%;
+  }
+}
+
+@media (max-width: 700px) {
+  body {
+    font-size: 160%;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    font-size: 140%;
+  }
+}
+
+@media (max-width: 500px) {
+  body {
+    font-size: 120%;
+  }
+}
+
+@media (max-width: 400px) {
+  body {
+    font-size: 100%;
+  }
+}
