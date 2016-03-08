@@ -18,7 +18,7 @@ Este es el inicio de una serie de posts en los que intentaré explicar qué hace
 
 Entonces empecemos:
 
-### ¿Para que sirve Haxl?
+## ¿Para que sirve Haxl?
 
 [Principalmente](https://code.facebook.com/posts/302060973291128/open-sourcing-haxl-a-library-for-haskell/) Haxl permite:
 
@@ -30,7 +30,7 @@ Esto le permite a un programador delegar el _batching_, paralelismo y cacheo a l
 
 Veamos cada uno de los anteriores puntos en detalle:
 
-### _Batching_
+## _Batching_
 
 ¿A que me refiero con _batching_? Digamos que tenemos un _endpoint_ HTTP donde podemos solicitar un recurso, por ejemplo un usuario según su id:
 
@@ -60,9 +60,9 @@ GET /usuarios?ids=usuario-1,usuario-2,usuario-3
 
 Esto no solo cuenta para APIs HTTP. Por ejemplo Redis tiene el comando [MGET](http://redis.io/commands/mget) que permite obtener múltiples valores a partir de una secuencia de llaves.
 
-La promesa de Haxl en este aspecto es hacer el _batching_ automáticamente (dado que uno configure la librería para que reconozca el API en batch) sin que el programador tenga que hacerlo. El programador por su parte puede trabajar pensando que va a utilizar el API que retorna un solo recurso y Haxl se encargaría de identificar consultas que se pueden acumular. 
+La promesa de Haxl en este aspecto es hacer el _batching_ automáticamente (dado que uno configure la librería para que reconozca el API en _batch_). El desarrollador por su parte puede trabajar pensando que va a utilizar el API que retorna un solo recurso y Haxl se encargaría de identificar consultas que se pueden acumular. 
 
-### Paralelismo
+## Paralelismo
 
 Ahora, ¿qué pasa si hay que consultar, de forma independiente, multiples fuentes de datos? Por ejemplo: un recurso `/usuarios` y otro `/blogs`. En estos casos, cuando las consultas son *independientes* (una no depende del resultado de la otra) se pueden paralelizar las consultas y posteriormente unir sus resultados para su procesamiento en conjunto. Las promesas o futuros son una solución a estos problemas. En efecto estos mecanismos sirven para paralelizar, unir y secuenciar computaciones. Pero desafortunadamente no proveen las otras ventajas de Haxl. Sin embargo, como verémos más adelante Haxl ofrece un API de combinadores funcionales muy similares a los de los futuros.
 
@@ -76,14 +76,14 @@ Además dicha solicitud se puede dar en dos lugares distintos: en la función `f
 
 De forma similar a los anteriores puntos Haxl ofrece manejar esta responsabilidad sin que el desarrollador tenga que hacerlo explícitamente. En estos casos el programador trabaja cómo si siempre estuviera accediendo al recurso remoto, pero finalmente accediendo al recurso cacheado, si lo hay.
 
-Esto, además de los claros beneficios en rendimiento y en claridad de código, tiene una ventaja desde el punto de vista funcional. Esto permite recuperar la *transparencia referencial* cuando se consultan datos de fuentes externas, lo que es algo que normalmente no se tiene aún en lenguajes puramente funcionales cómo Haskell. 
+Esto, además de los claros beneficios en rendimiento y en claridad de código, tiene una ventaja desde el punto de vista funcional. Esto permite recuperar la [*transparencia referencial*](https://en.wikipedia.org/wiki/Referential_transparency) cuando se consultan datos de fuentes externas, que es algo que normalmente no se tiene aún en lenguajes puramente funcionales cómo Haskell. ¿Cuál es la ventaja de esto? El desarrollador puede funcionar con marco mental en el que su lógica se ejecuta en un instante en el tiempo, sin la posibilidad de que un mismo servicio responda dos cosas distintas en momentos cercanos en el tiempo.
 
-### Rompiendo reglas
+[//]: <> (### Rompiendo reglas)
 
-Por último me gustaría detallar las cosas que me parecen mas interesantes de Haxl. Por una parte Haxl es interesante por que hace uso de conceptos rimbonbantes como monadas, funtores aplicativos y monadas libres, entre otros. Pero más allá de eso lo más interesante es que en su construcción Haxl ha roto muchas "reglas" o "dogmas" usuales en programación funcional. 
+[//]: <> (Por último me gustaría detallar las cosas que me parecen mas interesantes de Haxl. Por una parte Haxl es interesante por que hace uso de conceptos rimbonbantes como monadas, funtores aplicativos y monadas libres, entre otros. Pero más allá de eso lo más interesante es que en su construcción Haxl ha roto muchas "reglas" o "dogmas" usuales en programación funcional. )
 
-Por ejemplo, la implementación de Haxl viola una propiedad que exige la consistencia entre la definición como monada y como funtor aplicativo. Si esto suena pedante es por que lo es. Romper esta regla es uno de los puntos más centrales del artículo y sin esto Haxl no tendría sentido. 
+[//]: <> (Por ejemplo, la implementación de Haxl viola una propiedad que exige la consistencia entre la definición como monada y como funtor aplicativo. Si esto suena pedante es por que lo es. Romper esta regla es uno de los puntos más centrales del artículo y sin esto Haxl no tendría sentido. )
 
-Por otra parte en Haxl pululan las referencias mutables (como se debería de esperar dado el cacheo), que son una de las primeras cosas que uno aprende que son "malas" en programación funcional.
+[//]: <> (Por otra parte en Haxl pululan las referencias mutables (como se debería de esperar dado el cacheo), que son una de las primeras cosas que uno aprende que son "malas" en programación funcional.)
 
-Y por último uno de los dogmas mas comunes en programación funcional tipada es la idea de que el código, por construcción y buen uso de los tipos, debe evitar errores en tiempo de ejecución. En esencia: si el código pasa el chequeo de tipos no debería haber razón para que haya errores en tiempo de ejecución. Para garantizar esto uno tendría que evitar mecanismos que "engañan" al sistema de tipos como por ejemplo casteos. Haxl en su implementación utiliza dos mecanismos no seguros: casteos y un match no seguro (para los que sepan de Scala esto sería similar a invocar `Option#get`).
+[//]: <> (Y por último uno de los dogmas mas comunes en programación funcional tipada es la idea de que el código, por construcción y buen uso de los tipos, debe evitar errores en tiempo de ejecución. En esencia: si el código pasa el chequeo de tipos no debería haber razón para que haya errores en tiempo de ejecución. Para garantizar esto uno tendría que evitar mecanismos que "engañan" al sistema de tipos como por ejemplo casteos. Haxl en su implementación utiliza dos mecanismos no seguros: casteos y un match no seguro (para los que sepan de Scala esto sería similar a invocar `Option#get`).)
