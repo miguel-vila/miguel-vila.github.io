@@ -12,7 +12,7 @@ Hace poco ménos de un año leí ese artículo y, para mi sorpresa, entendí lo 
 
 Este es el inicio de una serie de posts en los que intentaré explicar qué hace Haxl y cómo está implementado. Para esto usaré código en Scala, que será una traducción más o ménos equivalente del mismo código en Haskell. 
 
-Nos toparemos con conceptos como "monadas" y "funtores aplicativos" que tienen nombres raros y hasta cierto punto podrían ser innecesarios. Desearía ni siquiera nombrarlos para no propagar la idea de que la programación funcional es un tema para ingenieros "superiores". Sin embargo una de las principales agudezas de Haxl es aprovechar la diferencia entre estos conceptos para implementar una librería eficiente. En este sentido los conceptos "monadas" y "funtores aplicativos", palabras decididamente raras, nos sirven para referirnos a dos tipos de computaciones diferentes. Y el beneficio de usar esas extrañas denominaciones es poder integrar conceptualmente. 
+Nos toparemos con conceptos como "monadas" y "funtores aplicativos" que tienen nombres raros y hasta cierto punto podrían ser innecesarios. Si fuera posible no nombrar estos conceptos y aún así explicar Haxl lo haría. Sin embargo una de las principales agudezas de Haxl es aprovechar la diferencia entre estos conceptos para implementar una librería eficiente. En este sentido los conceptos "monadas" y "funtores aplicativos", palabras decididamente raras, nos sirven para referirnos a dos tipos de computaciones diferentes. Y el beneficio de usar esas extrañas denominaciones es poder integrar conceptualmente. 
 
 > You can capture abstractions as classes, interfaces, and functions that you can refer to in your actual programs. But the primary benefit is *conceptual integration*. When you recognize common structure among different solutions in different contexts, you unite all of those instances of the structure under a single definition and give it a *name*. The benefit, as you gain experience with this, is that you can look at the general shape of a problem and say, for example: “That looks like a *monad*!” You’re then already far along in finding the shape of the solution. A secondary benefit is that if other people have developed the same kind of vocabulary, you can communicate your designs to them with extraordinary efficiency.
 
@@ -28,7 +28,7 @@ Entonces empecemos:
 * Realizar consultas en paralelo sobre multiples fuentes de datos.
 * Cachear consultas anteriores.
 
-Esto le permite a un programador delegar el _batching_, paralelismo y cacheo a la librería y así concentrarse en la lógica de negocio. Esto facilita escribir código que es mas entendible y que al mismo tiempo tiene buen rendimiento. Y dado que tendencias actuales como microservicios exigen el uso de multiples fuentes de datos Haxl aparece como una excelente alternativa a hacer optimizaciones manualmente.
+Esto le permite a un programador delegar el _batching_, paralelismo y cacheo a la librería y así concentrarse en la lógica de negocio. Esto facilita escribir código que es mas entendible y que al mismo tiempo tiene buen rendimiento. Y dado que tendencias actuales como microservicios exigen el uso de multiples fuentes de datos Haxl aparece como una excelente alternativa a hacer estas optimizaciones manualmente.
 
 Veamos cada uno de los anteriores puntos en detalle:
 
