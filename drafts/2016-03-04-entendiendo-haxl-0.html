@@ -13,6 +13,16 @@
         <link rel="stylesheet" type="text/css" href="../css/style.css" />
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
     </head>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-74778346-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
@@ -26,7 +36,7 @@
         </nav>
     </header>
     <article>
-    <h2>Entendiendo Haxl usando Scala (Parte 0)</h2>
+    <h2>Entendiendo Haxl usando Scala: (Parte 0)</h2>
     <div id="content" class="inside">
     <div class="info">
         
@@ -39,59 +49,43 @@
         
     </div>
     <hr>
-    <p><a href="https://github.com/facebook/Haxl">Haxl</a> es una librería de Haskell usada para facilitar la obtención de datos de diferentes fuentes. Haxl fue desarrollada por Facebook y en 2014 publicaron un <a href="http://community.haskell.org/~simonmar/papers/haxl-icfp14.pdf">artículo académico</a> explicándola.</p>
-<p>Hace poco ménos de un año leí ese artículo y, para mi sorpresa, entendí lo suficiente como para tratar de traducirla a Scala. Escribo esta serie de entradas con, tal vez, un año de tardanza aunque con la intención de usar Haxl como vehículo para hablar de varias cosas.</p>
-<p>Este es el inicio de una serie de posts en los que intentaré explicar qué hace Haxl y cómo está implementado. Para esto usaré código en Scala, que será una traducción más o ménos equivalente del mismo código en Haskell.</p>
-<p>Nos toparemos con conceptos como “monadas” y “funtores aplicativos” que tienen nombres raros y hasta cierto punto podrían ser innecesarios. Desearía ni siquiera nombrarlos para no propagar la idea de que la programación funcional es un tema para ingenieros “superiores”. Sin embargo una de las principales agudezas de Haxl es aprovechar la diferencia entre estos conceptos para implementar una librería eficiente. En este sentido los conceptos “monadas” y “funtores aplicativos”, palabras decididamente raras, nos sirven para referirnos a dos tipos de computaciones diferentes. Y el beneficio de usar esas extrañas denominaciones es poder integrar conceptualmente.</p>
-<blockquote>
-<p>You can capture abstractions as classes, interfaces, and functions that you can refer to in your actual programs. But the primary benefit is <em>conceptual integration</em>. When you recognize common structure among different solutions in different contexts, you unite all of those instances of the structure under a single definition and give it a <em>name</em>. The benefit, as you gain experience with this, is that you can look at the general shape of a problem and say, for example: “That looks like a <em>monad</em>!” You’re then already far along in finding the shape of the solution. A secondary benefit is that if other people have developed the same kind of vocabulary, you can communicate your designs to them with extraordinary efficiency.</p>
-</blockquote>
-<p>Intentaré proveer enlaces que introduzcan esos conceptos a medida que sea necesario.</p>
+    <p><img src="../images/haxl-logo.png" style="float: right; padding: 0.5em;"></p>
+<p><a href="https://github.com/facebook/Haxl">Haxl</a> es una librería de Haskell que facilita la obtención de datos de diferentes fuentes. Haxl fue desarrollada por Facebook y en 2014 publicaron un <a href="http://community.haskell.org/~simonmar/papers/haxl-icfp14.pdf">artículo académico</a> explicándola. Hace poco ménos de un año leí ese artículo y, para mi sorpresa, entendí lo suficiente como para tratar de traducirla a Scala. Escribo esta serie de entradas con la intención de usar Haxl como vehículo para hablar de varias cosas sobre programación funcional.</p>
+<p>Este es el inicio de una serie de posts en los que intentaré explicar qué hace Haxl y cómo está implementado. Para esto usaré código en Scala, que será una traducción más o ménos equivalente del mismo código en Haskell. Existen varias implementaciones en Scala: <a href="https://engineering.twitter.com/university/videos/introducing-stitch">una</a> desarrollada por twitter y <a href="https://github.com/getclump/clump">otra</a> por desarrolladores de soundcloud. La implementación de juguete que se mostrará en esta serie de posts, por su parte, se ceñirá mucho a su origen en Haskell pero utilizará muchas cosas propias de Scala.</p>
 <p>Entonces empecemos:</p>
-<h3 id="para-que-sirve-haxl">¿Para que sirve Haxl?</h3>
+<h2 id="para-que-sirve-haxl">¿Para que sirve Haxl?</h2>
 <p><a href="https://code.facebook.com/posts/302060973291128/open-sourcing-haxl-a-library-for-haskell/">Principalmente</a> Haxl permite:</p>
 <ul>
 <li>Acumular multiples consultas a una fuente de datos en una sola consulta en <em>batch</em>.</li>
 <li>Realizar consultas en paralelo sobre multiples fuentes de datos.</li>
 <li>Cachear consultas anteriores.</li>
 </ul>
-<p>Esto le permite a un programador delegar el <em>batching</em>, paralelismo y cacheo a la librería y así concentrarse en la lógica de negocio. Esto facilita escribir código que es mas entendible y que al mismo tiempo tiene buen rendimiento. Y dado que tendencias actuales como microservicios exigen el uso de multiples fuentes de datos Haxl aparece como una excelente alternativa a hacer optimizaciones manualmente.</p>
+<p>Esto le permite a un programador delegar el <em>batching</em>, paralelismo y cacheo a la librería y así concentrarse en la lógica de negocio. Esto facilita escribir código que es mas entendible y que al mismo tiempo tiene buen rendimiento. Y dado que tendencias actuales como microservicios exigen el uso de multiples fuentes de datos Haxl aparece como una excelente alternativa a hacer estas optimizaciones manualmente.</p>
 <p>Veamos cada uno de los anteriores puntos en detalle:</p>
-<h3 id="batching"><em>Batching</em></h3>
+<h2 id="batching"><em>Batching</em></h2>
 <p>¿A que me refiero con <em>batching</em>? Digamos que tenemos un <em>endpoint</em> HTTP donde podemos solicitar un recurso, por ejemplo un usuario según su id:</p>
 <pre><code>GET /usuarios/&lt;id-usuario&gt;</code></pre>
 <p>y queremos consultar los usuarios con identificadores <code>usuario-1</code>, <code>usuario-2</code> y <code>usuario-3</code>. Podríamos realizar 3 consultas independientes a ese <em>endpoint</em>:</p>
 <pre><code>GET /usuarios/usuario-1</code></pre>
 <pre><code>GET /usuarios/usuario-2</code></pre>
 <pre><code>GET /usuarios/usuario-3</code></pre>
-<p>Pero esto es costoso, aun cuando paralelicemos las consultas. Estámos abriendo y cerrando 3 conexiones HTTP a, posiblemente, la misma maquina. En cambio si el <em>endpoint</em> ofrece un API en <em>batch</em> podríamos solamente hacer una solicitud:</p>
+<p>Pero esto es costoso, aun cuando paralelicemos las consultas. Estámos abriendo y cerrando 3 conexiones HTTP a, posiblemente, la misma maquina. En cambio si el <em>endpoint</em> ofrece un API en <em>batch</em> podríamos hacer una sola solicitud:</p>
 <pre><code>GET /usuarios?ids=usuario-1,usuario-2,usuario-3</code></pre>
 <p>Esto no solo cuenta para APIs HTTP. Por ejemplo Redis tiene el comando <a href="http://redis.io/commands/mget">MGET</a> que permite obtener múltiples valores a partir de una secuencia de llaves.</p>
-<p>La promesa de Haxl en este aspecto es hacer el <em>batching</em> automáticamente (dado que uno configure la librería para que reconozca el API en batch) sin que el programador tenga que hacerlo. El programador por su parte puede trabajar pensando que va a utilizar el API que retorna un solo recurso y Haxl se encargaría de identificar consultas que se pueden acumular.</p>
-<h3 id="paralelismo">Paralelismo</h3>
-<p>Ahora, ¿qué pasa si hay que consultar, de forma independiente, multiples fuentes de datos? Por ejemplo: un recurso <code>/usuarios</code> y otro <code>/blogs</code>. En estos casos, cuando las consultas son <em>independientes</em> (una no depende del resultado de la otra) se pueden paralelizar las consultas y posteriormente unir sus resultados para su procesamiento en conjunto. Tal vez reconozcan las promesas o futuros como una solución a estos problemas. En efecto estos mecanismos sirven para paralelizar, unir y secuenciar computaciones. Pero desafortunadamente no proveen las otras ventajas de Haxl. Sin embargo, como verémos más adelante Haxl ofrece un API de combinadores funcionales muy similares a los de los futuros.</p>
+<p>La promesa de Haxl en este aspecto es hacer el <em>batching</em> automáticamente (dado que uno configure la librería para que reconozca el API en <em>batch</em>). El desarrollador por su parte puede trabajar pensando que va a utilizar el API que retorna un solo recurso y Haxl se encargaría de identificar consultas que se pueden acumular.</p>
+<h2 id="paralelismo">Paralelismo</h2>
+<p>Ahora, ¿qué pasa si hay que consultar, de forma independiente, multiples fuentes de datos? Por ejemplo: un recurso <code>/usuarios</code> y otro <code>/blogs</code>. En estos casos, cuando las consultas son <em>independientes</em> (una no depende del resultado de la otra) se pueden paralelizar las consultas y posteriormente unir sus resultados para su procesamiento en conjunto. Las promesas o futuros son una solución a estos problemas. En efecto estos mecanismos sirven para paralelizar, unir y secuenciar computaciones. Pero desafortunadamente no proveen las otras ventajas de Haxl. Sin embargo, como verémos más adelante Haxl ofrece un API de combinadores funcionales muy similares a los de los futuros.</p>
 <h2 id="cacheo">Cacheo</h2>
-<p><img src="../images/sketch.png" width="40%" /></p>
-<h3 id="rompiendo-reglas">Rompiendo reglas</h3>
-<p>Por último me gustaría detallar las cosas que me parecen mas interesantes de Haxl. Por una parte Haxl es interesante por que hace uso de conceptos rimbonbantes como monadas, funtores aplicativos y monadas libres, entre otros. Pero más allá de eso lo más interesante es que en su construcción Haxl ha roto muchas “reglas” o “dogmas” usuales en programación funcional.</p>
-<p>Por ejemplo, la implementación de Haxl viola una propiedad que exige la consistencia entre la definición como monada y como funtor aplicativo. Si esto suena pedante es por que lo es. Romper esta regla es uno de los puntos más centrales del artículo y sin esto Haxl no tendría sentido.</p>
-<p>Por otra parte en Haxl pululan las referencias mutables (como se debería de esperar dado el cacheo), que son una de las primeras cosas que uno aprende que son “malas” en programación funcional.</p>
-<p>Y por último uno de los dogmas mas comunes en programación funcional tipada es la idea de que el código, por construcción y buen uso de los tipos, debe evitar errores en tiempo de ejecución. En esencia: si el código pasa el chequeo de tipos no debería haber razón para que haya errores en tiempo de ejecución. Para garantizar esto uno tendría que evitar mecanismos que “engañan” al sistema de tipos como por ejemplo casteos. Haxl en su implementación utiliza dos mecanismos no seguros: casteos y un match no seguro (para los que sepan de Scala esto sería similar a invocar <code>Option#get</code>).</p>
+<p>Por último ¿qué pasa si en el curso de atender una solicitud debemos consumir otra API posiblemente multiples veces y existe la posibilidad de que consultemos el mismo recurso mas de una vez? Por ejemplo en el siguiente diagrama el microservicio <code>A</code> para responder el recurso <code>X</code> posiblemente necesite el recurso <code>Y</code> que está en el microservicio <code>B</code>:</p>
+<p><img src="../images/sketch.png" width="40%" style="display: block; margin-left: auto; margin-right: auto;" /></p>
+<p>Además dicha solicitud se puede dar en dos lugares distintos: en la función <code>f1</code> o en la función <code>f3</code>. Una optimización obvia es que <code>f1</code> propague el valor de <code>Y</code> hasta <code>f3</code>, posiblemente modificando la firma de <code>f2</code> para que simplemente propague el valor. Tal vez esta no sea una solución tan mala en este caso, pero uno puede imaginarse casos mas complicados: ¿que pasa si se trata de más de un recurso? ¿que pasa si entre <code>f1</code> y <code>f3</code> hay muchas mas funciones? ¿que pasa si la obtención del recurso es condicionada por algún predicado? y así…</p>
+<p>De forma similar a los anteriores puntos Haxl ofrece manejar esta responsabilidad sin que el desarrollador tenga que hacerlo explícitamente. En estos casos el programador trabaja cómo si siempre estuviera accediendo al recurso remoto, pero finalmente accediendo al recurso cacheado, si lo hay.</p>
+<p>Esto, además de los claros beneficios en rendimiento y en claridad de código, tiene una ventaja desde el punto de vista funcional. Esto permite recuperar la <a href="https://en.wikipedia.org/wiki/Referential_transparency"><em>transparencia referencial</em></a> cuando se consultan datos de fuentes externas, que es algo que normalmente no se tiene aún en lenguajes puramente funcionales cómo Haskell. ¿Cuál es la ventaja de esto? El desarrollador puede funcionar con marco mental en el que su lógica se ejecuta en un instante en el tiempo, sin la posibilidad de que un mismo servicio responda dos cosas distintas en momentos cercanos en el tiempo.</p>
 </div>
     </article>
     <footer>
         <hr>
         <p>Made with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
     </footer>
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-74778346-1', 'auto');
-        ga('send', 'pageview');
-
-    </script>
     </body>
 </html>
