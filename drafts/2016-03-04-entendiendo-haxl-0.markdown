@@ -6,11 +6,11 @@ tags: Haxl, Haskell, Scala, Functional Programming, Free Monads, Monads, Applica
 
 <img src="/images/haxl-logo.png" style="float: right; padding: 0.5em;">
 
-[Haxl](https://github.com/facebook/Haxl) es una librería de Haskell que facilita la obtención de datos de diferentes fuentes. Haxl fue desarrollada por Facebook y en 2014 publicaron un [artículo académico](http://community.haskell.org/~simonmar/papers/haxl-icfp14.pdf) explicándola. Hace poco ménos de un año leí ese artículo y, para mi sorpresa, entendí lo suficiente como para tratar de traducirla a Scala. Escribo esta serie de entradas con la intención de usar Haxl como vehículo para hablar de varias cosas sobre programación funcional.
+[Haxl](https://github.com/facebook/Haxl) es una librería de Haskell que facilita la obtención de datos de diferentes fuentes. Haxl fue desarrollada por Facebook y en 2014 publicaron un [artículo académico](http://community.haskell.org/~simonmar/papers/haxl-icfp14.pdf) explicándola. Hace poco ménos de un año leí ese artículo y, para mi sorpresa, entendí lo suficiente como para tratar de traducirla a Scala.
 
 [//]: <> (Podría ser tema para otra entrada, pero resulta muy curioso que una empresa como Facebook, que todos conocemos y usamos, decida invertir en un paradigma no tan usado como lo es la programación funcional. Por ahora esta inversión parece ser en infraestructura como es evidenciado por éste proyecto y por otro como [Flow](http://flowtype.org/).)
 
-Este es el inicio de una serie de posts en los que intentaré explicar qué hace Haxl y cómo está implementado. Para esto usaré código en Scala, que será una traducción más o ménos equivalente del mismo código en Haskell. Existen varias implementaciones en Scala: [una](https://engineering.twitter.com/university/videos/introducing-stitch) desarrollada por twitter y [otra](https://github.com/getclump/clump) por desarrolladores de soundcloud. La implementación de juguete que se mostrará en esta serie de posts, por su parte, se ceñirá mucho a su origen en Haskell pero utilizará muchas cosas propias de Scala.
+Este es el inicio de una serie de posts en los que intentaré explicar qué hace Haxl y cómo está implementado. Para esto usaré código en Scala que será una traducción mas o menos equivalente del mismo código en Haskell. Existen varias implementaciones en Scala: [una](https://engineering.twitter.com/university/videos/introducing-stitch) desarrollada por twitter y [otra](https://github.com/getclump/clump) por desarrolladores de soundcloud. La implementación de juguete que se mostrará en esta serie de posts, por su parte, se ceñirá mucho a su origen en Haskell pero utilizará muchas cosas propias de Scala.
 
 [//]: <> (Nos toparemos con conceptos como "monadas" y "funtores aplicativos" que tienen nombres raros y hasta cierto punto podrían ser innecesarios. Si fuera posible no nombrar estos conceptos y aún así explicar Haxl lo haría. Sin embargo una de las principales agudezas de Haxl es aprovechar la diferencia entre estos conceptos para implementar una librería eficiente. En este sentido los conceptos "monadas" y "funtores aplicativos", palabras decididamente raras, nos sirven para referirnos a dos tipos de computaciones diferentes. Y el beneficio de usar esas extrañas denominaciones es comunicar los mismos conceptos.)
 
@@ -26,7 +26,7 @@ Entonces empecemos:
 * Realizar consultas en paralelo sobre multiples fuentes de datos.
 * Cachear consultas anteriores.
 
-Esto le permite a un programador delegar el _batching_, paralelismo y cacheo a la librería y así concentrarse en la lógica de negocio. Esto facilita escribir código que es mas entendible y que al mismo tiempo tiene buen rendimiento. Y dado que tendencias actuales como microservicios exigen el uso de multiples fuentes de datos Haxl aparece como una excelente alternativa a hacer estas optimizaciones manualmente.
+Esto le permite a un programador delegar el _batching_, paralelismo y cacheo a la librería y así concentrarse en la lógica de negocio. Esto facilita escribir código que es mas entendible y modular y que al mismo tiempo tiene buen rendimiento. Y dado que tendencias actuales como microservicios exigen el uso de multiples fuentes de datos Haxl aparece como una excelente alternativa a hacer estas optimizaciones manualmente.
 
 Veamos cada uno de los anteriores puntos en detalle:
 
@@ -58,17 +58,21 @@ Pero esto es costoso, aun cuando paralelicemos las consultas. Estámos abriendo 
 GET /usuarios?ids=usuario-1,usuario-2,usuario-3
 ```
 
-Esto no solo cuenta para APIs HTTP. Por ejemplo Redis tiene el comando [MGET](http://redis.io/commands/mget) que permite obtener múltiples valores a partir de una secuencia de llaves.
+Esto no solo cuenta para APIs HTTP. Por ejemplo Redis tiene el comando [MGET](http://redis.io/commands/mget) que permite obtener múltiples valores a partir de una secuencia de llaves. Y adicionalmente esto no solo se reduce a APIs en _batch_ que devuelven el mismo tipo de resultado. Si el API permite enviar multiples solicitudes, posiblemente heterogeneas, en el mismo paquete entonces estas podrían hacerse cómo una sola solicitud en _batch_ (Como lo explican en el artículo el repositorio [TAO](https://www.facebook.com/notes/facebook-engineering/tao-the-power-of-the-graph/10151525983993920/) de facebook lo permite).
 
 La promesa de Haxl en este aspecto es hacer el _batching_ automáticamente (dado que uno configure la librería para que reconozca el API en _batch_). El desarrollador por su parte puede trabajar pensando que va a utilizar el API que retorna un solo recurso y Haxl se encargaría de identificar consultas que se pueden acumular. 
 
 ## Paralelismo
 
-Ahora, ¿qué pasa si hay que consultar, de forma independiente, multiples fuentes de datos? Por ejemplo: un recurso `/usuarios` y otro `/blogs`. En estos casos, cuando las consultas son *independientes* (una no depende del resultado de la otra) se pueden paralelizar las consultas y posteriormente unir sus resultados para su procesamiento en conjunto. Las promesas o futuros son una solución a estos problemas. En efecto estos mecanismos sirven para paralelizar, unir y secuenciar computaciones. Pero desafortunadamente no proveen las otras ventajas de Haxl. Sin embargo, como verémos más adelante Haxl ofrece un API de combinadores funcionales muy similares a los de los futuros.
+Ahora, ¿qué pasa si hay que consultar, de forma independiente, multiples fuentes de datos? Por ejemplo: un recurso `/usuarios` y otro `/blogs`. En estos casos, cuando las consultas son *independientes* (una no depende del resultado de la otra) se pueden paralelizar las consultas y posteriormente unir sus resultados para su procesamiento en conjunto. 
+
+Las promesas o futuros son una solución a estos problemas. En efecto estos mecanismos sirven para paralelizar, unir y secuenciar computaciones. Pero desafortunadamente no proveen las otras ventajas de Haxl. Sin embargo, como verémos más adelante Haxl ofrece un API de combinadores funcionales muy similares a los de los futuros.
 
 ## Cacheo
 
-Por último ¿qué pasa si en el curso de atender una solicitud debemos consumir otra API posiblemente multiples veces y existe la posibilidad de que consultemos el mismo recurso mas de una vez? Por ejemplo en el siguiente diagrama el microservicio `A` para responder el recurso `X` posiblemente necesite el recurso `Y` que está en el microservicio `B`:
+Por último ¿qué pasa si en el curso de atender una solicitud debemos consumir otra API posiblemente multiples veces y existe la posibilidad de que consultemos el mismo recurso mas de una vez? 
+
+Por ejemplo en el siguiente diagrama el microservicio `A` para responder el recurso `X` posiblemente necesite el recurso `Y` que está en el microservicio `B`:
 
 <img src="/images/sketch.png" width="40%" style="display: block; margin-left: auto; margin-right: auto;"></img>
 
@@ -76,7 +80,7 @@ Además dicha solicitud se puede dar en dos lugares distintos: en la función `f
 
 De forma similar a los anteriores puntos Haxl ofrece manejar esta responsabilidad sin que el desarrollador tenga que hacerlo explícitamente. En estos casos el programador trabaja cómo si siempre estuviera accediendo al recurso remoto, pero finalmente accediendo al recurso cacheado, si lo hay.
 
-Esto, además de los claros beneficios en rendimiento y en claridad de código, tiene una ventaja desde el punto de vista funcional. Esto permite recuperar la [*transparencia referencial*](https://en.wikipedia.org/wiki/Referential_transparency) cuando se consultan datos de fuentes externas, que es algo que normalmente no se tiene aún en lenguajes puramente funcionales cómo Haskell. ¿Cuál es la ventaja de esto? El desarrollador puede funcionar con marco mental en el que su lógica se ejecuta en un instante en el tiempo, sin la posibilidad de que un mismo servicio responda dos cosas distintas en momentos cercanos en el tiempo.
+Esto, además de los claros beneficios en rendimiento y en claridad de código, tiene una ventaja desde el punto de vista funcional. Esto permite recuperar la [*transparencia referencial*](https://en.wikipedia.org/wiki/Referential_transparency) cuando se consultan datos de fuentes externas, que es algo que normalmente no se tiene aún en lenguajes puramente funcionales cómo Haskell. ¿Cuál es la ventaja de esto? El desarrollador puede trabajar con marco mental en el que su lógica se ejecuta en un "solo" instante en el tiempo, sin la posibilidad de que un mismo servicio responda dos cosas distintas en momentos cercanos en el tiempo.
 
 [//]: <> (### Rompiendo reglas)
 
