@@ -8,7 +8,7 @@ Uno de los aparentes ritos de paso en programación funcional es el de construir
 
 Por ejemplo el [artículo](http://homepages.inf.ed.ac.uk/wadler/papers/marktoberdorf/baastad.pdf) de [Philip Wadler](http://homepages.inf.ed.ac.uk/wadler/) explicando un patrón común en programación funcional usa un intérprete como motivador. 
 
-En el mundo de lenguajes tipo lisp también es muy común, dada la facilidad de recorrer las expresiones. Por ejemplo en el [curso de lenguajes de programación en coursera](https://www.coursera.org/course/proglang) hacen el ejercicio de construir un pequeño intérprete usando racket. O tal vez mas conocido es el libro ["Structure and Interpretation of Computer Programs"](https://mitpress.mit.edu/sicp/) donde en una buena parte del libro se dedican a hacer lo mismo.
+En el mundo de lenguajes tipo lisp también es muy común. Por ejemplo en el [curso de lenguajes de programación en coursera](https://www.coursera.org/course/proglang) hacen el ejercicio de construir un pequeño intérprete usando racket. O tal vez mas conocido es el libro ["Structure and Interpretation of Computer Programs"](https://mitpress.mit.edu/sicp/) donde en una buena parte del libro se dedican a hacer lo mismo.
 
 Y mas recientemente la idea de los intérpretes ha sido usada con [propósitos más complejos](https://www.youtube.com/watch?v=hmX2s3pe_qk).
 
@@ -69,14 +69,6 @@ Algunos tal vez estén familiarizados con este patrón. Se denomina [Abstract Da
 
 Pero todo lo anterior solo describe el resultado final de las computaciones. Necesitamos describir las expresiones que nuestro lenguaje soporta que al evaluarse producen alguno de los anteriores tipos.
 
-La base de todo va a ser un tipo abstracto llamado `Expression` que está parametrizado según el tipo de la expresión:
-
-```scala
-sealed trait Expression[V <: Value]
-```
-
-Aquí estamos usando un [límite de tipo](http://www.scala-lang.org/old/node/136) (el extraño `<:`) para decir que el parámetro de tipo `V` debe ser un subtipo de `Value`, es decir o `NumberValue` o `BooleanValue` o `Void`.
-
 Ahora veamos que tipos de expresiones tiene nuestro pequeño lenguaje:
 
 * Hay **literales** que son valores que no se pueden evaluar más como "`123`" o "`True`".
@@ -85,3 +77,99 @@ Ahora veamos que tipos de expresiones tiene nuestro pequeño lenguaje:
 * Hay **expresiones booleanas** como **comparaciones** ("`1 < 2`" o "`miVariable < 4`") o referencias a variables booleanas.
 * Hay **expresiones numéricas** como **operaciones binarias** ("`1 + 3`" o "`x * 7`") o referencias a variables numéricas.
 * Hay **estructuras de control** como `if() {} else {} ` o `while () {}`
+
+La base de todo va a ser un tipo abstracto llamado `Expression` que está parametrizado según el tipo de la expresión:
+
+```scala
+sealed trait Expression[V <: Value]
+```
+
+Aquí estamos usando un [límite de tipo](http://www.scala-lang.org/old/node/136) (el extraño `<:`) para decir que el parámetro de tipo `V` debe ser un subtipo de `Value`, es decir o `NumberValue` o `BooleanValue` o `Void`.
+
+Veamos como podríamos implementar cada una de las anteriores expresiones:
+
+Los literales son expresiones de los que podemos obtener su valor inmediatamente:
+
+```scala
+trait Literal[V<:Value] extends Expression[V] {
+  def value: V
+}
+```
+Las expresiones booleanas son solo una especialización de una expresión:
+
+```scala
+sealed trait BooleanExpression extends Expression[BooleanValue]
+```
+
+Los literales booleanos son tanto expresiones booleanas como literales:
+
+```scala
+case class Boolean(value: BooleanValue) extends BooleanExpression with Literal[BooleanValue]
+```
+
+Y vamos a incluir un companion object con algunos métodos que nos pueden resultar utiles:
+
+```scala
+object Boolean {
+  def apply(boolean: scala.Boolean): Boolean = Boolean(BooleanValue(boolean))
+  def True: Boolean = apply(true)
+  def False: Boolean = apply(false)
+}
+```
+
+Antes de hablar de otras expresiones booleanas como comparaciones tenemos que definir el tipo de las expresiones numéricas. Como las booleanas simplemente va a ser una especialización:
+
+```scala
+sealed trait NumberExpression extends Expression[NumberValue]
+```
+
+Ahora si podrémos definir qué es una comparación. Primero describirémos un tipo base que nos resultará útil para evitarnos cierta repetición en el futuro:
+
+```scala
+sealed trait Comparison extends BooleanExpression {
+  def left: NumberExpression
+  def right: NumberExpression
+}
+```
+
+Y los distintos tipos de comparaciones van a ser una extensión de la anterior:
+
+```scala
+case class LessThan(left: NumberExpression, right: NumberExpression) extends Comparison 
+
+case class Equal(left: NumberExpression, right: NumberExpression) extends Comparison
+
+case class GreaterThan(left: NumberExpression, right: NumberExpression) extends Comparison
+```
+
+Ahora de forma similar a los booleanos tenemos los literales numéricos:
+
+```scala
+case class Number(value: NumberValue) extends NumberExpression with Literal[NumberValue]
+
+object Number {
+
+  def apply(float: Float): Number = new Number(NumberValue(float))
+
+}
+```
+
+Tenemos un tipo base para las operaciones binarias:
+
+```scala
+sealed trait BinaryOp extends NumberExpression {
+  def left: NumberExpression
+  def right: NumberExpression
+}
+```
+
+Y una extensión para cada tipo de operación binaria:
+
+```scala
+case class Add(left: NumberExpression, right: NumberExpression) extends BinaryOp
+
+case class Multiply(left: NumberExpression, right: NumberExpression) extends BinaryOp
+```
+
+
+
