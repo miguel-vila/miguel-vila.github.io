@@ -3,8 +3,14 @@ h1 {
 }
 
 body {
-  font-family: 'Libre Baskerville', serif;
+  font-family: 'Libre Baskerville', Georgia, serif;
   text-align: justify;
+  letter-spacing: .1px;
+  font-size: 16px;
+}
+
+article p {
+  line-height: 26px;
 }
 
 hr {
