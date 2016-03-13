@@ -13,6 +13,10 @@ article p {
   line-height: 26px;
 }
 
+article ul li {
+  line-height: 26px;
+}
+
 hr {
   margin-top: 20px;
   display: block;
