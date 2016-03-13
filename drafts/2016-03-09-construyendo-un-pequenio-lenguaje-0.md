@@ -4,11 +4,11 @@ description: Parte 0 de una serie de posts en las que se construye un pequeño l
 tags: Scala, Interpreter, Functional Programming, Understanding Computation
 ---
 
-Uno de los aparentes ritos de paso en programación funcional es el de construir un pequeño lenguaje de programación. O para ser más preciso construir el intérprete de un lenguaje de programación: algo que recorra un árbol de sintáxis y lo reduzca a un valor. Este ejercicio es bastante común en artículos, libros o cursos.
+Un ejercicio común en programación funcional es el de construir un pequeño lenguaje. O para ser más preciso construir el intérprete de un lenguaje: algo que recorra un árbol de sintáxis y lo reduzca a un valor. Este ejercicio es bastante común en artículos, libros o cursos.
 
-Por ejemplo el [artículo](http://homepages.inf.ed.ac.uk/wadler/papers/marktoberdorf/baastad.pdf) de [Philip Wadler](http://homepages.inf.ed.ac.uk/wadler/) explicando un patrón común en programación funcional usa un intérprete como motivador. 
+Por ejemplo el [artículo](http://homepages.inf.ed.ac.uk/wadler/papers/marktoberdorf/baastad.pdf) de [Philip Wadler](http://homepages.inf.ed.ac.uk/wadler/) usa un intérprete como motivador para explicar un patrón común en programación funcional. 
 
-En el mundo de lenguajes tipo lisp también es muy común. Por ejemplo en el [curso de lenguajes de programación en coursera](https://www.coursera.org/course/proglang) hacen el ejercicio de construir un pequeño intérprete usando racket. O tal vez mas conocido es el libro ["Structure and Interpretation of Computer Programs"](https://mitpress.mit.edu/sicp/) donde en una buena parte del libro se dedican a hacer lo mismo.
+En el mundo de lenguajes tipo [lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)) también es muy común. Por ejemplo en el [curso de lenguajes de programación en coursera](https://www.coursera.org/course/proglang) hacen el ejercicio de construir un pequeño intérprete usando [racket](https://racket-lang.org/). O tal vez mas conocido es el libro ["Structure and Interpretation of Computer Programs"](https://mitpress.mit.edu/sicp/) en el que en una buena parte del libro se dedican a hacer lo mismo.
 
 Y mas recientemente la idea de los intérpretes ha sido usada con [propósitos más complejos](https://www.youtube.com/watch?v=hmX2s3pe_qk).
 
@@ -30,7 +30,7 @@ while ( i < 11 ) {
 }
 ```
 
-Primero vamos a crear una jerarquía de tipos, detallando lo que queremos. Por una parte vamos a tener solo dos tipos de datos: números y booleanos. Pero ciertos tipos de expresiones, por ejemplo asignaciones, no tienen un tipo de retorno. Entonces otro tipo dentro de nuestra jerarquía será `Void`. 
+Primero vamos a crear una jerarquía de tipos detallando lo que queremos. Por una parte vamos a tener solo dos tipos de datos: números y booleanos. Pero ciertos tipos de expresiones, por ejemplo asignaciones, no tienen un tipo de retorno. Entonces otro tipo dentro de nuestra jerarquía será `Void`. 
 
 Empezamos con un tipo abstracto que represente la base que comparten todos los tipos de nuestro lenguaje:
 
@@ -58,30 +58,31 @@ case class NumberValue(value: Float) extends Value {
 }
 ```
 
-Y por último "`Void`" que será un tipo y un valor (podríamos hacerlo solo un valor pero hacerlo de esta forma nos evita anotar algunas cosas como "`Void.type`" lo que es un poco raro):
+Y por último "`Void`" que será un tipo y un valor (podríamos hacerlo solo un valor pero de esta forma nos evita anotar algunas cosas como "`Void.type`" lo que es un poco raro):
 
 ```scala
 trait Void extends Value
 object Void extends Void
 ```
 
-Algunos tal vez estén familiarizados con este patrón. Se denomina [Abstract Data Types](http://tech.esper.com/2014/07/30/algebraic-data-types/).
+Este patrón, común en programación funcional, se denomina [Abstract Data Types](http://tech.esper.com/2014/07/30/algebraic-data-types/).
 
-Pero todo lo anterior solo describe el resultado final de las computaciones. Necesitamos describir las expresiones que nuestro lenguaje soporta que al evaluarse producen alguno de los anteriores tipos.
+Todo lo anterior solo describe el resultado final de las computaciones. Necesitamos describir las expresiones que nuestro lenguaje soporta que al evaluarse producen alguno de esos valores.
 
 Ahora veamos que tipos de expresiones tiene nuestro pequeño lenguaje:
 
 * Hay **literales** que son valores que no se pueden evaluar más como "`123`" o "`True`".
-* Hay **asignaciones** que son expresiones de tipo "`x = <alguna expresión>`" donde atamos el valor de una expresión al nombre de una variable.
-* Hay **referencias a variables** que son cuando usamos el nombre de una variable para usar su valor. Por ejemplo con nombres válidos que sean secuencias de carácteres alfabéticos como "`x`" o "`miVariable`".
+* Hay **variables** que son cuando usamos el nombre de una variable para referirnos a su valor. Por ejemplo con nombres válidos que sean secuencias de caracteres alfabéticos como "`x`" o "`miVariable`".
 * Hay **expresiones booleanas** como **comparaciones** ("`1 < 2`" o "`miVariable < 4`") o referencias a variables booleanas.
 * Hay **expresiones numéricas** como **operaciones binarias** ("`1 + 3`" o "`x * 7`") o referencias a variables numéricas.
-* Hay **estructuras de control** como `if() {} else {} ` o `while () {}`
+* Hay **asignaciones** que son expresiones de tipo "`x = <alguna expresión>`" donde atamos el valor de una expresión al nombre de una variable.
+* Hay **estructuras de control** como `if() {} else {} ` o `while () {}`.
+* Hay **secuencias de instrucciones** como secuencias de asignaciones, o de `if`s o `while`s.
 
-La base de todo va a ser un tipo abstracto llamado `Expression` que está parametrizado según el tipo de la expresión:
+Una expresión será representada por un tipo abstracto llamado `Exp` que estará parametrizado según el tipo de la expresión:
 
 ```scala
-sealed trait Expression[V <: Value]
+sealed trait Exp[ V <: Value ]
 ```
 
 Aquí estamos usando un [límite de tipo](http://www.scala-lang.org/old/node/136) (el extraño `<:`) para decir que el parámetro de tipo `V` debe ser un subtipo de `Value`, es decir o `NumberValue` o `BooleanValue` o `Void`.
@@ -91,64 +92,61 @@ Veamos como podríamos implementar cada una de las anteriores expresiones:
 Los literales son expresiones de los que podemos obtener su valor inmediatamente:
 
 ```scala
-trait Literal[V<:Value] extends Expression[V] {
+trait Literal[ V <: Value ] extends Exp[V] {
   def value: V
 }
 ```
-Las expresiones booleanas son solo una especialización de una expresión:
+
+Las expresiones booleanas serán subclases de `Exp[BooleanValue]` y los literales booleanos son una extensión del anterior `trait` con el campo `value` de tipo `BooleanValue`:
 
 ```scala
-sealed trait BooleanExpression extends Expression[BooleanValue]
+case class Boolean(value: BooleanValue) extends Literal[BooleanValue]
 ```
 
-Los literales booleanos son tanto expresiones booleanas como literales:
-
-```scala
-case class Boolean(value: BooleanValue) extends BooleanExpression with Literal[BooleanValue]
-```
-
-Y vamos a incluir un companion object con algunos métodos que nos pueden resultar utiles:
+Y vamos a incluir un _companion object_ con algunos métodos que nos pueden resultar utiles:
 
 ```scala
 object Boolean {
-  def apply(boolean: scala.Boolean): Boolean = Boolean(BooleanValue(boolean))
-  def True: Boolean = apply(true)
+  /**
+    * Constructor
+    */
+  def apply(sboolean: scala.Boolean /*un boolean de la lib estándar de Scala*/): Boolean = {
+    Boolean(BooleanValue(sboolean))
+  }
+  def True : Boolean = apply(true)
   def False: Boolean = apply(false)
 }
 ```
 
-Antes de hablar de otras expresiones booleanas como comparaciones tenemos que definir el tipo de las expresiones numéricas. Como las booleanas simplemente va a ser una especialización:
+Cuando hablamos de una comparación estamos relacionando dos expresiones numéricas (algo del tipo `Exp[NumberValue]`), una a la izquierda y otra a la derecha de la comparación. Primero describirémos un tipo base que nos resultará útil para evitarnos cierta repetición en el futuro:
 
 ```scala
-sealed trait NumberExpression extends Expression[NumberValue]
-```
-
-Ahora si podrémos definir qué es una comparación. Primero describirémos un tipo base que nos resultará útil para evitarnos cierta repetición en el futuro:
-
-```scala
-sealed trait Comparison extends BooleanExpression {
-  def left: NumberExpression
-  def right: NumberExpression
+sealed trait Comparison extends Exp[BooleanValue] {
+  def left : Exp[NumberValue]
+  def right: Exp[NumberValue]
 }
 ```
 
 Y los distintos tipos de comparaciones van a ser una extensión de la anterior:
 
 ```scala
-case class LessThan(left: NumberExpression, right: NumberExpression) extends Comparison 
+case class LessThan(left: Exp[NumberValue], right: Exp[NumberValue]) extends Comparison 
 
-case class Equal(left: NumberExpression, right: NumberExpression) extends Comparison
+case class Equal(left: Exp[NumberValue], right: Exp[NumberValue]) extends Comparison
 
-case class GreaterThan(left: NumberExpression, right: NumberExpression) extends Comparison
+case class GreaterThan(left: Exp[NumberValue], right: Exp[NumberValue]) extends Comparison
 ```
 
 Ahora de forma similar a los booleanos tenemos los literales numéricos:
 
 ```scala
-case class Number(value: NumberValue) extends NumberExpression with Literal[NumberValue]
+case class Number(value: NumberValue) extends Literal[NumberValue]
 
 object Number {
 
+  /**
+    * Constructor
+    */
   def apply(float: Float): Number = new Number(NumberValue(float))
 
 }
@@ -157,19 +155,103 @@ object Number {
 Tenemos un tipo base para las operaciones binarias:
 
 ```scala
-sealed trait BinaryOp extends NumberExpression {
-  def left: NumberExpression
-  def right: NumberExpression
+sealed trait BinaryOp extends Exp[NumberValue] {
+  def left : Exp[NumberValue]
+  def right: Exp[NumberValue]
 }
 ```
 
 Y una extensión para cada tipo de operación binaria:
 
 ```scala
-case class Add(left: NumberExpression, right: NumberExpression) extends BinaryOp
+case class Add(left: Exp[NumberValue], right: Exp[NumberValue]) extends BinaryOp
 
-case class Multiply(left: NumberExpression, right: NumberExpression) extends BinaryOp
+case class Multiply(left: Exp[NumberValue], right: Exp[NumberValue]) extends BinaryOp
 ```
 
+También las variables son expresiones. Una variable se puede describir por su nombre. Empezamos con un tipo base:
 
+```scala
+trait Var[ V <: Value ] extends Exp[ V ] {
+  def name: String
+}
+```
+
+Y las distintas extensiones que podemos tener:
+
+```scala
+case class NumberVar(name: String) extends Var[NumberValue]
+case class BooleanVar(name: String) extends Var[BooleanValue]
+```
+
+Ahora vamos a ver las expresiones que no tienen valor y que denominaremos instrucciones. 
+
+Una asignación consiste de un nombre y de una expresión:
+
+```scala
+case class Assign(name: String, expression: Exp[ _ <: Value ]) extends Exp[Void]
+```
+
+El tipo existencial de la expresión (el _underscore_ detrás del `_ <: Value`) nos sirve para decir que no nos interesa el tipo específico de la expresión.
+
+En nuestro lenguaje los condicionales también serán expresiones sin valor de retorno (a diferencia de lenguajes donde los `if`s son expresiones con valor como el mismo Scala) y consistirán de una expresión booleana (el condicional) y dos instrucciones (la instrucción cuando el condicional sea verdadero y la instrucción cuando no lo sea):
+
+```scala
+case class If(
+  condition:   Exp[BooleanValue],
+  consequence: Exp[Void],
+  alternative: Exp[Void]
+) extends Exp[Void]
+```
+
+Los `while`s serán similares:
+
+```scala
+case class While(
+  condition:   Exp[BooleanValue],
+  body: Exp[Void]
+) extends Exp[Void]
+```
+
+Y por último la concatenación de multiples instrucciones también es una instrucción:
+
+```scala
+case class Sequence(exps: Exp[Void]*) extends Exp[Void] 
+```
+
+Y utilizamos un [argumento variable](http://alvinalexander.com/scala/how-to-define-methods-variable-arguments-varargs-fields) solamente para poder escribir expresiones sin tener que construir listas.
+
+Este patrón, similar a los ADTs pero con un parámetro de tipo, se denomina [Generalised Abstract Data Type](https://vimeo.com/12208838).
+
+Ya armados con una jerarquía de tipos el siguiente código...
+
+```c
+a = 0;
+b = 1;
+i = 1;
+while ( i < 11 ) {
+    c = a;
+    a = b;
+    b = b + c;
+    i = i + 1;
+}
+```
+
+...se traduce en:
+
+```scala
+Sequence(
+  Assign("a", Number(0)),
+  Assign("b", Number(1)),
+  Assign("i", Number(1)),
+  While(LessThan( NumberVar("i"), Number(11) ),
+        Sequence(
+            Assign( "c", NumberVar("a") ),
+            Assign( "a", NumberVar("b") ),
+            Assign( "b", Sum( NumberVar("b"), NumberVar("c") ) ),
+            Assign( "i", Sum( NumberVar("i"), NumberVar(1) ) )
+        )
+  )
+)
+```
 
