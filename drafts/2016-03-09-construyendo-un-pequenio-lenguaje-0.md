@@ -6,7 +6,7 @@ tags: Scala, Interpreter, Functional Programming, Understanding Computation
 
 Un ejercicio común en [programación funcional](https://en.wikipedia.org/wiki/Functional_programming) es el de construir un pequeño lenguaje. Más precisamente el ejercicio consiste en construir el intérprete de un lenguaje: algo que recorra un árbol de sintáxis y lo reduzca a un valor. Este ejercicio es bastante común en artículos, libros o cursos de programación funcional.
 
-Por ejemplo el [artículo](http://homepages.inf.ed.ac.uk/wadler/papers/marktoberdorf/baastad.pdf) de [Philip Wadler](http://homepages.inf.ed.ac.uk/wadler/) usa un intérprete como motivador para explicar un "patrón" común en programación funcional. 
+Por ejemplo [Philip Wadler](http://homepages.inf.ed.ac.uk/wadler/) tiene un [artículo](http://homepages.inf.ed.ac.uk/wadler/papers/marktoberdorf/baastad.pdf) que usa un intérprete para motivar un patrón común en programación funcional. 
 
 En el mundo de lenguajes tipo [lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)) también es muy común. Por ejemplo en el [curso de lenguajes de programación en coursera](https://www.coursera.org/course/proglang) hacen el ejercicio de construir un pequeño intérprete usando [racket](https://racket-lang.org/). O tal vez mas conocido es el libro ["Structure and Interpretation of Computer Programs"](https://mitpress.mit.edu/sicp/) (posiblemente inspiración del anterior curso) en el que en una buena parte del libro se dedican a hacer lo mismo.
 
@@ -68,7 +68,7 @@ case class NumberValue(value: Float) extends Value
 [//]: <> (})
 [//]: <> (```)
 
-Por último "`Void`" que será un tipo y un valor (podríamos hacerlo solo un valor pero de esta forma nos evita anotar algunas cosas como "`Void.type`" lo que es un poco raro):
+Por último "`Void`" será un tipo (un `trait`) y un valor (un `object`). Podríamos hacerlo solo un valor pero de esta forma nos evita anotar algunas cosas como "`Void.type`" lo que es un poco raro:
 
 ```scala
 trait Void extends Value
@@ -79,14 +79,14 @@ Este patrón, común en programación funcional, se denomina **Algebraic Data Ty
 
 ## Las expresiones del lenguaje
 
-Todo lo anterior solo describe el resultado final de las computaciones. Necesitamos describir las expresiones que nuestro lenguaje soporta que al evaluarse producen alguno de esos valores.
+Todo lo anterior solo describe el resultado final de las computaciones. Necesitamos describir las expresiones de nuestro lenguaje que al evaluarse producen alguno de esos valores.
 
 Enumerémos qué tipos de expresiones tiene nuestro pequeño lenguaje:
 
 * Hay **literales** que son valores que no se pueden evaluar más como "`123`" o "`True`".
 * Hay **variables** que son cuando usamos el nombre de una variable para referirnos a su valor. Por ejemplo con nombres válidos que sean secuencias de caracteres alfabéticos como "`x`" o "`miVariable`".
-* Hay **expresiones booleanas** como **comparaciones** ("`1 < 2`" o "`miVariable < 4`" o "`x == y`") o referencias a variables booleanas.
-* Hay **expresiones numéricas** como **operaciones binarias** ("`1 + 3`" o "`x * 7`" o "`3 * y + 2 * ( 3 + z )`") o referencias a variables numéricas.
+* Hay **expresiones booleanas** como **comparaciones** (por ejemplo "`1 < 2`" o "`miVariable < 4`" o "`x == y`") o referencias a variables booleanas.
+* Hay **expresiones numéricas** como **operaciones binarias** (por ejemplo "`1 + 3`" o "`x * 7`" o "`3 * y + 2 * ( 3 + z )`") o referencias a variables numéricas.
 * Hay **asignaciones** que son expresiones de tipo "`x = <alguna expresión>`" donde atamos el valor de una expresión al nombre de una variable.
 * Hay **estructuras de control** como "`if() {} else {}`" o "`while () {}`".
 * Hay **secuencias de instrucciones** como secuencias de asignaciones, o de `if`s o `while`s.
@@ -97,11 +97,11 @@ Una expresión será representada por un tipo abstracto llamado `Exp` que estar�
 sealed trait Exp[ V <: Value ]
 ```
 
-Aquí estamos usando un [límite de tipo](http://www.scala-lang.org/old/node/136) (el extraño `<:`) para decir que el parámetro de tipo `V` debe ser un subtipo de `Value`, es decir o `NumberValue` o `BooleanValue` o `Void`.
+Aquí estamos usando un [límite de tipo](http://www.scala-lang.org/old/node/136) (el extraño `<:`) para decir que el parámetro de tipo `V` debe ser un subtipo de `Value`, es decir o `NumberValue` o `BooleanValue` o `Void`. El parámetro sirve para decir cuál es el tipo de la expresión: las expresiones numéricas seran de tipo `Exp[NumberValue]`, las booleanas de tipo `Exp[BooleanValue]` y las que no tienen tipo `Exp[Void]`.
 
 Veamos como podríamos implementar cada una de las anteriores expresiones:
 
-Los literales son expresiones de los que podemos obtener su valor inmediatamente:
+Los **literales** son expresiones de los que podemos obtener su valor inmediatamente:
 
 ```scala
 trait Literal[ V <: Value ] extends Exp[V] {
@@ -109,7 +109,7 @@ trait Literal[ V <: Value ] extends Exp[V] {
 }
 ```
 
-Las expresiones booleanas serán subclases de `Exp[BooleanValue]` y los literales booleanos son una extensión del anterior `trait` con el campo `value` de tipo `BooleanValue`:
+Las **expresiones booleanas** serán subclases de `Exp[BooleanValue]` y los **literales booleanos** son una extensión del anterior `trait` con el campo `value` de tipo `BooleanValue`:
 
 ```scala
 case class Boolean(value: BooleanValue) extends Literal[BooleanValue]
@@ -130,7 +130,7 @@ case class Boolean(value: BooleanValue) extends Literal[BooleanValue]
 [//]: <> (})
 [//]: <> (```)
 
-Cuando hablamos de una comparación estamos relacionando dos expresiones numéricas (algo del tipo `Exp[NumberValue]`), una a la izquierda y otra a la derecha de la comparación. Primero describirémos un tipo base que nos resultará útil para evitarnos cierta repetición en el futuro:
+Cuando hablamos de una **comparación** estamos relacionando dos expresiones numéricas (algo del tipo `Exp[NumberValue]`), una a la izquierda y otra a la derecha de la comparación. Primero describirémos un tipo base que nos resultará útil para evitarnos cierta repetición en el futuro:
 
 ```scala
 sealed trait Comparison extends Exp[BooleanValue] {
@@ -149,7 +149,7 @@ case class Equal(left: Exp[NumberValue], right: Exp[NumberValue]) extends Compar
 case class GreaterThan(left: Exp[NumberValue], right: Exp[NumberValue]) extends Comparison
 ```
 
-Ahora de forma similar a los booleanos tenemos los literales numéricos:
+De forma similar a los booleanos tenemos los **literales numéricos**:
 
 ```scala
 case class Number(value: NumberValue) extends Literal[NumberValue]
@@ -164,7 +164,7 @@ object Number {
 }
 ```
 
-Tenemos un tipo base para las operaciones binarias:
+También tendrémos un tipo base para las **operaciones binarias**:
 
 ```scala
 sealed trait BinaryOp extends Exp[NumberValue] {
@@ -181,7 +181,7 @@ case class Add(left: Exp[NumberValue], right: Exp[NumberValue]) extends BinaryOp
 case class Multiply(left: Exp[NumberValue], right: Exp[NumberValue]) extends BinaryOp
 ```
 
-También las variables son expresiones. Una variable se puede describir por su nombre. Empezamos con un tipo base:
+También las **variables** son expresiones. Una variable se puede describir por su nombre. Empezamos con un tipo base:
 
 ```scala
 trait Var[ V <: Value ] extends Exp[ V ] {
@@ -198,7 +198,7 @@ case class BooleanVar(name: String) extends Var[BooleanValue]
 
 Ahora vamos a ver las expresiones que no tienen valor y que denominaremos instrucciones. 
 
-Una asignación consiste de un nombre y de una expresión:
+Una **asignación** consiste de un nombre y de una expresión:
 
 ```scala
 case class Assign(name: String, expression: Exp[ _ <: Value ]) extends Exp[Void]
@@ -206,7 +206,7 @@ case class Assign(name: String, expression: Exp[ _ <: Value ]) extends Exp[Void]
 
 El tipo existencial de la expresión (el _underscore_ detrás del `_ <: Value`) nos sirve para decir que no nos interesa el tipo específico de la expresión. Lo que nos interesa decir es que una asignación consiste de un nombre y de una expresión de _algún_ tipo, pero no nos importa cuál.
 
-En nuestro lenguaje los condicionales también serán expresiones sin valor de retorno (a diferencia de lenguajes donde los `if`s son expresiones con valor como el mismo Scala) y consistirán de una expresión booleana (el condicional) y dos instrucciones (la instrucción cuando el condicional sea verdadero y la instrucción cuando no lo sea):
+En nuestro lenguaje los **condicionales** también serán expresiones sin valor de retorno (a diferencia de lenguajes donde los `if`s son expresiones con valor como el mismo Scala) y consistirán de una expresión booleana (el condicional) y dos instrucciones (la instrucción cuando el condicional sea verdadero y la instrucción cuando no lo sea):
 
 ```scala
 case class If(
@@ -225,7 +225,7 @@ case class While(
 ) extends Exp[Void]
 ```
 
-Y por último la concatenación de multiples instrucciones también es una instrucción:
+Por último la **concatenación de instrucciones** también es una instrucción:
 
 ```scala
 case class Sequence(exps: Exp[Void]*) extends Exp[Void] 
