@@ -1,6 +1,6 @@
 ---
 title: Construyendo un pequeño lenguaje de programación (Parte 0)
-description: Parte 0 de una serie de posts en las que se construye un pequeño lenguaje de programación
+description: Parte 0 de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala
 tags: Scala, Interpreter, Functional Programming, Understanding Computation
 ---
 
@@ -75,13 +75,13 @@ trait Void extends Value
 object Void extends Void
 ```
 
-Este patrón, común en programación funcional, se denomina **Algebraic Data Type** (ADT). La idea es que un mismo tipo, `Value`, se puede instanciar de formas distintas: como `BooleanValue`, como `NumberValue` o como `Void`. En Scala ésta conjunción de posibilidades se codifica usando un tipo base que es abstracto y un subtipo por cada variante. En otros lenguajes como Haskell esto se hace declarando un solo tipo con multiples constructores. Pueden leer más sobre el concepto de ADTs en [este](http://tech.esper.com/2014/07/30/algebraic-data-types/) enlace y como se construyen en Scala [acá](https://gleichmann.wordpress.com/2011/01/30/functional-scala-algebraic-datatypes-enumerated-types/).
+Este patrón, común en programación funcional, se denomina **Algebraic Data Type** (ADT). La idea es que un mismo tipo, `Value`, se puede instanciar de formas distintas: como `BooleanValue`, como `NumberValue` o como `Void`. En Scala ésta conjunción de posibilidades se codifica usando un tipo base que es abstracto y un subtipo por cada variante. En otros lenguajes como Haskell esto se hace declarando un solo tipo con multiples constructores. Pueden leer más sobre ADTs en [este](http://tech.esper.com/2014/07/30/algebraic-data-types/) enlace y sobre como se construyen en Scala [acá](https://gleichmann.wordpress.com/2011/01/30/functional-scala-algebraic-datatypes-enumerated-types/).
 
 ## Las expresiones del lenguaje
 
 Todo lo anterior solo describe el resultado final de las computaciones. Necesitamos describir las expresiones de nuestro lenguaje que al evaluarse producen alguno de esos valores.
 
-Enumerémos qué tipos de expresiones tiene nuestro pequeño lenguaje:
+Enumerémos qué expresiones tiene nuestro pequeño lenguaje:
 
 * Hay **literales** que son valores que no se pueden evaluar más como "`123`" o "`True`".
 * Hay **variables** que son cuando usamos el nombre de una variable para referirnos a su valor. Por ejemplo con nombres válidos que sean secuencias de caracteres alfabéticos como "`x`" o "`miVariable`".
