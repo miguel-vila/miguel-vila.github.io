@@ -1,7 +1,7 @@
 ---
 title: Construyendo un pequeño lenguaje de programación (Parte 0)
 description: Parte 0 de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala
-tags: Scala, Interpreter, Functional Programming, Understanding Computation
+tags: Scala, Interpreter, Functional Programming, ADT, GADT, Construyendo un pequeño lenguaje
 ---
 
 Un ejercicio común en [programación funcional](https://en.wikipedia.org/wiki/Functional_programming) es el de construir un pequeño lenguaje. Más precisamente el ejercicio consiste en construir el intérprete de un lenguaje: algo que recorra un árbol de sintáxis y lo reduzca a un valor. Este ejercicio es bastante común en artículos, libros o cursos de programación funcional.
@@ -77,6 +77,12 @@ object Void extends Void
 
 Este patrón, común en programación funcional, se denomina **Algebraic Data Type** (ADT). La idea es que un mismo tipo, `Value`, se puede instanciar de formas distintas: como `BooleanValue`, como `NumberValue` o como `Void`. En Scala ésta conjunción de posibilidades se codifica usando un tipo base que es abstracto y un subtipo por cada variante. En otros lenguajes como Haskell esto se hace declarando un solo tipo con multiples constructores. Pueden leer más sobre ADTs en [este](http://tech.esper.com/2014/07/30/algebraic-data-types/) enlace y sobre como se construyen en Scala [acá](https://gleichmann.wordpress.com/2011/01/30/functional-scala-algebraic-datatypes-enumerated-types/).
 
+En este caso el ADT es muy simple pero hay usos más complejos: 
+
+* El tipo [`Option`](http://danielwestheide.com/blog/2012/12/19/the-neophytes-guide-to-scala-part-5-the-option-type.html).
+* [Listas encadenadas](http://www.scala-lang.org/api/2.7.7/scala/List.html)
+* Para representar valores [`JSON`](https://github.com/playframework/playframework/blob/58a150d712bdf3bf4d14709569afcfd9ea97fb7f/framework/src/play-json/src/main/scala/play/api/libs/json/JsValue.scala#L15).
+
 ## Las expresiones del lenguaje
 
 Todo lo anterior solo describe el resultado final de las computaciones. Necesitamos describir las expresiones de nuestro lenguaje que al evaluarse producen alguno de esos valores.
@@ -84,9 +90,9 @@ Todo lo anterior solo describe el resultado final de las computaciones. Necesita
 Enumerémos qué expresiones tiene nuestro pequeño lenguaje:
 
 * Hay **literales** que son valores que no se pueden evaluar más como "`123`" o "`True`".
-* Hay **variables** que son cuando usamos el nombre de una variable para referirnos a su valor. Por ejemplo con nombres válidos que sean secuencias de caracteres alfabéticos como "`x`" o "`miVariable`".
-* Hay **expresiones booleanas** como **comparaciones** (por ejemplo "`1 < 2`" o "`miVariable < 4`" o "`x == y`") o referencias a variables booleanas.
-* Hay **expresiones numéricas** como **operaciones binarias** (por ejemplo "`1 + 3`" o "`x * 7`" o "`3 * y + 2 * ( 3 + z )`") o referencias a variables numéricas.
+* Hay **variables** que es cuando usamos el nombre de una variable para referirnos a su valor. Por ejemplo con nombres válidos que sean secuencias de caracteres alfabéticos como "`x`" o "`miVariable`".
+* Hay **expresiones booleanas** como **comparaciones** (por ejemplo "`1 < 2`" o "`miVariable < 4`" o "`x == y`") o también referencias a variables booleanas.
+* Hay **expresiones numéricas** como **operaciones binarias** (por ejemplo "`1 + 3`" o "`3*y + 2*(3+z)`") o también referencias a variables numéricas.
 * Hay **asignaciones** que son expresiones de tipo "`x = <alguna expresión>`" donde atamos el valor de una expresión al nombre de una variable.
 * Hay **estructuras de control** como "`if() {} else {}`" o "`while () {}`".
 * Hay **secuencias de instrucciones** como secuencias de asignaciones, o de `if`s o `while`s.
@@ -101,7 +107,7 @@ Aquí estamos usando un [límite de tipo](http://www.scala-lang.org/old/node/136
 
 Veamos como podríamos implementar cada una de las anteriores expresiones:
 
-Los **literales** son expresiones de los que podemos obtener su valor inmediatamente:
+Los **literales** son expresiones de las que podemos obtener su valor inmediatamente, entonces tiene sentido definir un miembro abstracto que devuelva el valor:
 
 ```scala
 trait Literal[ V <: Value ] extends Exp[V] {
@@ -109,7 +115,7 @@ trait Literal[ V <: Value ] extends Exp[V] {
 }
 ```
 
-Las **expresiones booleanas** serán subclases de `Exp[BooleanValue]` y los **literales booleanos** son una extensión del anterior `trait` con el campo `value` de tipo `BooleanValue`:
+Los **literales booleanos** serán una extensión del anterior `trait` con el campo `value` de tipo `BooleanValue`:
 
 ```scala
 case class Boolean(value: BooleanValue) extends Literal[BooleanValue]
@@ -181,7 +187,7 @@ case class Add(left: Exp[NumberValue], right: Exp[NumberValue]) extends BinaryOp
 case class Multiply(left: Exp[NumberValue], right: Exp[NumberValue]) extends BinaryOp
 ```
 
-También las **variables** son expresiones. Una variable se puede describir por su nombre. Empezamos con un tipo base:
+También las **variables** son expresiones. La forma de referirnos a una variable es por medio de su nombre, entonces tiene sentido definir un campo nombre de tipo `String`. Empezamos con un tipo base:
 
 ```scala
 trait Var[ V <: Value ] extends Exp[ V ] {
@@ -196,7 +202,7 @@ case class NumberVar(name: String) extends Var[NumberValue]
 case class BooleanVar(name: String) extends Var[BooleanValue]
 ```
 
-Ahora vamos a ver las expresiones que no tienen valor y que denominaremos instrucciones. 
+Ahora vamos a ver las expresiones que no tienen valor y que denominarémos instrucciones. 
 
 Una **asignación** consiste de un nombre y de una expresión:
 
@@ -269,4 +275,4 @@ Sequence(
 
 ## Concluyendo
 
-Hasta ahora solo hemos definido un montón de tipos que nos permiten construir expresiones que representan programas en nuestro lenguaje. Como se podrán imaginar el siguiente paso es construir el evaluador, que será el tema del próximo post. Tal vez incluso se podrán imaginar como es que se hace esta transformación.
+Hasta ahora solo hemos definido un montón de tipos que nos permiten construir expresiones que representan programas en nuestro lenguaje. Como se podrán imaginar el siguiente paso es construir el evaluador, que será el tema del próximo _post_. Tal vez incluso se podrán imaginar como es que se hace esta transformación.
