@@ -266,8 +266,8 @@ Sequence(
         Sequence(
             Assign( "c", NumberVar("a") ),
             Assign( "a", NumberVar("b") ),
-            Assign( "b", Sum( NumberVar("b"), NumberVar("c") ) ),
-            Assign( "i", Sum( NumberVar("i"), Number(1) ) )
+            Assign( "b", Add( NumberVar("b"), NumberVar("c") ) ),
+            Assign( "i", Add( NumberVar("i"), Number(1) ) )
         )
   )
 )
