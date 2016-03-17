@@ -10,3 +10,20 @@ pre.sourceCode {
   padding: 1em;
   margin: 0em;
 }
+
+div.note {
+    margin: 0.5rem 0.5rem 1.5rem 0.5rem;
+    padding: 1rem 1rem 0.5rem;
+    border-left: 4px solid #383;
+    background: #f4fff4;
+}
+
+.hide {
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important; 
+}
+
+.clickme {
+  cursor: pointer; 
+}

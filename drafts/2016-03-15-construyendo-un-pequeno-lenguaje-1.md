@@ -6,7 +6,7 @@ tags: Scala, Interpreter, Functional Programming, ADT, GADT, Reader Monad, Const
 
 En el [anterior _post_](miguel-vila.github.io/posts/2016-03-15-construyendo-un-pequeno-lenguaje-0.html) establecimos unas bases para poder construir nuestro pequeño lenguaje. Definimos un tipo llamado `Exp` que nos sirve para representa arboles de sintáxis y ahora el objetivo será tomar algo de ese tipo e interpretarlo.
 
-¿Qué significa interpretar un árbol de sintáxis?
+## ¿Qué significa interpretar un árbol de sintáxis?
 
 En nuestro caso decidimos que una expresión estuviera parametrizada por su tipo:
 
@@ -75,6 +75,11 @@ trait Var[ V <: Value ] extends Exp[ V ] {
 
 Podrán notar que aquí estamos rompiendo varias "reglas". Primero la forma en la que extraemos el valor del mapa no es segura: si no existe ninguna variable definida con el nombre entonces ese método arroja una excepción. Y segundo: estamos haciendo un _casteo_ que también podría fallar si existe una variable definida con ese nombre pero con el tipo incorrecto. La idea de esta serie de artículos es presentar algo muy simple. Sin embargo ambas situaciones sirven para hablar de qué decisiones toman algunos lenguajes.
 
+<div class="note">
+<p class="clickable aside-header"><strong>Nota aparte</strong> <span class="clickme">(Click!)</span></p>
+
+<div class="note-content">
+
 La primera situación, intentar usar una variable que no está definida, se convierte en un error en la mayoría de lenguajes. En algunos, como JavaScript o Python, este error se da en tiempo de ejecución. En cambio en otros lenguajes como Java o C (y en general lenguajes con tipado estático) este error se da en tiempo de compilación.
 
 La segunda situación es más interesante: cuando una variable se intenta referenciar con un tipo distinto al que se usó cuando se definió. Esto sirve para ilustrar el difuso concepto de [tipado débil versus tipado fuerte](https://en.wikipedia.org/wiki/Strong_and_weak_typing). Algunos lenguajes como JavaScript intentan "adivinar" cuál era la intención del programador en unas cuantas de esas situaciones y adapta los tipos según corresponda. Es decir tiene una noción débil de cuales son los tipos. Por ejemplo:
@@ -102,6 +107,10 @@ TypeError: cannot concatenate 'str' and 'int' objects
 
 
 pero ambos tipos de errores se podrían evitar si antes de ejecutar la evaluación se hacen dos chequeos: uno de que todas las variables referidas hayan sido definidas previamente
+
+</div>
+
+</div>
 
 Antes de atacar las expresiones numéricas vamos agregar algunos métodos dentro de la clase `NumberValue` para facilitarnos la vida:
 
