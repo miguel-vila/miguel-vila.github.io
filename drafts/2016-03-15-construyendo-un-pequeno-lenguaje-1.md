@@ -22,7 +22,14 @@ sealed trait Exp[ V <: Value ] {
 }
 ```
 
-(Aquí elegimos definir un método definido dentro del `trait` pero también es posible definir una función que tomara como argumento el `Exp[V]`. Sin embargo esta alternativa nos implica de)
+<div class="note">
+<p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
+
+<div class="note-content">
+Aquí elegimos definir un método definido dentro del `trait` pero también es posible definir una función que tomara como argumento el `Exp[V]`. Sin embargo esta alternativa nos implica de
+
+</div>
+</div>
 
 Esto sirve muy bien para algunas expresiones aritméticas como "`1 + 3*( 2 + 7)`" e incluso comparaciones como "`1 < (2 * 3)`". Pero en cambio expresiones que usan variables como "`x + 1`" o "`i < 10`" no se ajustan al molde. Para poder evaluar este tipo de expresiones necesitamos tener acceso al entorno de variables definidas. Este entorno lo vamos a definir así:
 
@@ -76,7 +83,7 @@ trait Var[ V <: Value ] extends Exp[ V ] {
 Podrán notar que aquí estamos rompiendo varias "reglas". Primero la forma en la que extraemos el valor del mapa no es segura: si no existe ninguna variable definida con el nombre entonces ese método arroja una excepción. Y segundo: estamos haciendo un _casteo_ que también podría fallar si existe una variable definida con ese nombre pero con el tipo incorrecto. La idea de esta serie de artículos es presentar algo muy simple. Sin embargo ambas situaciones sirven para hablar de qué decisiones toman algunos lenguajes.
 
 <div class="note">
-<p class="clickable aside-header"><strong>Nota aparte</strong> <span class="clickme">(Click!)</span></p>
+<p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
 
 <div class="note-content">
 

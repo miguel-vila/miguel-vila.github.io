@@ -4,6 +4,7 @@ div.sourceCode {
   margin-bottom: 1.5em;
   padding-top: 2px;
   padding-bottom: 2px;
+  border: 1px solid black;
 }
 
 pre.sourceCode {
@@ -24,6 +25,6 @@ div.note {
   left: -9999px !important; 
 }
 
-.clickme {
+.clickable {
   cursor: pointer; 
 }
