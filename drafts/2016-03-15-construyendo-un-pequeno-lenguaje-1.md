@@ -443,23 +443,81 @@ sealed trait Expression[ V <: Value ] {
 
 Como con muchas monadas nos liberamos de un pedazo de carpintería: en este caso es el de pasar el estado modificado. 
 
-Por ejemplo al redefinir las comparaciones terminamos con esto:
+Por ejemplo al redefinir las comparaciones llegamos a esto:
 
 ```scala
 sealed trait Comparison extends BooleanExpression {
   def left: NumberExpression
   def right: NumberExpression
+
   def combinedWith(
-    f: (NumberValue, NumberValue) => BooleanValue
+    combine: (NumberValue, NumberValue) => BooleanValue
   ): Evaluator[BooleanValue] = {
     for {
-      l <- left.evaluator
-      r <- right.evaluator
-    } yield f(l,r)
+      leftValue  <- left.evaluator
+      rightValue <- right.evaluator
+    } yield combine(leftValue, rightValue)
   }
+
 }
 ```
 
 Dentro del _for-comprehension_ se está realizando la pasada de los entornos modificados, pero en nuestro código solo se muestra la lógica de que el evaluador de una comparación es la composición y combinación de los evaluadores de cada lado.
 
-De forma similar el 
+De forma similar también simplificamos los condicionales:
+
+```scala
+case class If(
+  condition:    BooleanExpression,
+  consequence:  VoidExpression,
+  alternative:  VoidExpression
+) extends VoidExpression {
+
+  val evaluator: Evaluator[Void] =
+    for {
+      evaluatedCondition <- condition.evaluator
+      _                  <- if(evaluatedCondition.value) 
+                                consequence.evaluator 
+                            else 
+                                alternative.evaluator
+    } yield Void
+
+}
+```
+
+Y `Sequence` se puede reescribir usando el _typeclass_ `Traverse` (`Traverse` y `State` se encuentran en la librería Scalaz):
+
+```scala
+case class Sequence(exps: VoidExpression*) extends VoidExpression {
+
+  val evaluator: Evaluator[Void] =
+    for {
+      _ <- Traverse[List].traverseS_( exps.toList ) (_.evaluator)
+    } yield Void
+
+}
+```
+<div class="note">
+<p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
+
+<div class="note-content">
+La función `traverseU_` hace lo mismo que la más reconocible `traverse_` cuya firma es:
+
+```scala
+def traverse_[G[_]:Applicative,A,B](fa: F[A])(f: A => G[B]): G[Unit]
+```
+
+`traverse_` hace algo similar a `traverse` solo que no acumula los efectos y por eso retorna un `G[Unit]`. Para contrastar esta es la firma de `traverse`:
+
+```scala
+def traverse[G[_]:Applicative,A,B](fa: F[A])(f: A => G[B]): G[F[B]]
+```
+
+En Scalaz así como en Haskell existe la convención de usar un `_` para significar que la función no acumula efectos
+
+`traverseU_` tiene la ventaja de que es más fácil de usar sin tener que poner anotaciones de tipos (especificamente _type lambdas_). Se trata de uno de esos tantos [trucos](http://typelevel.org/blog/2013/09/11/using-scalaz-Unapply.html) de Scala que aún no he entendido. 
+
+</div>
+</div>
+
+Por supuesto es discutible si esto es mas legible que  
