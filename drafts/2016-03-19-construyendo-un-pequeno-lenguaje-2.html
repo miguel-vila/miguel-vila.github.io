@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+        <title>
+            
+                Construyendo un pequeño lenguaje de programación (Parte 2)
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        if(window.location.hostname !== 'localhost'){
+            ga('create', 'UA-74778346-1', 'auto');
+            ga('send', 'pageview');
+        }
+    </script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Inicio</a>
+            <a href="../archive.html">Posts</a>| 
+            <a href="https://twitter.com/mglvl/">Twitter</a>
+            <a href="https://www.flickr.com/photos/77778296@N07/">Flickr</a>
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://slides.com/miguelvila/">Slides.com</a>
+        </nav>
+    </header>
+    <article>
+    <h1>Construyendo un pequeño lenguaje de programación (Parte 2)</h1>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        Marzo 19 de 2016
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/Scala.html">Scala</a>, <a href="../tags/Interpreter.html">Interpreter</a>, <a href="../tags/Functional%20Programming.html">Functional Programming</a>, <a href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a> 
+        
+    </div>
+    <hr>
+    <h2 id="una-formulación-alterna">Una formulación alterna</h2>
+<p>Esta parte del artículo supone que el lector sabe que es una monada, que funciones las conforman y cómo el mecanismo de <em>for-comprehensions</em> de Scala permite escribir fácilmente código que use monadas. Y tal vez un poco de familiaridad con la monada de estado.</p>
+<p>El tipo de la función <code>evaluate</code> es: <code>Environment =&gt; (Environment,V)</code>. Tal vez algunos hayan visto esto e identificado que esto es precisamente lo que hace la monada de estado. La monada de estado facilita manipular funciones que modifican estado y devuelven valores, precisamente lo que estamos haciendo con el entorno. Una implementación rápida de la monada de estado se muestra a continuación :</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> State[S,A](get: S =&gt; (S,A)) {
+    
+    <span class="kw">def</span> flatMap[B](f: A =&gt; State[S,B]): State[S,B] = {
+        <span class="kw">val</span> newGet: S =&gt; (S,B) = { s =&gt;  <span class="co">// (1)</span>
+            <span class="kw">val</span> (s1,a) = <span class="fu">get</span>(s1)         <span class="co">// (2)</span>
+            <span class="kw">val</span> bState = <span class="fu">f</span>(a)            <span class="co">// (3)</span>
+            bState.<span class="fu">get</span>(s1)               <span class="co">// (4)</span>
+        }
+        State( newGet )                  <span class="co">// (5)</span>
+    }
+
+    <span class="co">// ... otras funciones derivadas de `flatMap` y `state` </span>
+    <span class="co">// como por ejemplo `map`</span>
+
+}
+
+<span class="kw">object</span> State {
+    
+    <span class="kw">def</span> state[S,A](a: =&gt; A): State[S,A] = State( s =&gt; (s,a) )
+
+}</code></pre></div>
+<p>En el caso de la monada de estado la función <code>flatMap</code> funciona de la siguiente forma:</p>
+<p>El objetivo al implementar <code>flatMap</code> es dado un <code>State[S,A]</code> y una función <code>A =&gt; State[S,B]</code> retornar un <code>State[S,B]</code>. Si desenvolvemos la definición de <code>State</code> esto es equivalente a decir: dada una función <code>S =&gt; (S,A)</code> (el atributo <code>get</code>) y una función <code>A =&gt; (S =&gt; (S,B))</code> construir una función de tipo <code>S =&gt; (S,B)</code>.</p>
+<p>Primero en la línea <code>(1)</code> declaramos que vamos a construir una función de tipo <code>S =&gt; (S,B)</code>. En el cuerpo de la función en la línea <code>(2)</code> ejecutamos la primera función pasándole el estado incial y con esto obtenemos un nuevo estado y un valor de tipo <code>A</code>. Ya teniendo este valor de tipo <code>A</code> podemos ejecutar la segunda función (en la línea <code>(2)</code>) que a su vez nos devuelve otra función de tipo <code>S =&gt; (S,B)</code>. Y a esta función le pasamos el estado modificado y con esto obtenemos un <code>(S,B)</code> que era lo que queríamos que hiciera la función. Finalmente en la línea <code>(5)</code> envolvemos la función.</p>
+<p>Esa fue la difícil.</p>
+<p>La fácil es la otra función que deben implementar las monadas y es una función que dado un valor lo envuelva en un contexto mínimo. Para esto describimos una función que lee el estado y no lo modifica, solo lo devuelve junto al valor que le pasamos.</p>
+<p>Ahora podemos reformular qué significa evaluar una expresión. Como vimos <code>evaluate</code> era de tipo <code>Environment =&gt; (Environment, V)</code>. Vamos a introducir un alias que describa esto en función de <code>State</code>:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">type</span> Evaluator[ V &lt;: Value ] = State[ Environment, V ]</code></pre></div>
+<p>Y ahora en vez de que las expresiones deban definir una función <code>evaluate</code> deberían tener una propiedad de tipo <code>Evaluator</code>:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Expression[ V &lt;: Value ] {
+  <span class="kw">def</span> evaluator: Evaluator[ V ]
+}</code></pre></div>
+<p>¿Que ganamos con esto?</p>
+<p>Como con muchas monadas nos liberamos de un pedazo de carpintería: en este caso es el de pasar el estado modificado.</p>
+<p>Por ejemplo al redefinir las comparaciones llegamos a esto:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Comparison <span class="kw">extends</span> BooleanExpression {
+  <span class="kw">def</span> left: NumberExpression
+  <span class="kw">def</span> right: NumberExpression
+
+  <span class="kw">def</span> <span class="fu">combinedWith</span>(
+    combine: (NumberValue, NumberValue) =&gt; BooleanValue
+  ): Evaluator[BooleanValue] = {
+    <span class="kw">for</span> {
+      leftValue  &lt;- left.<span class="fu">evaluator</span>
+      rightValue &lt;- right.<span class="fu">evaluator</span>
+    } <span class="kw">yield</span> <span class="fu">combine</span>(leftValue, rightValue)
+  }
+
+}</code></pre></div>
+<p>Dentro del <em>for-comprehension</em> se está realizando la pasada de los entornos modificados, pero en nuestro código solo se muestra la lógica de que el evaluador de una comparación es la composición y combinación de los evaluadores de cada lado.</p>
+<p>De forma similar también simplificamos los condicionales:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">If</span>(
+  condition:    BooleanExpression,
+  consequence:  VoidExpression,
+  alternative:  VoidExpression
+) <span class="kw">extends</span> VoidExpression {
+
+  <span class="kw">val</span> evaluator: Evaluator[Void] =
+    <span class="kw">for</span> {
+      evaluatedCondition &lt;- condition.<span class="fu">evaluator</span>
+      _                  &lt;- <span class="kw">if</span>(evaluatedCondition.<span class="fu">value</span>) 
+                                consequence.<span class="fu">evaluator</span> 
+                            <span class="kw">else</span> 
+                                alternative.<span class="fu">evaluator</span>
+    } <span class="kw">yield</span> Void
+
+}</code></pre></div>
+<p>Y <code>Sequence</code> se puede reescribir usando el <em>typeclass</em> <code>Traverse</code> (<code>Traverse</code> y <code>State</code> se encuentran en la librería Scalaz):</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> Sequence(exps: VoidExpression*) <span class="kw">extends</span> VoidExpression {
+
+  <span class="kw">val</span> evaluator: Evaluator[Void] =
+    <span class="kw">for</span> {
+      _ &lt;- Traverse[List].<span class="fu">traverseS_</span>( exps.<span class="fu">toList</span> ) (_.<span class="fu">evaluator</span>)
+    } <span class="kw">yield</span> Void
+
+}</code></pre></div>
+<div class="note">
+<p class="clickable aside-header">
+<strong>Nota aparte</strong> <span>(Click!)</span>
+</p>
+<div class="note-content">
+<p>La función <code>traverseU_</code> hace lo mismo que la más reconocible <code>traverse_</code> cuya firma es:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> traverse_[G[_]:Applicative,A,B](fa: F[A])(f: A =&gt; G[B]): G[Unit]</code></pre></div>
+<p><code>traverse_</code> hace algo similar a <code>traverse</code> solo que no acumula los efectos y por eso retorna un <code>G[Unit]</code>. Para contrastar esta es la firma de <code>traverse</code>:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> traverse[G[_]:Applicative,A,B](fa: F[A])(f: A =&gt; G[B]): G[F[B]]</code></pre></div>
+<p>En Scalaz así como en Haskell existe la convención de usar un <code>_</code> para significar que la función no acumula efectos</p>
+<p><code>traverseU_</code> tiene la ventaja de que es más fácil de usar sin tener que poner anotaciones de tipos (especificamente <em>type lambdas</em>). Se trata de uno de esos tantos <a href="http://typelevel.org/blog/2013/09/11/using-scalaz-Unapply.html">trucos</a> de Scala que aún no he entendido.</p>
+</div>
+</div>
+<p>Por supuesto es discutible si esto es mas legible que</p>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Construido con <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    </body>
+</html>
