@@ -8,8 +8,16 @@
         <name>Miguel Vilá</name>
         <email>miguelvilag@gmail.com</email>
     </author>
-    <updated>2016-03-15T00:00:00Z</updated>
+    <updated>2016-03-20T00:00:00Z</updated>
     <entry>
+    <title>Construyendo un pequeño lenguaje de programación (Parte 1)</title>
+    <link href="http://miguel-vila.github.io/posts/2016-03-20-construyendo-un-pequeno-lenguaje-1.html" />
+    <id>http://miguel-vila.github.io/posts/2016-03-20-construyendo-un-pequeno-lenguaje-1.html</id>
+    <published>2016-03-20T00:00:00Z</published>
+    <updated>2016-03-20T00:00:00Z</updated>
+    <summary type="html"><![CDATA[Segunda parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala]]></summary>
+</entry>
+<entry>
     <title>Construyendo un pequeño lenguaje de programación (Parte 0)</title>
     <link href="http://miguel-vila.github.io/posts/2016-03-15-construyendo-un-pequeno-lenguaje-0.html" />
     <id>http://miguel-vila.github.io/posts/2016-03-15-construyendo-un-pequeno-lenguaje-0.html</id>
