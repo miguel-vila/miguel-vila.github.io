@@ -190,6 +190,7 @@ Primero evaluamos el lado izquierdo de la expresión y obtenemos dos cosas: el e
 <p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
 
 <div class="note-content">
+
 ¿Por que tenemos que pasar el entorno si solo estamos evaluando expresiones numéricas que no modifican el entorno?
 
 En un futuro podríamos querer incluir un operador como el `++`, común en algunos lenguajes, que al mismo tiempo devuelve un valor y modifica una variable. Por ejemplo el siguiente código en C es legal:
@@ -200,7 +201,6 @@ int y = (x++) + (x++);
 ```
 
 En la suma en la segunda línea las expresiones de ambos lados modifican el entorno y más aún la expresión del lado derecho usa una variable modificada en el lado izquierdo.
-
 </div>
 </div>
 
