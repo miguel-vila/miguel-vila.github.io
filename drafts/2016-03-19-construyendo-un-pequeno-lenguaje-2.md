@@ -169,7 +169,7 @@ def traverseS_[S,A,B](list: List[A])(f: A => State[S,B]): State[S,Unit] = {
 
 En realidad esta función [se puede implementar sin `flatMap`](http://www.staff.city.ac.uk/~ross/papers/Applicative.pdf), pero la idea acá es ilustrar que lo que hace es secuenciar los efectos. En el caso de `State` esto significa ir pasando el entorno actualizado de función en función hasta formar una gran función que sea la secuencia de todas. Este es uno de los tantos ejemplos de la utilidad de patrones funcionales que a primera vista resultan abstractos: ganamos pedazos de código muy generales, que no son específicos a nuestro dominio, y con esto logramos atacar el problema que nos corresponde.
 
-<div class="note">
+<!--div class="note">
 <p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
 
 <div class="note-content">
@@ -187,7 +187,7 @@ Traverse[List].traverse_(list)(g)
 
  es `G[Unit]`.
 </div>
-</div>
+</div-->
 
 En contraste implementar el evaluador de un literal es más simple:
 
@@ -234,4 +234,8 @@ trait Variable[V<:Value] extends Exp[V] {
 }
 ``` 
 
-Por supuesto es discutible si esto es mas legible que lo que teníamos antes. También resulta importante notar que legibilidad no es lo mismo que familiaridad. Para una persona que no esté familiarizada con estos patrones este código puede resultar abstracto, pero eso no quiere decir que no sea legible. 
+Pueden ver los evaluadores de las otras expresiones [acá](https://github.com/miguel-vila/understanding-computation/blob/master/src/main/scala/understanding_computation/chapter2/ast/Expression.scala), aunque tal vez no esté tan organizado.
+
+## Concluyendo
+
+Por supuesto es discutible si todo esto es mas legible que lo que teníamos antes. Resulta importante notar que legibilidad no es lo mismo que familiaridad. Para una persona que no esté familiarizada con estos patrones este código puede resultar abstracto, pero eso no quiere decir que no sea legible. Muchos patrones funcionales no son tan complicados, son formalizaciones de cosas que veníamos haciendo en otros lenguajes.
