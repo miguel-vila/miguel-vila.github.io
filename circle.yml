@@ -1,8 +1,8 @@
 machine:
 
   pre:
-    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20
-    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20
+    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 20
+    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 20
     - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 10
     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 10
 
@@ -16,7 +16,6 @@ dependencies:
 
   cache_directories:
     - "~/.stack"
-    - ".stack-work"
 
   pre:
     - wget https://github.com/commercialhaskell/stack/releases/download/v0.1.2.0/stack-0.1.2.0-x86_64-linux.gz -O /tmp/stack.gz
@@ -25,32 +24,33 @@ dependencies:
 
   override:
     - stack setup
-
-test:
-
-  override:
     - stack build
 
   post:
     - git submodule init
     - git submodule update
     - cd _site/ && git checkout master
+    - cd _site/ && git pull
     - stack exec site build
+
+test:
+
+  override:
+    - stack test
+
 
 deployment:
 
   production:
     branch: hakyll
     commands:
-      - cd _site/ && git config user.email circleci@circleci
-      - cd _site/ && git config user.name CircleCI
+      - git config --global user.email circleci@circleci
+      - git config --global user.name CircleCI
       - cd _site/ && git status
       - cd _site/ && git add --all
-      - cd _site/ && git commit --message "Update (`date '+%F %T %Z'`) [ci skip]"
+      - cd _site/ && git commit -m "Update (`date '+%F %T %Z'`) [ci skip]"
       - cd _site/ && git push origin master
-      - git config user.email circleci@circleci
-      - git config user.name CircleCI
       - git status
       - git add _site/
-      - git commit --message "Update _site (`date '+%F %T %Z'`) [ci skip]"
+      - git commit -m "Update _site (`date '+%F %T %Z'`) [ci skip]"
       - git push origin hakyll
