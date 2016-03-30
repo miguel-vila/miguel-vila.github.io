@@ -4,26 +4,45 @@ description: Tercera parte de una serie de posts en las que se construye un pequ
 tags: Scala, Interpreter, Functional Programming, Programming languages, State Monad, Construyendo un pequeño lenguaje
 ---
 
-En el [anterior _post_]() vimos como evaluar las expresiones de nuestro pequeño lenguaje. En este _post_ vamos a ver una forma de aprovechar un patrón funcional para hacer lo mismo que antes pero con ciertas facilidades. Vamos a retomar el mismo acercamiento de _big-step semantics_ pero lo vamos a desarrollar de otra forma.
+En el [anterior _post_](http://miguel-vila.github.io/posts/2016-03-20-construyendo-un-pequeno-lenguaje-1.html) vimos como evaluar las expresiones de nuestro pequeño lenguaje. En este _post_ vamos a aprovechar un patrón funcional para hacer lo mismo que antes pero con ciertas facilidades. Vamos a retomar el mismo acercamiento de _big-step semantics_ pero lo vamos a desarrollar de otra forma.
 
-Este _post_ asume que el lector sabe qué es una monada, qué funciones definen, por qué son útiles y cómo el mecanismo de _for-comprehensions_ de Scala permite escribir fácilmente código con ellas. Si el lector no está familiarizado con esos temas aquí hay algunos enlaces:
+Este _post_ asume que el lector sabe qué es una monada, qué funciones define, por qué son útiles y cómo el mecanismo de _for-comprehensions_ de Scala permite escribir fácilmente código con ellas. Si el lector no está familiarizado con esos temas aquí hay algunos enlaces:
 
 * [Este](https://www.youtube.com/watch?v=Mw_Jnn_Y5iA) video es una buena introducción. Empieza con monadas como `Option` y `Validation` y trata el tema de _for-comprehensions_.
 * Si ya están familiarizados con monadas pero no saben que son _for-comprehensions_ en Scala en [este](https://youtu.be/Mw_Jnn_Y5iA?t=20m39s) punto del anterior video lo explican.
-* [Este artículo](http://blog.jle.im/entry/inside-my-world-ode-to-functor-and-monad.html) me gusta mucho aunque es en Haskell y puede parecer un poco más abstracto.
-* Y en general el mejor consejo que puedo dar para entender monadas es ver y escribir mucho código que las usen. Creo que solo con la práctica uno llega a apreciar la utilidad de algo que inicialmente parece muy abstracto.
+* [Este artículo](http://blog.jle.im/entry/inside-my-world-ode-to-functor-and-monad.html) me gusta mucho aunque es en Haskell.
+* En general el mejor consejo que puedo dar para entender monadas es ver y escribir mucho código que las usen. Creo que solo con la práctica uno llega a apreciar la utilidad de algo que inicialmente parece muy abstracto.
 
 Ya suponiendo que saben esto podemos empezar.
 
 ## Una formulación alterna
 
-El tipo de la función `evaluate` que definimos en el anterior _post_ es: `Environment => (Environment,V)`. Tal vez algunos hayan visto esto e identificado que esto es precisamente lo que hace la **monada de estado**. La monada de estado facilita manipular funciones que modifican estado y devuelven valores, precisamente lo que estamos haciendo con el entorno. 
+El tipo de la función `evaluate` que definimos en el anterior _post_ es: `Environment => (Environment,V)`. Tal vez algunos hayan visto esto e identificado que esto es precisamente lo que hace la **monada de estado**. La monada de estado facilita manipular funciones que modifican estado y devuelven valores, que es justo lo que estamos haciendo con el entorno. 
 
-Cómo muchas otras, la monada de estado está implementada como un _wrapper_ sobre una función. En este caso estamos abstrayendo funciones que representan modificaciones de estado y que devuelven un valor, es decir cosas del tipo `S => (S,A)` donde `S` es el tipo que representa el estado y `A` es un valor de retorno de una modificación. El beneficio de abstraer algo como esto es que vamos a ganar mucho código cuya única funcionalidad es pasar de un lado a otro un estado y esto nos va a permitir concentrarnos en la lógica específica de nuestro problema.
+Cómo muchas otras, la monada de estado está implementada como un _"wrapper"_ sobre una función:
 
-Como todas las monadas debemos implementar dos funciones: una especie de constructor (usualmente llamado `unit`. En nuestro caso lo llamarémos `state`) y una especie de "secuenciador" (usualmente llamado `bind` o en el caso de Scala llamado `flatMap`)
+```scala
+case class State[S,A](run: S => (S,A)) {
+  ...
+}
+```
 
-Una implementación rápida de la monada de estado se muestra a continuación :
+En este caso estamos abstrayendo funciones que representan modificaciones de estado y que devuelven un valor, es decir cosas del tipo `S => (S,A)` donde `S` es el tipo que representa el estado y `A` es un valor de retorno de una modificación. El beneficio de abstraer algo como esto es que vamos a ganar mucho código cuya única funcionalidad es pasar de un lado a otro un estado y esto nos va a permitir concentrarnos en la lógica específica de nuestro problema.
+
+Como todas las monadas debemos implementar dos funciones: una especie de constructor (usualmente llamado `unit`, en nuestro caso lo llamarémos `state`) y una especie de "secuenciador" (usualmente llamado `bind` o en el caso de Scala llamado `flatMap`)
+
+Empecemos por `flatMap`. El significado de esta función en el caso de la monada de estado es mas o menos el siguiente: 
+
+> Dada una modificación de estado que devuelve un valor y dada una forma de construir otra modificación de estado según ese valor creé una nueva modificación de estado que sea la sucesión de ambas.
+
+En código, mas concretamente, esto significa: dado un `State[S,A]` y una función `A => State[S,B]` retornar un `State[S,B]`. Si desenvolvemos la definición de `State` esto es equivalente a decir dadas: 
+
+* Una función `S => (S,A)` (el atributo `run`)
+* Una función `A => (S => (S,B))`
+
+construir una función de tipo `S => (S,B)`.
+
+Veamos como podemos implementar esto línea a línea:
 
 ```scala
 case class State[S,A](run: S => (S,A)) {
@@ -37,28 +56,14 @@ case class State[S,A](run: S => (S,A)) {
         State( newRun )                  // (5)
     }
 
-    // ... otras funciones derivadas de `flatMap` y `state` 
-    // como por ejemplo `map`
-
 }
 ```
 
-El significado de `flatMap` en el caso de la monada de estado es el siguiente: 
-
-> Dada una modificación de estado que devuelve un valor y dada una forma de construir otra modificación de estado según ese valor creé una nueva modificación de estado que sea la sucesión de ambas.
-
-El objetivo al implementar `flatMap` es dado un `State[S,A]` y una función `A => State[S,B]` retornar un `State[S,B]`. Si desenvolvemos la definición de `State` esto es equivalente a decir dadas: 
-
-* Una función `S => (S,A)` (el atributo `run`)
-* Una función `A => (S => (S,B))` (el parámetro `f`)
-
-construir una función de tipo `S => (S,B)`.
-
-Veamos como hacer esto línea a línea. En la línea `(1)` declaramos que vamos a construir una función de tipo `S => (S,B)`. En el cuerpo de la función en la línea `(2)` ejecutamos la primera modificación de estado (`run`) pasándole el estado incial y con esto obtenemos un nuevo estado y un valor de tipo `A`. Ya teniendo este valor de tipo `A` podemos ejecutar la función `f` (en la línea `(3)`) que a su vez nos devuelve otra función de tipo `S => (S,B)`. Y a esta función le pasamos el estado modificado (en la línea `(4)`) y con esto obtenemos un `(S,B)` que era lo que queríamos que hiciera la función. Finalmente en la línea `(5)` envolvemos la función dentro de un `State`.
+En la línea `(1)` declaramos que vamos a construir una función de tipo `S => (S,B)`. En el cuerpo de la función en la línea `(2)` ejecutamos la primera modificación de estado (`run`) pasándole el estado inicial y con esto obtenemos un nuevo estado y un valor de tipo `A`. Ya teniendo este valor de tipo `A` podemos ejecutar la función `f` (en la línea `(3)`) que a su vez nos devuelve otra función de tipo `S => (S,B)`. Y a esta función le pasamos el estado modificado (en la línea `(4)`) y con esto obtenemos un `(S,B)` que era lo que queríamos que hiciera la función. Finalmente en la línea `(5)` envolvemos la función dentro de un `State`.
 
 Esa fue la difícil.
 
-La fácil es la otra función que deben implementar las monadas y es una función que dado un valor lo envuelva en un contexto mínimo que produzca ese valor dentro de la monada. Para esto describimos una función `state` que lee el estado y no lo modifica, solo lo devuelve junto al valor que le pasamos:
+La fácil es la otra función que deben implementar las monadas. Se trata de una función que dado un valor lo envuelva en un contexto mínimo que produzca ese valor dentro de la monada. Para esto describimos una función `state` que lee el estado y no lo modifica, solo lo devuelve junto al valor que le pasamos:
 
 ```scala
 object State {
@@ -82,9 +87,23 @@ sealed trait Expression[ V <: Value ] {
 }
 ```
 
+Podemos también implementar `map` que simplemente transforma el valor de retorno de la modificación:
+
+```scala
+case class State[S,A](run: S => (S,A)) {
+    
+    def map[B](f: A => B): State[S,B] = ???
+
+}
+```
+
+Pueden implementar esta función como ejercicio. Hay dos formas de hacerlo: una es como todas las monadas pueden hacerlo y consiste en combinar `flatMap` y `state` de cierta forma. Otra forma es un poco más explícita y no reutliza ninguna de las funciones.
+
+El caso es que una vez definidas las funciones `flatMap` y `map` podemos escribir _for-comprehensions_ que manipulen cosas de tipo `State`.
+
 ## ¿Que ganamos con esto?
 
-Como con muchas monadas nos liberamos de un pedazo de "carpintería": en este caso es el de pasar el estado modificado de función en función.
+Como con muchas monadas nos liberamos de un pedazo de "carpintería": en este caso es el de pasar el estado modificado de función en función. 
 
 Por ejemplo al redefinir las comparaciones llegamos a esto:
 
@@ -93,19 +112,19 @@ sealed trait Comparison extends Exp[BooleanValue] {
   def left:  Exp[NumberValue]
   def right: Exp[NumberValue]
 
-  def combinedWith(
-    combine: (NumberValue, NumberValue) => BooleanValue
+  def comparedWith(
+    compare: (NumberValue, NumberValue) => BooleanValue
   ): Evaluator[BooleanValue] = {
     for {
       leftValue  <- left.evaluator
       rightValue <- right.evaluator
-    } yield combine(leftValue, rightValue)
+    } yield compare(leftValue, rightValue)
   }
 
 }
 
 case class LessThan(left: Exp[Number], right: Exp[Number]) extends Comparison {
-  val evaluator = combinedWith(_ < _)
+  val evaluator = comparedWith(_ < _)
 }
 
 // ... las otras comparaciones son similares
@@ -134,7 +153,7 @@ case class If(
 }
 ```
 
-Y la forma de evaluar un `Sequence` se puede reescribir usando el _typeclass_ [`Traverse`](https://wiki.haskell.org/Foldable_and_Traversable#Traversable) (`Traverse` y `State` se encuentran en la librería Scalaz):
+Y la forma de evaluar un `Sequence` se puede reescribir usando el _typeclass_ [`Traverse`](https://wiki.haskell.org/Foldable_and_Traversable#Traversable) (`Traverse` y `State` se encuentran en librerías de patrones funcionales como [Scalaz](https://github.com/scalaz/scalaz/) o [Cats](https://github.com/typelevel/cats/)):
 
 ```scala
 case class Sequence(exps: Exp[Void]*) extends Exp[Void] {
@@ -167,7 +186,9 @@ def traverseS_[S,A,B](list: List[A])(f: A => State[S,B]): State[S,Unit] = {
 }
 ```
 
-En realidad esta función [se puede implementar sin `flatMap`](http://www.staff.city.ac.uk/~ross/papers/Applicative.pdf), pero la idea acá es ilustrar que lo que hace es secuenciar los efectos. En el caso de `State` esto significa ir pasando el entorno actualizado de función en función hasta formar una gran función que sea la secuencia de todas. Este es uno de los tantos ejemplos de la utilidad de patrones funcionales que a primera vista resultan abstractos: ganamos pedazos de código muy generales, que no son específicos a nuestro dominio, y con esto logramos atacar el problema que nos corresponde.
+En realidad esta función [se puede implementar sin `flatMap`](http://www.staff.city.ac.uk/~ross/papers/Applicative.pdf), pero la idea acá es ilustrar que lo que hace es secuenciar los efectos. En el caso de `State` esto significa ir pasando el entorno actualizado de función en función hasta formar una gran función que sea la secuencia de todas. 
+
+Este es uno de los tantos ejemplos de la utilidad de patrones funcionales que a primera vista resultan abstractos: ganamos pedazos de código muy generales, que no son específicos a nuestro dominio, y con esto logramos atacar el problema que nos corresponde.
 
 <!--div class="note">
 <p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
@@ -189,7 +210,7 @@ Traverse[List].traverse_(list)(g)
 </div>
 </div-->
 
-En contraste implementar el evaluador de un literal es más simple:
+Retomando podemos ver que en contraste implementar el evaluador de un literal es más simple:
 
 ```scala
 trait Literal[ V <: Value ] extends Exp[V] {
@@ -227,15 +248,17 @@ case class Assign(name: String, expression: Exp[ _ <: Value ]) extends Exp[Void]
     } yield Void
 }
 
-trait Variable[V<:Value] extends Exp[V] {
+trait Variable[ V <: Value ] extends Exp[V] {
   def name: String
   val evaluator: Evaluator[V] = 
     State.gets[Environment, V] { env => env(name).asInstanceOf[V] }
 }
 ``` 
 
-Pueden ver los evaluadores de las otras expresiones [acá](https://github.com/miguel-vila/understanding-computation/blob/master/src/main/scala/understanding_computation/chapter2/ast/Expression.scala), aunque tal vez no esté tan organizado.
+Pueden ver los evaluadores de las otras expresiones [acá](https://github.com/miguel-vila/understanding-computation/blob/master/src/main/scala/understanding_computation/chapter2/ast/Expression.scala), aunque tal vez el código no esté tan organizado.
 
 ## Concluyendo
 
-Por supuesto es discutible si todo esto es mas legible que lo que teníamos antes. Resulta importante notar que legibilidad no es lo mismo que familiaridad. Para una persona que no esté familiarizada con estos patrones este código puede resultar abstracto, pero eso no quiere decir que no sea legible. Muchos patrones funcionales no son tan complicados, son formalizaciones de cosas que veníamos haciendo en otros lenguajes.
+Por supuesto es discutible si todo esto es mas legible que lo que teníamos antes. Creo que en ocasiones confundimos legibilidad con familiaridad. Para una persona que no esté familiarizada con estos patrones este código puede resultar abstracto, pero eso no quiere decir que no sea legible. Muchos patrones funcionales no son tan complicados, son formalizaciones de cosas que veníamos haciendo en otros lenguajes. Y una vez nos familiarizamos con estos patrones los encontramos legibles y hasta naturales.
+
+En la próxima entrada vamos a ver como leer una cadena de texto (el contenido de un archivo por ejemplo) para convertirlo en un arbol de sintáxis de nuestro lenguaje.
