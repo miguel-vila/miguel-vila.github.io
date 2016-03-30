@@ -45,12 +45,12 @@
     <div id="content" class="inside">
     <div class="info">
         
-        Marzo 19 de 2016
+        Marzo 29 de 2016
         
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Scala.html">Scala</a>, <a href="../tags/Interpreter.html">Interpreter</a>, <a href="../tags/Functional%20Programming.html">Functional Programming</a>, <a href="../tags/Programming%20languages.html">Programming languages</a>, <a href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a> 
+        Tags: <a href="../tags/Scala.html">Scala</a>, <a href="../tags/Interpreter.html">Interpreter</a>, <a href="../tags/Functional%20Programming.html">Functional Programming</a>, <a href="../tags/Programming%20languages.html">Programming languages</a>, <a href="../tags/State%20Monad.html">State Monad</a>, <a href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a> 
         
     </div>
     <hr>
@@ -241,6 +241,26 @@ Traverse[List].traverse_(list)(g)
 <h2 id="concluyendo">Concluyendo</h2>
 <p>Por supuesto es discutible si todo esto es mas legible que lo que teníamos antes. Creo que en ocasiones al discutir estas cosas confundimos legibilidad con familiaridad. Para una persona que no esté familiarizada con estos patrones este código puede resultar abstracto, pero eso no quiere decir que no sea legible. Muchos patrones funcionales no son tan complicados, son formalizaciones de cosas que veníamos haciendo en otros lenguajes. Y una vez nos familiarizamos con estos patrones los encontramos legibles y hasta naturales.</p>
 <p>En la próxima entrada vamos a ver como leer una cadena de texto (el contenido de un archivo por ejemplo) para convertirlo en un arbol de sintáxis de nuestro lenguaje.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2016-03-29-construyendo-un-pequeno-lenguaje-2.html";
+        this.page.identifier = "posts/2016-03-29-construyendo-un-pequeno-lenguaje-2.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
     </article>
     <footer>
