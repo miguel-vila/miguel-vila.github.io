@@ -10,14 +10,14 @@ Este _post_ asume que el lector sabe qué es una monada, qué funciones define, 
 
 * [Este](https://www.youtube.com/watch?v=Mw_Jnn_Y5iA) video es una buena introducción. Empieza con monadas como `Option` y `Validation` y trata el tema de _for-comprehensions_.
 * Si ya están familiarizados con monadas pero no saben que son _for-comprehensions_ en Scala en [este](https://youtu.be/Mw_Jnn_Y5iA?t=20m39s) punto del anterior video lo explican.
-* [Este artículo](http://blog.jle.im/entry/inside-my-world-ode-to-functor-and-monad.html) me gusta mucho aunque es en Haskell.
-* En general el mejor consejo que puedo dar para entender monadas es ver y escribir mucho código que las usen. Creo que solo con la práctica uno llega a apreciar la utilidad de algo que inicialmente parece muy abstracto.
+* [Este artículo](http://blog.jle.im/entry/inside-my-world-ode-to-functor-and-monad.html) me gusta mucho (advertencia: es en Haskell).
+* En general el mejor consejo que puedo dar para entender monadas es leer y escribir mucho código que las usen. Creo que solo con la práctica uno llega a apreciar la utilidad de algo que inicialmente parece muy abstracto.
 
 Ya suponiendo que saben esto podemos empezar.
 
-## Una formulación alterna
+## Una monada escondida en `evaluate`
 
-El tipo de la función `evaluate` que definimos en el anterior _post_ es: `Environment => (Environment,V)`. Tal vez algunos hayan visto esto e identificado que esto es precisamente lo que hace la **monada de estado**. La monada de estado facilita manipular funciones que modifican estado y devuelven valores, que es justo lo que estamos haciendo con el entorno. 
+El tipo de la función `evaluate` que definimos en el anterior _post_ es: `Environment => (Environment,V)`. Tal vez algunos hayan visto esto e identificado que esto es precisamente lo que hace la **monada de estado**. La monada de estado facilita manipular funciones que modifican un estado y devuelven valores, que es justo lo que estamos haciendo con el entorno. 
 
 Cómo muchas otras, la monada de estado está implementada como un _"wrapper"_ sobre una función:
 
@@ -73,6 +73,22 @@ object State {
 }
 ```
 
+También podemos implementar `map` que simplemente transforma el valor de retorno de la modificación:
+
+```scala
+case class State[S,A](run: S => (S,A)) {
+    
+    def map[B](f: A => B): State[S,B] = ???
+
+}
+```
+
+Pueden implementar esta función como ejercicio. Hay dos formas de hacerlo: una es como todas las monadas pueden hacerlo y consiste en combinar `flatMap` y `state` de cierta forma. Otra forma es un poco más explícita y no reutliza ninguna de las funciones.
+
+El caso es que una vez definidas las funciones `flatMap` y `map` podemos escribir _for-comprehensions_ que manipulen cosas de tipo `State`.
+
+## Una formulación alterna
+
 Ahora podemos reformular qué significa evaluar una expresión. Como vimos `evaluate` era de tipo `Environment => (Environment, V)`. Vamos a introducir un alias que describa esto en función de `State`:
 
 ```scala
@@ -86,20 +102,6 @@ sealed trait Expression[ V <: Value ] {
   def evaluator: Evaluator[ V ]
 }
 ```
-
-Podemos también implementar `map` que simplemente transforma el valor de retorno de la modificación:
-
-```scala
-case class State[S,A](run: S => (S,A)) {
-    
-    def map[B](f: A => B): State[S,B] = ???
-
-}
-```
-
-Pueden implementar esta función como ejercicio. Hay dos formas de hacerlo: una es como todas las monadas pueden hacerlo y consiste en combinar `flatMap` y `state` de cierta forma. Otra forma es un poco más explícita y no reutliza ninguna de las funciones.
-
-El caso es que una vez definidas las funciones `flatMap` y `map` podemos escribir _for-comprehensions_ que manipulen cosas de tipo `State`.
 
 ## ¿Que ganamos con esto?
 
@@ -259,6 +261,6 @@ Pueden ver los evaluadores de las otras expresiones [acá](https://github.com/mi
 
 ## Concluyendo
 
-Por supuesto es discutible si todo esto es mas legible que lo que teníamos antes. Creo que en ocasiones confundimos legibilidad con familiaridad. Para una persona que no esté familiarizada con estos patrones este código puede resultar abstracto, pero eso no quiere decir que no sea legible. Muchos patrones funcionales no son tan complicados, son formalizaciones de cosas que veníamos haciendo en otros lenguajes. Y una vez nos familiarizamos con estos patrones los encontramos legibles y hasta naturales.
+Por supuesto es discutible si todo esto es mas legible que lo que teníamos antes. Creo que en ocasiones al discutir estas cosas confundimos legibilidad con familiaridad. Para una persona que no esté familiarizada con estos patrones este código puede resultar abstracto, pero eso no quiere decir que no sea legible. Muchos patrones funcionales no son tan complicados, son formalizaciones de cosas que veníamos haciendo en otros lenguajes. Y una vez nos familiarizamos con estos patrones los encontramos legibles y hasta naturales.
 
 En la próxima entrada vamos a ver como leer una cadena de texto (el contenido de un archivo por ejemplo) para convertirlo en un arbol de sintáxis de nuestro lenguaje.
