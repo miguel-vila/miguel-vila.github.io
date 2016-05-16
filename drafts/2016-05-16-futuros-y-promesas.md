@@ -143,7 +143,7 @@ En este punto les debería sonar el tipo `Try[T] => Unit`. El método `executeWi
 
 Armados con esto lo demás sigue más o menos fácilmente: la implementación de `Promesa`, cuándo se instancie inicia en el estado `Pendiente`.  Si, estando en este estado alguien llama `onComplete` debemos incluir este nuevo pedido en el estado (el atributo `callbacks`). Pero, si alguien llama `complete` estando en el estado `Pendiente` pasamos a `Resuelta`, almacenamos ese valor y podemos ejecutar los _callbacks_ que teníamos en el estado `Pendiente`. Y si alguien llama `onComplete` en el estado `Resuelta` podemos ejecutar ese _callback_ directamente. Esencialmente tenemos esta maquina de estados:
 
-![diagrama-estado.png](diagrama-estado.png)
+<img src="/images/diagrama-estado.png" style="margin-left: auto; margin-right: auto">
 
 ## Estado y concurrencia
 
