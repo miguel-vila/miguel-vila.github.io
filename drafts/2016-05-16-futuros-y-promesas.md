@@ -10,8 +10,8 @@ tags: Scala, Functional Programming, Monads, Concurrency, Futures, Promises
 
 Hay una idea que he visto varias veces en [sistemas de eventos que se pueden componer](https://twitter.com/conal/status/468875014461468677). Es bastante simple. Consiste en separar un flujo de eventos en dos partes:
 
-* Un lado de escritura bastante imperativo y dado a producir [efectos secundarios](https://en.wikipedia.org/wiki/Side_effect_(computer_science))
-* Un lado de lecturas bastante funcional desde el que se pueden combinar flujos de eventos
+* Un lado de escritura bastante [imperativo](https://en.wikipedia.org/wiki/Imperative_programming) y dado a producir [efectos secundarios](https://en.wikipedia.org/wiki/Side_effect_(computer_science))
+* Un lado de lecturas bastante [funcional](http://blog.jenkster.com/2015/12/what-is-functional-programming.html) desde el que se pueden combinar flujos de eventos
 
 [//]: <> (He visto tres instancias de esta idea:)
 
@@ -38,11 +38,11 @@ Hay una idea que he visto varias veces en [sistemas de eventos que se pueden com
 
 He visto varias instancias de esta "idea": por ejemplo `Observer` y `Observable` en [Reactive extensions](http://reactivex.io/) o `Address` y `Signal` en [elm](http://elm-lang.org/). Uno de los ejemplos más simples son las promesas y los futuros en la librería estándar de Scala. Un Futuro es el resultado eventual de una computación y una Promesa es una variable que se puede completar con un valor exitoso o con un error. Las Promesas juegan el papel del lado de "escritura" y los Futuros el lado de "lectura".
 
-Un Futuro puede ser visto como un caso especial de Observables: en un Futuro se emite máximo un evento, sea exitoso o fallido, y una vez se emite se "cierra" el flujo. Resulta útil para cosas como por ejemplo solicitudes HTTP. Creo que [esta](http://danielwestheide.com/blog/2013/01/09/the-neophytes-guide-to-scala-part-8-welcome-to-the-future.html) es una explicación muy buena de los futuros y de como se usan. Este artículo tiene otro objetivo: desarmar los futuros y las promesas para entender como funcionan.
+Los Futuros sirven para componer valores eventuales y pueden servir para hacer las cosas concurrente o paralelamente. Resultan útiles para cosas como por ejemplo solicitudes HTTP. Creo que [esta](http://danielwestheide.com/blog/2013/01/09/the-neophytes-guide-to-scala-part-8-welcome-to-the-future.html) es una explicación muy buena de los futuros y de como se usan. Este artículo supone que el lector los ha usado aún sin entender como funcionan por debajo. Ese es el objetivo de este artículo: entender cómo funcionan los futuros y las promesas.
 
 ## Desarmando los Futuros y las Promesas
 
-Hace poco en un grupo de estudio en mi trabajo nos pusimos a la tarea de entender como están implementados los futuros y promesas de la librería estándar de Scala. La implementación de la librería estándar tiene ciertas partes complicadas, sobre todo con respecto a la organización de las definiciones. Sin embargo creo que se puede entender la mayoría si uno tiene en cuenta la idea del lado de escritura y lectura. Hice una re-escritura de los Futuros y Promesas removiendo hasta dejar lo más básico y simplificando algunas partes, con propósitos didácticos y a esa es a la que me referiré en este artículo.
+La implementación de Futuros y Promesas de la librería estándar tiene ciertas partes complicadas, sobre todo con respecto a la organización de las definiciones. Sin embargo creo que se puede entender la mayoría si uno tiene en cuenta la idea del lado de escritura y lectura. Hice una re-escritura de los Futuros y Promesas removiendo hasta dejar lo más básico y simplificando algunas partes, con propósitos didácticos y a esa es a la que me referiré en este artículo.
 
 Entonces veamos como se podría construir nuestra propia implementación de promesas y futuros:
 
@@ -74,7 +74,7 @@ trait Promesa[T] {
 }
 ```
 
-Tiene una propiedad de tipo `Futuro`, es decir del lado de lectura de la variable, y tiene una función `complete` que permite escribir la variable, sea con un valor exitoso o fallido. Esta última función devuelve un booleano indicando si se pudo hacer la escritura dado que nadie haya escrito la variable antes, en cuyo caso retorna `false`.
+Tiene una propiedad de tipo `Futuro`, es decir del lado de lectura de la variable, y tiene una función `complete` que permite escribir la variable, sea con un valor exitoso o fallido. Esta última función devuelve un booleano indicando si se pudo hacer la escritura dado que nadie haya escrito la variable antes, en cuyo caso retorna `false`. Se suele decir que una promesa ha sido "resuelta" cuando alguien ha escrito un valor exitoso. De forma similar se dice que ha sido "rechazada" si el valor con el que se ha escrito es erróneo.
 
 ## _Wishful thinking_
 
@@ -111,13 +111,21 @@ Otro combinador funcional como `flatMap` se puede describir con un patrón simil
 
 ## El estado de una promesa
 
-Resulta que esto no es tan complicado. Una computación eventual puede estar en dos estados: o pendiente o resuelta, sea con un valor o con un error. Más aún puede que alguien haya programado la ejecución de una función que use el valor de la promesa cuando esta sea resuelta. Debido a esto en el estado pendiente tenemos que persistir estos pedidos. Materializando esto en tipos tenemos lo siguiente:
+Resulta que esto no es tan complicado. Una computación eventual puede estar en dos estados: o pendiente o completada, sea con un valor o con un error. Más aún puede que alguien haya programado la ejecución de una función que use el valor de la promesa cuando esta sea completada. Debido a esto en el estado pendiente tenemos que persistir estos pedidos. Materializando esto en tipos tenemos lo siguiente:
 
 ```scala
 sealed trait EstadoPromesa[T]
-case class Resuelta[T](value: Try[T]) extends EstadoPromesa[T]
+case class Completada[T](value: Try[T]) extends EstadoPromesa[T]
 case class Pendiente[T](callbacks: List[Callback[T]]) extends EstadoPromesa[T]
 ```
+
+<div class="note">
+<p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
+
+<div class="note-content">
+En la implementación de verdad hay un [tercer posible estado](https://github.com/scala/scala/blob/804a4cc1ff9fa159c576be7c685dbb81220c11da/src/library/scala/concurrent/impl/Promise.scala#L126). Se trata de una optimización para disminuir el consumo de memoria. Éste es un detalle que no entiendo completamente pero lo demás se puede entender sin esto.
+</div>
+</div>
 
 Aquí `Callback` es algo que lee el valor resuelto y se va a ejecutar en algún `ExecutionContext`:
 
@@ -141,7 +149,7 @@ En este punto les debería sonar el tipo `Try[T] => Unit`. El método `executeWi
 
 ## Una simple descomposición
 
-Armados con esto lo demás sigue más o menos fácilmente: la implementación de `Promesa`, cuándo se instancie inicia en el estado `Pendiente`.  Si, estando en este estado alguien llama `onComplete` debemos incluir este nuevo pedido en el estado (el atributo `callbacks`). Pero, si alguien llama `complete` estando en el estado `Pendiente` pasamos a `Resuelta`, almacenamos ese valor y podemos ejecutar los _callbacks_ que teníamos en el estado `Pendiente`. Y si alguien llama `onComplete` en el estado `Resuelta` podemos ejecutar ese _callback_ directamente. Esencialmente tenemos esta maquina de estados:
+Armados con esto lo demás sigue más o menos fácilmente. Cuándo se instancie una promesa iniciará en el estado `Pendiente`.  Si, estando en este estado alguien programa la ejecución de un pedido con `onComplete` entonces debemos incluir este pedido en el estado (el atributo `callbacks`). Pero si alguien llama `complete` cuando estamos en el estado `Pendiente` pasamos a `Completada`, almacenamos ese valor y podemos ejecutar los _callbacks_ que teníamos en el estado `Pendiente`. Y si alguien llama `onComplete` en el estado `Completada` podemos ejecutar ese _callback_ directamente. Esencialmente tenemos esta maquina de estados:
 
 <img src="/images/diagrama-estado.png" style="margin-left: auto; margin-right: auto; display: block;">
 
@@ -151,7 +159,7 @@ Como tal vez sospechen la cosa no es tan simple como tener una referencia mutabl
 
 Debido a esto necesitamos proteger el estado contra estas condiciones de carrera. Una forma de hacerlo es con candados, pero este acercamiento tiene la gran desventaja de ser bloqueante y además es demasiado pesimista. Las situaciones en las que se le agreguen multiples _callbacks_ a un mismo futuro son posibles pero no tan recurrentes, y ménos aún que se hagan al mismo tiempo. Por lo general cuando usamos un futuro le agregamos un número fijo de _callbacks_ y seguimos encadenando llamadas con nuevos futuros, pero rara vez usamos multiple y concurrentemente un mismo futuro. Sin embargo esta situación es posible y deberíamos protegernos contra ella. Es solo que los candados son un método demasiado "paranoico" en este caso.
 
-Hay un acercamiento más optimista: suponemos que al hacer la actualización no va a haber la interferencia de otro hilo y procedemos a la modificación. Si detectamos alguna interferencia no hacemos "commit" de la actualización y reintentamos. Este es el acercamiento que tienen [las variables atómicas](http://www.ibm.com/developerworks/library/j-jtp11234/) en Java y tienen la ventaja de tener un mejor _throughput_ que los candados durante situaciones de moderada contención. Y en situaciones de alta contención tienen un _throughput_ similar. Si quieren ahondar en este tema sugiero el capítulo 15 del libro "Java concurrency in practice".
+Hay un acercamiento más optimista: suponemos que al hacer la actualización no va a haber la interferencia de otro hilo y procedemos a la modificación. Si detectamos alguna interferencia no hacemos "commit" de la actualización y reintentamos. Este es el acercamiento que tienen [las variables atómicas](http://www.ibm.com/developerworks/library/j-jtp11234/) en Java y tienen la ventaja de tener un mejor _throughput_ que los candados durante situaciones de moderada contención. Y en situaciones de alta contención tienen un _throughput_ similar. Si quieren ahondar en este tema sugiero el capítulo 15 del libro ["Java Concurrency in Practice"](http://jcip.net/).
 
 Dado esto, en vez de utilizar una referencia mutable de tipo `EstadoPromesa` vamos a tener algo de tipo `AtomicReference[ EstadoPromesa ]` y vamos a usar los métodos [`get`](https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/atomic/AtomicReference.html#get()) y [`compareAndSet`](https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/atomic/AtomicReference.html#compareAndSet(V,%20V)) para consultar y modificar el estado respectivamente. El método `compareAndSet` amerita una breve explicación. Recibe dos valores: el valor que se espera que va a ser el actual y el que queremos que sea el nuevo. Si el estado de la referencia atómica coincide con el que esperabamos la modificación procede y retorna `true`. En caso contrario la modificación no se hace y retorna `false`. Esto nos da la oportunidad para reintentar, y por lo que describí anteriormente el número de reintentos no debería ser muy alto, dados los patrones comunes de uso de los futuros.
 
@@ -197,10 +205,10 @@ Esto se reduce a inspeccionar el estado de la promesa: si ya está resuelta pedi
 @tailrec
 private def onComplete(callback: Callback[T]): Unit = {
   get() match {
-    case Resuelta(value)                            =>
+    case Completada(value)                          =>
       callback.executeWith(value)
     case currentState @ Pendiente(currentCallbacks) =>
-      if(compareAndSet(currentState, Pendiente( callback :: currentCallbacks)))
+      if(compareAndSet(currentState, Pendiente( callback :: currentCallbacks )))
         ()
       else
         onComplete(callback)
@@ -215,22 +223,22 @@ Es  importante notar que:
 
 ## Escribiendo la promesa
 
-Para escribir la promesa, suponiendo que no ha sido resuelta anteriormente, hay que tener en cuenta que además de cambiar de `Pendiente` a `Resuelta` toca recordar el listado de _callbacks_ que hay, para ejecutarlos con el valor resuelto. Para esto creamos el método `getCallbacksAndSetValue` que funciona recibiendo un valor con el que escribirá la promesa y devolverá una lista de _callbacks_. Pero también hay que tener en cuenta el caso en el que este método se llame sobre una promesa resuelta. Debido a esto nuestro tipo de retorno será `Option[List[Callback]]`:
+Para escribir la promesa, suponiendo que no ha sido resuelta anteriormente, hay que tener en cuenta que además de cambiar de `Pendiente` a `Completada` debemos recordar el listado de _callbacks_ que hay, para ejecutarlos con el valor resuelto. Para esto creamos el método `getCallbacksAndSetValue` que funciona recibiendo un valor con el que escribirá la promesa y devolverá una lista de _callbacks_. Pero también hay que tener en cuenta el caso en el que este método se llame sobre una promesa resuelta. Debido a esto nuestro tipo de retorno será `Option[List[Callback]]`:
 
 ```scala
 @tailrec
-  private def getCallbacksAndSetValue(value: Try[T]): Option[List[Callback[T]]] = {
-    get() match {
-      case Resuelta(_)                                =>
-        None
-      case currentState @ Pendiente(currentCallbacks) =>
-        if (compareAndSet(currentState, Resuelta(value))) {
-          Some(currentCallbacks)
-        } else {
-          getCallbacksAndSetValue(value)
-        }
-    }
+private def getCallbacksAndSetValue(value: Try[T]): Option[List[Callback[T]]] = {
+  get() match {
+    case Completada(_)                                =>
+      None
+    case currentState @ Pendiente(currentCallbacks) =>
+      if (compareAndSet(currentState, Completada(value))) {
+        Some(currentCallbacks)
+      } else {
+        getCallbacksAndSetValue(value)
+      }
   }
+}
 ```
 
 En esta función retornar `None` nos sirve para indicar que la promesa ya había sido escrita anteriormente y `Some` de una lista para indicar que la promesa fué resuelta y al mismo tiempo devolver la lista de _callbacks_. Es importante notar que, al igual que `onComplete`, esta función modifica el estado atómicamente.
@@ -342,7 +350,37 @@ Y esto facilita mucho escribir código que manipula resultados asíncronos, a di
 
 También hay combinadores funcionales para manejar las fallas. Por ejemplo `recover` o `recoverWith` que mapean la falla (si es que el futuro es fallido) a algún tipo que tenga algo en común con el contenido del futuro. Pueden mirar el [codigo fuente](https://github.com/miguel-vila/grupo-concurrencia-paralelismo/tree/b14bb0a9b90a901593825f887f5e46d793a874a8/futuro-y-promesa), pero resulta que su implementación es muy similar a la de `map` y `flatMap` respectivamente.
 
-Esta similitud es la que nos podría llevar a un refactor, que es el que precisamente hacen en la implementación de verdad de la librería estándar. Creo que es más fácil entender la repetición y después ver la forma de generalizarlo.
+Esta similitud es la que nos podría llevar a un refactor, que es el que precisamente hacen en [la implementación de la librería estándar](https://github.com/scala/scala/blob/804a4cc1ff9fa159c576be7c685dbb81220c11da/src/library/scala/concurrent/impl/Promise.scala#L27-L44). Creo que es más fácil entender la repetición y después ver la forma de generalizarla.
+
+Otro combinador funcional común es `sequence`, que sirve para reunir múltiples resultados eventuales en uno solo. Una forma de imaginarnos como está implementado es la siguiente:
+
+```scala
+def sequence[T](futures: List[Future[T]])(implicit e: ExecutionContext): Future[List[T]] = {
+  for {
+    t0  <- futures(0)
+    t1  <- futures(1)
+    .
+    .
+    .
+    tn  <- futures(n)
+  } yield t0 :: t1 :: ... :: tn :: List.empty[T]
+}
+```
+
+Es decir la implementación solo depende de `flatMap` y de `map`.  Más concretamente se podria materializar así: 
+
+```scala
+def sequence[T](futures: List[Future[T]])(implicit e: ExecutionContext): Future[List[T]] = {
+  futures.foldRight(Future.successful(List.empty[T])) { (fh,ftl) =>
+    for {
+      h  <- fh
+      tl <- ftl
+    } yield h :: tl
+  }
+}
+```
+
+En la librería estándar ésta función funciona no solo para listas sino también para otras estructuras de datos. Esto se logra mediante el _typeclass_ `CanBuildFrom`. Ése _typeclass_ lo explican en la parte 3 de [este artículo](https://adriaanm.github.io/files/higher.pdf) pero bajo el nombre de `Buildable`. 
 
 ## `Futuro.apply`
 
@@ -358,33 +396,31 @@ En este caso `myFuture` servirá como un futuro del resultado eventual de `miCod
 Una forma de implementar este método es simplemente programar la ejecución del código dentro del `ExecutionContext` y guardar el resultado en una promesa:
 
 ```scala
-def apply[T](body :=> T)(implicit executor: ExecutionContext): Futuro[T] = {
+def apply[T](block :=> T)(implicit executor: ExecutionContext): Futuro[T] = {
   val promesa = Promesa[T]()
   executor.execute(new Runnable {
     override def run(): Unit = {
-      try {
-        promesa.complete( Success(body) )
-      } catch {
-        case NonFatal(t) =>
-          promesa.complete( Failure(t) )
-      }
+      val result = Try { block }
+      promesa.complete( result )
     }
   })
   promesa.futuro
 }
 ```
 
-Un detalle importante de esta implementación es que el bloque de código es un argumento _pass by-name_ y no _pass by-value_ para que quién invoque este código no sea el que lo ejecute sino el `ExecutionContext`.
+Un detalle importante de esta implementación es que el bloque de código es un argumento _call-by-name_ y no _call-by-value_ para que quién invoque este código no sea el que lo ejecute sino el `ExecutionContext`.
 
 Pero hay otra forma de implementar esta función y es aprovechado un truco funcional:
 
 ```scala
-def apply[T](body :=> T)(implicit executor: ExecutionContext): Futuro[T] = {
-  Futuro.successful( () ).map( _ => body )
+def apply[T](block :=> T)(implicit executor: ExecutionContext): Futuro[T] = {
+  Futuro.successful( () ).map( _ => block )
 }
 ```
 
-Conociendo como funcionan `successful` y `map` nos podemos dar cuenta de que ambas implementaciones hacen lo mismo.
+Partimos de un Futuro con un valor arbitrario y lo reemplazamos mediante map por el resultado de ejecutar el bloque. Conociendo como funcionan `successful` y `map` nos podemos dar cuenta de que ambas implementaciones hacen lo mismo.
+
+Ahora ¿de qué sirve este método? ¿Sirve para convertir código bloqueante en no bloqueante? Ya sabemos como funciona la cosa por debajo para saber que la respuesta es no. Si un pedazo de código es bloqueante envolverlo con `Futuro { codigoBloqueante }` servirá para que, en el mejor de los casos, el bloqueo suceda en otro _thread_, pero igual habrá un bloqueo. Además uno podría pasarle un `ExecutionContext` que ejecute lo `Runnable`s sobre el mismo _thread_ que llame `execute` y con esto el _thread_ que crea los futuros también se bloquearía.
 
 ## Reemplazando _callbacks_
 
