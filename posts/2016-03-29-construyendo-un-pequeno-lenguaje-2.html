@@ -186,7 +186,7 @@
 <p>En realidad esta función <a href="http://www.staff.city.ac.uk/~ross/papers/Applicative.pdf">se puede implementar sin <code>flatMap</code></a>, pero la idea acá es ilustrar que lo que hace es secuenciar los efectos. En el caso de <code>State</code> esto significa ir pasando el entorno actualizado de función en función hasta formar una gran función que sea la secuencia de todas.</p>
 <p>Este es uno de los tantos ejemplos de la utilidad de patrones funcionales que a primera vista resultan abstractos: ganamos pedazos de código muy generales, que no son específicos a nuestro dominio, y con esto logramos atacar el problema que nos corresponde.</p>
 <!--div class="note">
-<p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
+<p class="aside-header"><strong>Nota aparte</strong> <span class="clickable">(Click!)</span></p>
 
 <div class="note-content">
 La función `traverseS_` es una especialización de `traverse_` para `State`. En Scalaz así como en Haskell existe la convención de usar un `_` para indicar que la función hace algo similar a la versión sin `_` pero sin acumular los resultados de los efectos. Por ejemplo en el siguiente código si `g` retorna un `G[Unit]` entonces el tipo de 
