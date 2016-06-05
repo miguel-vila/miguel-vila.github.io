@@ -193,7 +193,7 @@ En realidad esta función [se puede implementar sin `flatMap`](http://www.staff.
 Este es uno de los tantos ejemplos de la utilidad de patrones funcionales que a primera vista resultan abstractos: ganamos pedazos de código muy generales, que no son específicos a nuestro dominio, y con esto logramos atacar el problema que nos corresponde.
 
 <!--div class="note">
-<p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
+<p class="aside-header"><strong>Nota aparte</strong> <span class="clickable">(Click!)</span></p>
 
 <div class="note-content">
 La función `traverseS_` es una especialización de `traverse_` para `State`. En Scalaz así como en Haskell existe la convención de usar un `_` para indicar que la función hace algo similar a la versión sin `_` pero sin acumular los resultados de los efectos. Por ejemplo en el siguiente código si `g` retorna un `G[Unit]` entonces el tipo de 

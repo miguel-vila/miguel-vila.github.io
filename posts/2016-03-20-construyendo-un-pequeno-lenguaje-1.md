@@ -7,7 +7,7 @@ tags: Scala, Interpreter, Functional Programming, Programming languages, Constru
 En el [anterior _post_](http://miguel-vila.github.io/posts/2016-03-15-construyendo-un-pequeno-lenguaje-0.html) establecimos unas bases para poder construir nuestro pequeño lenguaje. Definimos un tipo llamado `Value` para representar los tipos de valores de nuestro lenguaje y definimos otro tipo `Exp` que representa expresiones.
 
 <div class="note">
-<p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
+<p class="aside-header"><strong>Nota aparte</strong> <span class="clickable">(Click!)</span></p>
 
 <div class="note-content">
 
@@ -187,7 +187,7 @@ case class Add(left: Exp[NumberValue], right: Exp[NumberValue]) extends BinaryOp
 Primero evaluamos el lado izquierdo de la expresión y obtenemos dos cosas: el entorno, tal vez actualizado, y el resultado de evaluar la expresión a la izquierda. Después evaluamos el lado derecho de la expresión usando el anterior entorno y volvemos a obtener dos cosas: un tercer entorno y el valor del lado derecho. Una vez obtenidos ambos valores los combinamos usando `+`, la función definida sobre objetos de tipo `NumberValue`, y finalmente devolvemos el entorno final y la suma.
 
 <div class="note">
-<p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
+<p class="aside-header"><strong>Nota aparte</strong> <span class="clickable">(Click!)</span></p>
 
 <div class="note-content">
 
@@ -293,7 +293,7 @@ trait Var[ V <: Value ] extends Exp[ V ] {
 Podrán notar que aquí estamos rompiendo varias "reglas". Primero la forma en la que extraemos el valor del mapa no es segura: si no existe ninguna variable definida con ese nombre entonces la llamada arroja una excepción. Y segundo: estamos haciendo un _casteo_ que también podría fallar si existe una variable definida con ese nombre pero con el tipo incorrecto. La idea de esta serie de artículos es presentar algo muy simple entonces no nos vamos a preocupar por esto.
 
 <!--div class="note">
-<p class="clickable aside-header"><strong>Nota aparte</strong> <span>(Click!)</span></p>
+<p class="aside-header"><strong>Nota aparte</strong> <span class="clickable">(Click!)</span></p>
 
 <div class="note-content">
 

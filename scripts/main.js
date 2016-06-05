@@ -2,6 +2,8 @@
 $('.note .note-content').toggleClass('hide');
 
 $('.note .aside-header').click(function(ev) {
-    var noteContentElement = $(ev.target.parentElement).next();
+	console.log('clicked')
+    var noteContentElement = $(ev.target.parentElement.parentElement).find('.note-content');
+    console.log('noteContentElement = ', noteContentElement);
     noteContentElement.toggleClass('hide');
 });
