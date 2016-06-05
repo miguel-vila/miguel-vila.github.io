@@ -346,33 +346,7 @@ En la implementación de la librería estándar hacen varias optimizaciones, ent
 </div>
 </div>
 
-Pueden notar que hay una llamada a `onComplete` dentro del primer `onComplete`, lo mismo que un _callback_ dentro de otro _callback_, o también una función programada a ejecutarse que eventualmente programa la ejecución de otra función. Esta función es especialmente útil para secuenciar resultados eventuales, por ejemplo:
-
-```scala
-def getProfile(userId: UserId): Futuro[Profile] = ...
-val userId: Futuro[UserId] = ...
-
-userId.flatMap( userId => getProfile(userId) )
-```
-
-o también para juntar en un mismo lugar dos resultados asíncronos independientes:
-
-```scala
-val profile1 : Futuro[Profile] = getProfile(userId1)
-val profile2 : Futuro[Profile] = getProfile(userId2)
-val profiles : Futuro[(Profile, Profile)] = profile1.flatMap { p1 =>
-  profile2.map { p2 => (p1,p2) }
-}
-```
-
-Lo anterior también se puede escribir con un _for-comprehension_:
-
-```scala
-val profiles : Futuro[(Profile, Profile)] = for {
-  p1 <- profile1
-  p2 <- profile2
-} yield (p1,p2)
-```
+Pueden notar que hay una llamada a `onComplete` dentro del primer `onComplete`, lo mismo que un _callback_ dentro de otro _callback_, o también una función programada a ejecutarse que eventualmente programa la ejecución de otra función.
 
 También hay combinadores funcionales para manejar las fallas. Por ejemplo `recover` o `recoverWith` que mapean la falla (si es que el futuro es fallido) a algún tipo que tenga algo en común con el contenido del futuro. Pueden mirar el [codigo fuente](https://github.com/miguel-vila/grupo-concurrencia-paralelismo/tree/b14bb0a9b90a901593825f887f5e46d793a874a8/futuro-y-promesa), pero resulta que su implementación es muy similar a la de `map` y `flatMap` respectivamente.
 
@@ -410,7 +384,7 @@ def sequence[T](futures: List[Futuro[T]])(implicit e: ExecutionContext): Futuro[
 
 En la librería estándar ésta función sirve no solo para listas sino también para otras estructuras de datos. Esto se logra mediante el _typeclass_ `CanBuildFrom`. Si quieren saber más en la parte 3 de [este artículo](https://adriaanm.github.io/files/higher.pdf) explican un _typeclass_ similar bajo el nombre de `Buildable`.
 
-La función `traverse` es muy similar.
+La función `traverse` es muy parecida:
 
 ```scala
 def traverse[A,B](list: List[A])
@@ -430,7 +404,7 @@ def traverse[A,B](list: List[A])
 <p class="aside-header"><strong>Nota aparte</strong> <span class="clickable">(Click!)</span></p>
 
 <div class="note-content">
-Hay algo que tal vez noten y es que las implementaciones de `sequence` y `traverse` son bastante generales. Viendo el código no hay nada específico sobre asincronía o hilos. Solamente llamadas a `map`, `flatMap` o `successful` y estas son funciones que tienen formas muy generales. El patrón que estámos viendo acá es el de [funtores aplicativos](http://strictlypositive.org/Idiom.pdf).
+Hay algo que tal vez noten y es que las implementaciones de `sequence` y `traverse` son bastante generales. Viendo el código no hay nada específico sobre asincronía o hilos, nada que nos diga que este código debería funcionar solamente para futuros. El patrón que estámos viendo acá es el de [funtores aplicativos](http://strictlypositive.org/Idiom.pdf) y funciona a distintos tipos de efectos.
 </div>
 </div>
 
@@ -476,7 +450,7 @@ Ahora ¿de qué sirve este método? ¿Sirve para convertir código bloqueante en
 
 ## Reemplazando _callbacks_
 
-Hay otra forma de crear Futuros y es la que se se usa cuando se está trabajando con un API asincrónica. Incluso ya hemos visto este método de construcción. Como ejemplo supongamos que vamos a envolver un cliente HTTP asíncrono en Futuros, para así poder manipular más fácilmente los resultados.
+Hay otra forma de crear Futuros y es la que se se usa cuando se está trabajando con un API asincrónica. Incluso ya hemos visto este método de construcción. Como ejemplo supongamos que vamos a envolver un cliente HTTP asincrónico en Futuros, para así poder manipular más fácilmente los resultados.
 
 Por ejemplo [este](https://github.com/AsyncHttpClient/async-http-client) cliente en Java que se puede usar con _callbacks_:
 
@@ -547,4 +521,4 @@ Por otra parte los [`Task`](http://timperrett.com/2014/07/20/scalaz-task-the-mis
 
 Hay muchas más cosas por decir sobre los futuros, sobre las decisiones de diseño y sobre qué tipo de lógica permiten separar. Pero para concluir tal vez valga la pena decir que el objetivo de desarmar los futuros es saber cómo usarlos de una mejor forma y eliminar un poco de la "magia" que uno puede atribuirles cuando se usan.
 
-Cualquier comentario, sugerencia o corrección es bienvenido.
+Cualquier comentario, sugerencia o corrección son bienvenidos.
