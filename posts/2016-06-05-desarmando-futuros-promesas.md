@@ -1,5 +1,5 @@
 ---
-title: Desarmando las Promesas y Futuros de la librería estándar de Scala
+title: Desarmando las Promesas y los Futuros de la librería estándar de Scala
 description: ¿Cómo están implementadas las promesas y los futuros en la librería estándar de Scala?
 tags: Scala, Functional Programming, Monads, Concurrency, Futures, Promises, Async
 ---
