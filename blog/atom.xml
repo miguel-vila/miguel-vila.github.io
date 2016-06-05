@@ -8,8 +8,16 @@
         <name>Miguel Vilá</name>
         <email>miguelvilag@gmail.com</email>
     </author>
-    <updated>2016-03-29T00:00:00Z</updated>
+    <updated>2016-06-05T00:00:00Z</updated>
     <entry>
+    <title>Desarmando las Promesas y Futuros de la librería estándar de Scala</title>
+    <link href="http://miguel-vila.github.io/posts/2016-06-05-desarmando-futuros-promesas.html" />
+    <id>http://miguel-vila.github.io/posts/2016-06-05-desarmando-futuros-promesas.html</id>
+    <published>2016-06-05T00:00:00Z</published>
+    <updated>2016-06-05T00:00:00Z</updated>
+    <summary type="html"><![CDATA[¿Cómo están implementadas las promesas y los futuros en la librería estándar de Scala?]]></summary>
+</entry>
+<entry>
     <title>Construyendo un pequeño lenguaje de programación (Parte 2)</title>
     <link href="http://miguel-vila.github.io/posts/2016-03-29-construyendo-un-pequeno-lenguaje-2.html" />
     <id>http://miguel-vila.github.io/posts/2016-03-29-construyendo-un-pequeno-lenguaje-2.html</id>
