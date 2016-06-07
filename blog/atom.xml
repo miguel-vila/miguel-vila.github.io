@@ -23,7 +23,7 @@
     <id>http://miguel-vila.github.io/posts/2016-03-29-construyendo-un-pequeno-lenguaje-2.html</id>
     <published>2016-03-29T00:00:00Z</published>
     <updated>2016-03-29T00:00:00Z</updated>
-    <summary type="html"><![CDATA[Tercera parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala]]></summary>
+    <summary type="html"><![CDATA[Tercera parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala - Evaluando las expresiones con una monada]]></summary>
 </entry>
 <entry>
     <title>Construyendo un pequeño lenguaje de programación (Parte 1)</title>
@@ -31,7 +31,7 @@
     <id>http://miguel-vila.github.io/posts/2016-03-20-construyendo-un-pequeno-lenguaje-1.html</id>
     <published>2016-03-20T00:00:00Z</published>
     <updated>2016-03-20T00:00:00Z</updated>
-    <summary type="html"><![CDATA[Segunda parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala]]></summary>
+    <summary type="html"><![CDATA[Segunda parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala - Evaluando las expresiones]]></summary>
 </entry>
 <entry>
     <title>Construyendo un pequeño lenguaje de programación (Parte 0)</title>
@@ -39,7 +39,7 @@
     <id>http://miguel-vila.github.io/posts/2016-03-15-construyendo-un-pequeno-lenguaje-0.html</id>
     <published>2016-03-15T00:00:00Z</published>
     <updated>2016-03-15T00:00:00Z</updated>
-    <summary type="html"><![CDATA[Parte 0 de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala]]></summary>
+    <summary type="html"><![CDATA[Parte 0 de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala - Definiendo las expresiones]]></summary>
 </entry>
 
 </feed>
