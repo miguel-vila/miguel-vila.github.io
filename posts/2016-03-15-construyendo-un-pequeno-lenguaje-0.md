@@ -1,6 +1,6 @@
 ---
 title: Construyendo un pequeño lenguaje de programación (Parte 0)
-description: Parte 0 de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala
+description: Parte 0 de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala - Definiendo las expresiones
 tags: Scala, Interpreter, Functional Programming, ADT, GADT, Construyendo un pequeño lenguaje
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: Construyendo un pequeño lenguaje de programación (Parte 2)
-description: Tercera parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala
+description: Tercera parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala - Evaluando las expresiones con una monada
 tags: Scala, Interpreter, Functional Programming, Programming languages, State Monad, Construyendo un pequeño lenguaje
 ---
 

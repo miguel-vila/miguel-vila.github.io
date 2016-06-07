@@ -1,7 +1,9 @@
-<ul>
-    $for(posts)$
-        <li>
-            <a href="$url$">$title$</a> - $date$
-        </li>
-    $endfor$
-</ul>
+$for(posts)$
+	<div class="post">
+	  	<p class="post-meta">$date$</p>
+	   	<a class="post-link" href="$url$">
+	   		<h3 class="post-title">$title$</h3>
+	   	</a>
+	   	<p class="post-summary">$description$</p>
+	</div>
+$endfor$

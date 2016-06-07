@@ -1,6 +1,6 @@
 ---
 title: Construyendo un pequeño lenguaje de programación (Parte 1)
-description: Segunda parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala
+description: Segunda parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala - Evaluando las expresiones
 tags: Scala, Interpreter, Functional Programming, Programming languages, Construyendo un pequeño lenguaje
 ---
 

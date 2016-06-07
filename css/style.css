@@ -67,3 +67,24 @@ div.note {
   cursor: pointer; 
 }
 
+.post-meta {
+  width: auto;
+  font-size: 1rem;
+  font-weight: 300;
+  margin: 0;
+  padding: .25em 0;
+  color: #7a7a7a;
+  font-style: italic;
+}
+
+.post-link .post-title {
+    margin-top: 0;
+    font-weight: 600;
+    color: #333;
+}
+
+.post {
+    margin-bottom: 0.75em;
+    padding-bottom: .375em;
+    border-bottom: thin solid #afafaf;
+}
