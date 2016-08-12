@@ -27,7 +27,7 @@ takeRecentFirst n = fmap (maybeTake n) . recentFirst
 
 main :: IO ()
 main = hakyll $ do
-    match "images/*" $ do
+    match "images/**/*" $ do
         route   idRoute
         compile copyFileCompiler
 
@@ -117,12 +117,12 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateCompiler
 
-    create ["blog/atom.xml"] $ do
+    create ["feed.xml"] $ do
         route   $ idRoute
         compile $ do
           let feedCtx = postCtx `mappend` bodyField "description"
           posts <- takeRecentFirst (Only 5) =<< loadAllSnapshots "posts/*" "content"
-          renderAtom feedConfig feedCtx posts
+          renderRss feedConfig feedCtx posts
 
 --------------------------------------------------------------------------------
 draftCtx :: Context String

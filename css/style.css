@@ -88,3 +88,15 @@ div.note {
     padding-bottom: .375em;
     border-bottom: thin solid #afafaf;
 }
+
+h2 {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: .5em;
+}
+
+.photo {
+  width: 60%;
+  box-shadow: 8px 8px 10px #aaa;
+  display: block;
+  margin: auto;
+}
