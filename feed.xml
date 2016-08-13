@@ -7,8 +7,16 @@
         <description><![CDATA[Blog personal de Miguel Vilá]]></description>
         <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Fri, 12 Aug 2016 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Sat, 13 Aug 2016 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Día 1</title>
+    <link>http://miguel-vila.github.io/posts/2016-08-13-day-1.html</link>
+    <description><![CDATA[Día 1]]></description>
+    <pubDate>Sat, 13 Aug 2016 00:00:00 UT</pubDate>
+    <guid>http://miguel-vila.github.io/posts/2016-08-13-day-1.html</guid>
+    <dc:creator>Miguel Vilá</dc:creator>
+</item>
+<item>
     <title>Día 0</title>
     <link>http://miguel-vila.github.io/posts/2016-08-12-day-0.html</link>
     <description><![CDATA[Día 0]]></description>
@@ -38,14 +46,6 @@
     <description><![CDATA[Tercera parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala - Evaluando las expresiones con una monada]]></description>
     <pubDate>Tue, 29 Mar 2016 00:00:00 UT</pubDate>
     <guid>http://miguel-vila.github.io/posts/2016-03-29-construyendo-un-pequeno-lenguaje-2.html</guid>
-    <dc:creator>Miguel Vilá</dc:creator>
-</item>
-<item>
-    <title>Construyendo un pequeño lenguaje de programación (Parte 1)</title>
-    <link>http://miguel-vila.github.io/posts/2016-03-20-construyendo-un-pequeno-lenguaje-1.html</link>
-    <description><![CDATA[Segunda parte de una serie de posts en las que se construye un pequeño lenguaje de programación usando Scala - Evaluando las expresiones]]></description>
-    <pubDate>Sun, 20 Mar 2016 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2016-03-20-construyendo-un-pequeno-lenguaje-1.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 
