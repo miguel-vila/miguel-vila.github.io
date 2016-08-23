@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+        <title>
+            
+                My first week at Recurse Center
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        if(window.location.hostname !== 'localhost'){
+            ga('create', 'UA-74778346-1', 'auto');
+            ga('send', 'pageview');
+        }
+    </script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Inicio</a>
+            <a href="../archive.html">Posts</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
+            <a href="https://twitter.com/mglvl/">Twitter</a>
+            <a href="https://www.flickr.com/photos/77778296@N07/">Flickr</a>
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://slides.com/miguelvila/">Slides.com</a>
+        </nav>
+    </header>
+    <article>
+    <h2>My first week at Recurse Center</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        Agosto 22 de 2016
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/rc.html">rc</a>, <a href="../tags/ny.html">ny</a> 
+        
+    </div>
+    <hr>
+    <p><img src="../images/rc-w1.jpeg" style="float: right; padding: 0.5em; width: 35%"></p>
+<p>My first week at <a href="https://www.recurse.com/">Recurse Center’s (RC)</a> just ended and so far it has been very cool. If you don’t know what RC is the short description is “a retreat for programmers”. If that’s not enough you can go to their site.</p>
+<p>I’m starting my RC batch with two objectives: to learn about operating systems (a college subject I missed) and to learn about distributed systems. For my first objective I was thinking on following <a href="http://www.rust-class.org/">this</a> lectures and for the second one I was thinking I could try to implement the <a href="https://raft.github.io/">Raft consensus algorithm</a>. I don’t know if I will keep up with these objectives on the weeks to come. Everybody is doing cool things and it’s easy to get distracted.</p>
+<p>Right now <a href="http://ssfrr.com/">Spencer Russell</a> is taking some time as a resident at RC. I told him I wanted to learn some concurrency in C, which is an area he has some experience on. First thing I did was implement a very simple thread-safe queue. After that I decided to expand the project to implement a small actors library on top of that. I paired with Spencer to do this and <a href="https://github.com/miguel-vila/silly-actors/tree/8e36160c87b9e6f719b7ac75a08e54c6d9a6e2d4">this</a> is what I have at the moment. So far I’ve learnt a lot from Spencer: some things are very C-related and others things about concurrency, design and memory management. I realized it would be better to learn some of the C things by reading some book and this <a href="http://c.learncodethehardway.org/book/">one</a> looks good (Note: just over the weekend, before I published this post, the book stopped being available online for free).</p>
+<p>Right now I’m having a bug with an example I wrote for the small actors library and I’m trying to find the cause. First I used the good old <code>printf</code> but it looks like using <code>gdb</code> is a better idea (some of these simple things go over my head). Thanks to a fellow recurser I’ve learnt to do some basic things with it and I think it’s a good starting point to find the bug’s cause.</p>
+<p>Besides my silly C adventures I’m trying to learn Rust. So far the hardest thing I’ve found is the ownership system which is a feature of Rust’s type system. I think it’s intended to prevent wrong memory accesses (goodbye segfaults?) and maybe also make it safer for concurrency (avoid sharing the same memory location amongst diferent threads?).</p>
+<p>Also I finished reading very quickly the <a href="https://raft.github.io/">Raft</a> article and I have a very general view of the algorithm. Next week I would like to try reading it again while drafting a possible implementation.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2016-08-22-first-week-at-rc.html";
+        this.page.identifier = "posts/2016-08-22-first-week-at-rc.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Construido con <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    </body>
+</html>
