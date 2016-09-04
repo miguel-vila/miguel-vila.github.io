@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+        <title>
+            
+                Week 3 at RC
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        if(window.location.hostname !== 'localhost'){
+            ga('create', 'UA-74778346-1', 'auto');
+            ga('send', 'pageview');
+        }
+    </script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Inicio</a>
+            <a href="../archive.html">Posts</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
+            <a href="https://twitter.com/mglvl/">Twitter</a>
+            <a href="https://www.flickr.com/photos/77778296@N07/">Flickr</a>
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://slides.com/miguelvila/">Slides.com</a>
+        </nav>
+    </header>
+    <article>
+    <h2>Week 3 at RC</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        Septiembre  3 de 2016
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/rc.html">rc</a>, <a href="../tags/ny.html">ny</a> 
+        
+    </div>
+    <hr>
+    <p><img src="../images/rc-w3-1.jpg" style="float: left; padding: 0.5em; width: 35%"></p>
+<p>On Monday and Tuesday I worked on my C project. I was able to send one message from an actor in one machine to another one in another machine through a socket. It was mostly a simple process. What I want to do now is send multiple messages on the same connection and that’s why I was looking into <a href="https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing">COBS</a>. I have written some tests for the encoding and decoding side but it needs more work. Also I wanted to organize better my build process and <a href="http://github.com/satabdidas">Satabdi</a> helped me out with that. I feel like I’m advancing very slowly on this project.</p>
+<p>Also on Monday I attended <a href="http://groups.csail.mit.edu/mac/users/gjs/">Gerald J. Sussman</a>’s talk on Flexible Systems (<a href="https://vimeo.com/151465912">this</a> is a longer version of the talk). Sussman is one of the authors of <a href="https://mitpress.mit.edu/sicp/">SICP</a> which is the first book from which I learnt the very first notions of Functional Programming, even though the book is more general than that. It was very cool to see him and hear him in person. I didn’t ask him anything, though. I couldn’t think of any non-stupid thing to say. Some memorable quotes:</p>
+<blockquote>
+<p>“A diamond is very pretty. But it is very hard to add to a diamond. A ball of mud is not pretty. But you can always add more mud to a ball of mud.”</p>
+</blockquote>
+<blockquote>
+<p>“I want to enhance the lifes of people who are having fun programming, not because it’s a job they do, (but) because they want to think, and they want to learn by writing programs that help them think.”</p>
+</blockquote>
+<blockquote>
+<p>“Any Lisp is better than none!”</p>
+</blockquote>
+<p><img src="../images/rc-w3-2.jpg" style="float: right; padding: 0.5em; width: 35%"></p>
+<p>On Tuesday I attended the weekly code dojo and solved <a href="https://www.hackerrank.com/challenges/sherlock-and-the-beast">this</a> problem with <a href="http://github.com/vaibhavsagar">Vaibhav</a> using Haskell. Our code was very slow but afterwards Vaibhav was able to make it more efficient. <a href="https://gist.github.com/miguel-vila/9d843a954742d7c3d44c7b23f07f9e54#file-sherlock-hs">Here’s</a> the final version. It’s been a long time since I solved this kind of problem. This got me thinking about the fact that this solution may generalize for pair of numbers that are <a href="http://mathworld.wolfram.com/RelativelyPrime.html">relatively prime</a>. I swear I saw this kind of problem during some discrete math course I took, with the caveat that the solution may contain negative numbers.</p>
+<p>On Wednesday and Thursday I worked on my Raft implementation. I started to write a lot of code but I’m not sure if some parts of it are correct. I think the leader election part is the easiest one. The complex one is the part that concerns log replication. I’ve been re-reading the paper and watching <a href="http://thesecretlivesofdata.com/raft/">this</a> animation multiple times because there are some fine-grained details that I don’t understand yet. I also found <a href="https://thesquareplanet.com/blog/students-guide-to-raft/">this</a> blog post from a TA at MIT with advice for students trying to do the same thing. My strategy so far has been to hold the state of each node in an actor (looks like it’s been my favorite concurrency abstraction so far). The advantage of doing this is that it’s an abstraction that’s naturally distributable so my local tests will reflect, up to some point, what may happen in a distributed environment. Nevertheless I plan to do some kind of “real distributed tests” whatever that may mean. But for now I just want to iterate quickly.</p>
+<p>On Thursday there were some presentations. My favorites were:</p>
+<ul>
+<li><strong><a href="https://github.com/JKiely/Totes-Random">Totes random</a></strong> by <a href="https://github.com/phasedchirp">Sean</a>, <a href="https://github.com/tayloraburgess">Taylor</a> and <a href="https://github.com/JKiely">John</a>: a random number generator that uses Twitter as a source of entropy.</li>
+<li><strong><a href="https://github.com/emilyxxie/3d_soundscape">3d soundscape</a></strong> by <a href="https://github.com/emilyxxie">Emily</a>: It’s a procedurally generated 3D landscape using audio data as input. You can see a video of it <a href="https://www.youtube.com/watch?v=S6fbYi9KRuQ&amp;feature=youtu.be">here</a>. I like the idea of using code to create art, and not just doing something that, in corporate slang, “generates value”. I wish I were that creative and had the technical skill to do something like that.</li>
+<li><strong>Continued fractions</strong> by <a href="https://github.com/hrldcpr">Harold</a>: <a href="https://x.st/continued-fraction-streams/">This</a> blog post is somewhat to similar to the talk (the “live” version was very cool, I don’t think anyone would understand why I liked the presentation from reading the blog). I then realized that Harold is the same author of <a href="https://x.st/non-empty-recursion-in-elm/">this</a> same blog post that I read (and really liked) before coming to RC.</li>
+</ul>
+<p>Friday was the day of Rust:</p>
+<ul>
+<li>I watched 2 lecture videos of the <a href="http://rust-class.org/">Rust OS Class</a> and I completed the <a href="http://rust-class.org/pages/ps1.html">first programming assignment</a>.</li>
+<li>I finished the <a href="http://intermezzos.github.io/book/booting-up.html">Booting up</a> chapter of IntermezzOS.</li>
+<li>I wrote very little code of my Rust IRC server.</li>
+</ul>
+<p>And in other news: I’ve been attending a daily guided meditation group. Ten years ago Miguel would have laughed at the idea. I’ve been reading about that mindfulness thing and it sounds interesting. Also I started to read again “Gödel, Escher, Bach” during my commute (in spanish, I don’t think I’d be able to ingest that much abstraction in english). Hopefully this time I will be able to finish it.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2016-09-03-week-3-at-rc.html";
+        this.page.identifier = "posts/2016-09-03-week-3-at-rc.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Construido con <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    </body>
+</html>
