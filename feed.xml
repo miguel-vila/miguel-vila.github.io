@@ -7,8 +7,16 @@
         <description><![CDATA[Blog personal de Miguel Vilá]]></description>
         <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Sat, 03 Sep 2016 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Sun, 18 Sep 2016 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Weeks 4 and 5 at RC</title>
+    <link>http://miguel-vila.github.io/posts/2016-09-18-weeks-4-5-at-rc.html</link>
+    <description><![CDATA[My fourth and fifth weeks at RC]]></description>
+    <pubDate>Sun, 18 Sep 2016 00:00:00 UT</pubDate>
+    <guid>http://miguel-vila.github.io/posts/2016-09-18-weeks-4-5-at-rc.html</guid>
+    <dc:creator>Miguel Vilá</dc:creator>
+</item>
+<item>
     <title>Week 3 at RC</title>
     <link>http://miguel-vila.github.io/posts/2016-09-03-week-3-at-rc.html</link>
     <description><![CDATA[My third week at RC: a little more focused, a little elss confused]]></description>
@@ -38,14 +46,6 @@
     <description><![CDATA[Día 3]]></description>
     <pubDate>Mon, 15 Aug 2016 00:00:00 UT</pubDate>
     <guid>http://miguel-vila.github.io/posts/2016-08-15-day-3.html</guid>
-    <dc:creator>Miguel Vilá</dc:creator>
-</item>
-<item>
-    <title>Día 1</title>
-    <link>http://miguel-vila.github.io/posts/2016-08-13-day-1.html</link>
-    <description><![CDATA[Día 1]]></description>
-    <pubDate>Sat, 13 Aug 2016 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2016-08-13-day-1.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 

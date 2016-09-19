@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+        <title>
+            
+                Weeks 4 and 5 at RC
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        if(window.location.hostname !== 'localhost'){
+            ga('create', 'UA-74778346-1', 'auto');
+            ga('send', 'pageview');
+        }
+    </script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Inicio</a>
+            <a href="../archive.html">Posts</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
+            <a href="https://twitter.com/mglvl/">Twitter</a>
+            <a href="https://www.flickr.com/photos/77778296@N07/">Flickr</a>
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://slides.com/miguelvila/">Slides.com</a>
+        </nav>
+    </header>
+    <article>
+    <h2>Weeks 4 and 5 at RC</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        Septiembre 18 de 2016
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/rc.html">rc</a>, <a href="../tags/ny.html">ny</a> 
+        
+    </div>
+    <hr>
+    <p><img src="../images/rc-w45-1.jpg" style="float: right; padding: 0.5em; width: 35%"></p>
+<p>It’s been some time since my last post. I’ve lost track of time and I wanted to be constant with these posts, more or less as a self-accountability mechanism. Here’s what I remember doing during the last two weeks, starting with the fourth week:</p>
+<p>I’ve been struggling to make “real progress” with what it’s supposed to be my main project. I feel I haven’t got to that “flow” zone in which I make sustainable and constant progress. Monday was Labor Day in the States and I decided to rest. On Tuesday I took some time for my C project and I got to test the COBS encoding and decoding in two different processes. There are still more tests to do, and some things to clean up. That project is very small but I would like to close it by giving it some final touches.</p>
+<p>On Wednesday and Thursday I continued with my raft implementation. I’m trying to setup some tests, specially for the failure cases. There are various kind of failures I’m interested in testing: complete node failures and disconnects or network partitions between nodes. I found that Akka provides a multi node testkit which should help me with that. I’m still trying to make the tests work, but so far that testkit looks very powerful.</p>
+<p>On Thursday I attended Lisa’s talk on how to read code. It was focused on reading open source libraries code. This reminded me that sometimes you need to swim through a lot of abstraction in a library to find the specific piece of code you are interested in, which sometimes means, for example, to look for the implementations of abstract classes.</p>
+<p>Also attended Emily’s workshop on <a href="http://p5js.org/">p5.js</a>. p5 may be seen as a JavaScript port of <a href="https://processing.org/">Processing</a>. It can be used to write generative art. It has a very simple API. One of my favorites examples of what you can do with it it’s <a href="http://xie-emily.com/projects/noise_art.html">this</a> piece by Emily.</p>
+<p>And finally my favorite talks:</p>
+<ul>
+<li><strong>BF REPL</strong>: <a href="https://github.com/gudnm">Ivan</a> live coded a REPL for <a href="https://en.wikipedia.org/wiki/Brainfuck">Brainfuck</a> in exactly 5 minutes, which is an amazing feat.</li>
+<li><strong>Word embeddings</strong>: Once again a presentation by <a href="https://github.com/hrldcpr">Harold</a>. This one was about vector representations of words (I think this is related to <a href="https://code.google.com/archive/p/word2vec/">word2vec</a>). This is useful because the words vectors preserve some of the words relations. For example:</li>
+</ul>
+<pre><code>closestVector( ( vector(&quot;man&quot;) - vector(&quot;king&quot;) ) + vector(&quot;woman&quot;)  ) == vector(&quot;queen&quot;)</code></pre>
+<p>That is: word analogies can be modeled as vector translations!</p>
+<p>About last week:</p>
+<p>I decided to change to something completely different. I started to write a Scheme interpreter by following <a href="https://en.wikibooks.org/wiki/Write_Yourself_a_Scheme_in_48_Hours">this</a> tutorial. By the way: I don’t recommend that tutorial unless you know some Haskell beforehand. It assumes you know a good deal of things about Haskell and spends little or no time explaining concepts. So far I’ve learned about <a href="https://wiki.haskell.org/Existential_type">existential types</a> and how to make useful test helpers based on the suggestion of another recurser (<a href="https://github.com/miguel-vila/scheme-in-haskell/blob/cd333bfa1f777f962a702ffa86683b81f7aa59af/test/EvalSpec.hs#L17-L23">for example</a>). Unlike the raft project I can advance very quickly with this. I hope to finish it next week and maybe do some additional things afterwards like supporting macros or a more interactive REPL.</p>
+<p>I also want to learn about operating systems. I was trying to follow the <a href="http://intermezzos.github.io/">intermezzos</a> tutorial but I got stuck at some point trying to use a forked version of rust’s libcore (I don’t remember all the details of the specific issue). So I decided to follow <a href="http://os.phil-opp.com/">this</a> other tutorial in the same vein and now I can print to the screen using rust. All these tutorials also assume you should know some things beforehand. I haven’t wrapped my head around pagination so I’m trying to read about it. I know I can continue to do the things that the tutorial says but I want to understand better some of the details.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2016-09-18-weeks-4-5-at-rc.html";
+        this.page.identifier = "posts/2016-09-18-weeks-4-5-at-rc.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Construido con <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    </body>
+</html>
