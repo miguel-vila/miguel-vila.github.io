@@ -11751,7 +11751,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Towards-an-Applicative-for-macro">Towards an Applicative for macro<a class="anchor-link" href="#Towards-an-Applicative-for-macro">&#182;</a></h1><p>(This post is Jupyter notebook that you can run. You can download it <a href="https://raw.githubusercontent.com/miguel-vila/applicative-for/fce55249ebbb36a21d98457fc5257aa690e98014/BlogPost.ipynb">here</a>)</p>
+<h1 id="Towards-an-Applicative-for-macro">Towards an Applicative for macro<a class="anchor-link" href="#Towards-an-Applicative-for-macro">&#182;</a></h1><p>(This post is a Jupyter notebook that you can run. You can download it <a href="https://raw.githubusercontent.com/miguel-vila/applicative-for/fce55249ebbb36a21d98457fc5257aa690e98014/BlogPost.ipynb">here</a>)</p>
 <p>Some time ago with the release of the Haskell's <a href="https://hackage.haskell.org/package/haxl">Haxl</a> library the same authors realized that the <code>do</code> notation in Haskell could use some improvements. The <code>do</code> notation can be used to "flatten" deep nestings of <code>&gt;&gt;=</code> applications. For example instead of writting something like this:</p>
 <div class="highlight"><pre><span></span><span class="nf">findVal</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="kt">Int</span>
 <span class="nf">findVal</span> <span class="n">key</span> <span class="ow">=</span> <span class="o">...</span> <span class="c1">-- some function definition</span>
@@ -12423,7 +12423,7 @@ Apply(Select(Ident(TermName(&#34;x&#34;)), TermName(&#34;$plus&#34;)), List(Iden
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>And let's combine them with <code>ValidationApplicative.map2</code>:</p>
+<p>And let's combine them with <code>ValidationApplicative.map2</code>. We will describe our desired expression with a <a href="http://docs.scala-lang.org/overviews/quasiquotes/intro.html">quasiquote</a>:</p>
 
 </div>
 </div>
