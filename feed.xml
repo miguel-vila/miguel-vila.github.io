@@ -9,7 +9,7 @@
                    type="application/rss+xml" />
         <lastBuildDate>Sun, 09 Oct 2016 00:00:00 UT</lastBuildDate>
         <item>
-    <title>Towards an Applicative for macro</title>
+    <title>Towards an applicative-for macro</title>
     <link>http://miguel-vila.github.io/posts/2016-10-09-towards-an-applicative-for-macro.html</link>
     <description><![CDATA[The first steps on building a macro that calls Applicative's functions when possible]]></description>
     <pubDate>Sun, 09 Oct 2016 00:00:00 UT</pubDate>

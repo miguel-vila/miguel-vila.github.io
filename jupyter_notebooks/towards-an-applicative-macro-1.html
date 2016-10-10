@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Towards an applicative macro</title>
+<title>towards-an-applicative-macro-1</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -11751,13 +11751,16 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Towards-an-Applicative-for-macro">Towards an Applicative for macro<a class="anchor-link" href="#Towards-an-Applicative-for-macro">&#182;</a></h1><p>(This post is a Jupyter notebook that you can run. You can download it <a href="https://raw.githubusercontent.com/miguel-vila/applicative-for/fce55249ebbb36a21d98457fc5257aa690e98014/BlogPost.ipynb">here</a>)</p>
+<h1 id="Towards-an-applicative-for-macro">Towards an applicative-for macro<a class="anchor-link" href="#Towards-an-applicative-for-macro">&#182;</a></h1><p>(This post is a Jupyter notebook that you can run. You can download it <a href="https://github.com/miguel-vila/applicative-for/blob/dde6400906f60778efea75f3a673b75e31740319/towards-an-applicative-macro-1.ipynb">here</a>)</p>
 <p>Some time ago with the release of the Haskell's <a href="https://hackage.haskell.org/package/haxl">Haxl</a> library the same authors realized that the <code>do</code> notation in Haskell could use some improvements. The <code>do</code> notation can be used to "flatten" deep nestings of <code>&gt;&gt;=</code> applications. For example instead of writting something like this:</p>
 <div class="highlight"><pre><span></span><span class="nf">findVal</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="kt">Int</span>
 <span class="nf">findVal</span> <span class="n">key</span> <span class="ow">=</span> <span class="o">...</span> <span class="c1">-- some function definition</span>
 
 <span class="nf">sum</span> <span class="ow">::</span> <span class="kt">Maybe</span> <span class="kt">Int</span>
-<span class="nf">sum</span> <span class="ow">=</span> <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key1&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">val1</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key2&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">val2</span> <span class="ow">-&gt;</span> <span class="n">return</span> <span class="p">(</span><span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span><span class="p">))))</span>
+<span class="nf">sum</span> <span class="ow">=</span> 
+    <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key1&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">val1</span> <span class="ow">-&gt;</span> 
+        <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key2&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">val2</span> <span class="ow">-&gt;</span> 
+            <span class="n">return</span> <span class="p">(</span><span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span><span class="p">))))</span>
 </pre></div>
 <p>you can write:</p>
 <div class="highlight"><pre><span></span><span class="nf">sum</span> <span class="ow">::</span> <span class="kt">Maybe</span> <span class="kt">Int</span>
@@ -11765,8 +11768,8 @@ div#notebook {
          <span class="n">val2</span> <span class="ow">&lt;-</span> <span class="n">findVal</span> <span class="s">&quot;key2&quot;</span>
          <span class="n">return</span> <span class="p">(</span><span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span><span class="p">)</span>
 </pre></div>
-<p>This makes it easier to read the expression and to understand what's going on. Haskell's compiler simply desugars this notation to <code>&gt;&gt;=</code> applications. The <code>do</code> notation is specially readable because you can interpret it as follows: At the left side of a <code>&lt;-</code> you will find the "extracted" value of the monadic value at the right side.</p>
-<p>Now as you may have noticed in the previous example we are not using the whole power of the <code>Monad</code> typeclass. We are just calling <code>&gt;&gt;=</code> because we want to have the values inside the monadic values in the same place so we can express our desired computation: <code>(val1 + val2)</code>. But <code>Monad</code> is more powerful than that! For example we can express something like this:</p>
+<p>This makes it easier to read the expression and to understand what's going on. Haskell's compiler simply desugars this notation into <code>&gt;&gt;=</code> applications. The <code>do</code> notation is specially readable because you can interpret it as follows: At the left side of a <code>&lt;-</code> you will find the "extracted" value of the monadic value at the right side.</p>
+<p>Now as you may have noticed in the previous example we are not using the complete power of the <code>Monad</code> typeclass. We are just calling <code>&gt;&gt;=</code> because we want to have the values inside the monadic values in the same place so we can express our desired computation: <code>(val1 + val2)</code>. But <code>Monad</code> is more powerful than that! For example we can express something like this:</p>
 <div class="highlight"><pre><span></span><span class="kr">do</span> <span class="n">val1</span> <span class="ow">&lt;-</span> <span class="n">findVal</span> <span class="s">&quot;key1&quot;</span>
    <span class="n">val2</span> <span class="ow">&lt;-</span> <span class="n">findVal</span> <span class="p">(</span><span class="s">&quot;key&quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">val1</span><span class="p">)</span>
    <span class="n">return</span> <span class="n">val2</span>
@@ -11777,7 +11780,7 @@ div#notebook {
 
 <span class="nf">sum</span> <span class="ow">=</span> <span class="n">add</span> <span class="o">&lt;$&gt;</span> <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key1&quot;</span><span class="p">)</span> <span class="o">&lt;*&gt;</span> <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key2&quot;</span><span class="p">)</span>
 </pre></div>
-<p>If you are thinking this is less readable than the <code>do</code> version you are on to something. As it turns out for the <code>Maybe</code> monad there is not much difference between choosing one style over the other because both alternatives have a similar performance. But there are other monads in which it is preferrable to use <code>Applicative</code> when possible. The first one that comes to my mind is precisely Haxl's <code>Fetch</code> monad. With <code>Fetch</code> applicative independent computations can be done concurrently. Even more if they access the same data source then the query can be batched.</p>
+<p>If you are thinking this is less readable than the <code>do</code> version you are on to something. As it turns out for the <code>Maybe</code> monad there is not much difference between choosing one style over the other because both alternatives have a similar performance. But there are other monads in which it is preferrable to use <code>Applicative</code> when possible. The first one that comes to my mind is precisely Haxl's <code>Fetch</code> monad. With the applicative instance for <code>Fetch</code> independent data fetches can be done concurrently. Even more if they access the same data source then the query can be batched.</p>
 <p>For instance in the following situation:</p>
 <div class="highlight"><pre><span></span><span class="nf">fetchData</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">Fetch</span> <span class="kt">Data</span>
 <span class="nf">fetchData</span> <span class="n">key</span> <span class="ow">=</span> <span class="o">...</span> <span class="c1">-- build fetch value</span>
@@ -11795,7 +11798,7 @@ div#notebook {
 <p>But there is a catch: given that in this situation the <code>do</code> expression is desugared into <code>&gt;&gt;=</code> applications then the fetches are done sequentially. This is because the first monadic value must be computed before computing the one in the second line. Thus, by trying to use a more intuitive and readable notation we are incurring in a performance loss.</p>
 <p>But the problem is not just readability. When you are making changes to a codebase you must be aware that the change may allow you to use <code>Applicative</code> instead of monad. This may happen if, for example you are changing a line of a <code>do</code> expression.</p>
 <p>Wouldn't it be cool if <code>do</code> expressions would use <code>Monad</code> just when they are strictly necessary and <code>Applicative</code> where possible? This would allow us to always use the <code>do</code> notation without having to worry if we are using the correct typeclass. This is precisely the topic of Haxl's follow-up <a href="http://research.microsoft.com/en-us/um/people/simonpj/papers/list-comp/applicativedo.pdf">paper</a>. There is a <a href="https://ghc.haskell.org/trac/ghc/wiki/ApplicativeDo">proposal</a> in the Haskell community to include this behaviour in the GHC.</p>
-<p>Now, let's see in Scala how useful this could be. First remember that Scala's <code>for</code> comprehensions are similar to Haskell's <code>do</code> expressions: they just call <code>flatMap</code> for each <code>&lt;-</code> except for the last one which will be a <code>map</code> call.</p>
+<p>Now, let's see in Scala how useful this could be. First, remember that Scala's <code>for</code> comprehensions are similar to Haskell's <code>do</code> expressions: they just call <code>flatMap</code> for each <code>&lt;-</code> except for the last one which will be a <code>map</code> call.</p>
 <p>Let's start with our very own definition of a <code>Validation</code> which will be similar to Scalaz's <code>ValidationNel</code> or Cat's <code>ValidatedNel</code>:</p>
 
 </div>
@@ -11901,7 +11904,7 @@ defined <span class="ansi-green-fg">object </span><span class="ansi-cyan-fg">Val
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Our definition of <code>Applicative</code> is a little bit different from the usual formulation which describes a function <code>ap</code> (with type <code>F[A =&gt; B] =&gt; F[A] =&gt; F[B]</code>). As it turns out both formulations are equivalent: you can convince yourself by implementing one in terms of the other.</p>
-<p>Another thing to notice is that when <code>flatMap</code> fails it will fail with the error of the first <code>Validation</code> value. In contrast the <code>Applicative</code> instance says that if both of the values are failed then we can accumulate them.</p>
+<p>Another thing to notice is that when <code>flatMap</code> fails it will fail with the error of the first <code>Validation</code> value. In contrast the <code>Applicative</code> instance says that if both of the values are failed then we can accumulate the errors.</p>
 <p>Let's see an example. First with <code>flatMap</code>:</p>
 
 </div>
@@ -11949,7 +11952,7 @@ defined <span class="ansi-green-fg">object </span><span class="ansi-cyan-fg">Val
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this case the error in the result value is the one in the first validation. But given that the value <code>v2</code> doesn't depend on the value <code>x</code> couldn't we report also the failure of <code>v2</code>? Let's see  what <code>Applicative</code> can do:</p>
+<p>In this case the error in the result value is the one in the first validation. But given that the value <code>v2</code> doesn't depend on the value <code>x</code> couldn't we also report the failure of <code>v2</code>? Let's see  what <code>Applicative</code> can do:</p>
 
 </div>
 </div>
@@ -11998,12 +12001,14 @@ defined <span class="ansi-green-fg">object </span><span class="ansi-cyan-fg">Val
 </pre></div>
 <p>If we used a for comprehension we would be making a mistake because if there is one error only that one is going to be returned. We can use Applicative and some syntactic sugar like the one in Scalaz to get something like this:</p>
 <div class="highlight"><pre><span></span><span class="k">for</span> <span class="o">{</span>
-    <span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">,</span> <span class="n">okAge</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">validateFirstNameField</span> <span class="o">|@|</span> <span class="n">validateLastNameField</span> <span class="o">|@|</span> <span class="n">validateAge</span><span class="o">).</span><span class="n">tupled</span>
+    <span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">,</span> <span class="n">okAge</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">validateFirstNameField</span> <span class="o">|@|</span> 
+                                         <span class="n">validateLastNameField</span> <span class="o">|@|</span> 
+                                         <span class="n">validateAge</span><span class="o">).</span><span class="n">tupled</span>
     <span class="n">okFullName</span>                       <span class="k">&lt;-</span> <span class="n">validateFullName</span><span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">)</span>
 <span class="o">}</span> <span class="k">yield</span> <span class="nc">NewUserData</span><span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">,</span> <span class="n">okFullName</span><span class="o">,</span> <span class="n">okAge</span><span class="o">)</span>
 </pre></div>
-<p>This works but it may be less readable. More importantly this is more brittle to future changes and is coupled to the current computation structure. You can imagine what may happen with more fields and more complex dependencies between those fields.</p>
-<h2 id="Towards-an-Applicative-macro">Towards an Applicative macro<a class="anchor-link" href="#Towards-an-Applicative-macro">&#182;</a></h2><p>I would be very useful if this could be done automatically by the compiler. In Scala the for comprehensions syntax is just another phase of the compiler. So when a macro inspects this code it will be already desugared into a nested sequence of <code>flatMap</code>s and <code>map</code>s. Let's see if we can build a macro that replaces <code>flatMap</code>s and <code>map</code>s by <code>map2</code>s when possible.</p>
+<p>This works but it may be less readable. More importantly this is coupled to the current computation structure. You can imagine what may happen with more fields and more complex dependencies between those fields.</p>
+<h2 id="Towards-an-applicative-for-macro">Towards an applicative-for macro<a class="anchor-link" href="#Towards-an-applicative-for-macro">&#182;</a></h2><p>It would be very useful if this could be done automatically by the compiler. In Scala the for comprehensions syntax is just another phase of the compiler. So when a macro inspects this code it will be already desugared into a nested sequence of <code>flatMap</code>s and <code>map</code>s. Let's see if we can build a macro that replaces <code>flatMap</code>s and <code>map</code>s by <code>map2</code>s when possible.</p>
 <p>We are going to start with a very simple example:</p>
 
 </div>
@@ -12322,7 +12327,7 @@ ValDef(Modifiers(PARAM), TermName(&#34;x&#34;), TypeTree(), EmptyTree)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As we can see for computing the second term we don't need the function argument. So we want to transform this <code>flatMap</code>-&gt;<code>map</code> call into an <code>Applicative</code>'s <code>map2</code> call. For this we will need to extract the innermost expression of the for comprehension, that is the <code>x+y</code> expression. After that we will have to build the <code>map2</code> call passing the appropiate arguments. First, let's extract that expression from <code>nextFunctionDef</code>:</p>
+<p>As we can see when computing the second term we don't need the function argument. So we want to transform this <code>flatMap</code>-&gt;<code>map</code> call into an <code>Applicative</code>'s <code>map2</code> call. For this we will need to extract the innermost expression of the for comprehension, that is the <code>x+y</code> expression. After that we will have to build the <code>map2</code> call passing the appropiate arguments. First, let's extract that expression from <code>nextFunctionDef</code>:</p>
 
 </div>
 </div>
@@ -12499,7 +12504,7 @@ Apply(Select(Ident(TermName(&#34;ValidationApplicative&#34;)), TermName(&#34;map
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
-<p>As you may have noticed there are some differences with respect to what we did above: when matching the function calls the first argument has different shape (it's wrapped in a <code>TypeApply</code> object). Other than that it's mostly the same as what we did above. I don't know the cause for these differences with respect to our REPL / Jupyter session.</p>
+<p>As you may have noticed there are some differences with respect to what we did above: when matching the function calls the first argument has different shape (it's wrapped in a <code>TypeApply</code> object). Other than that it's mostly the same as what we did above. I don't know the cause for these differences with respect to our REPL / Jupyter session. I'm just starting to learn macros!</p>
 <p>Let's see the macro in action:</p>
 <div class="highlight"><pre><span></span><span class="k">val</span> <span class="n">v1</span><span class="k">:</span> <span class="kt">Validation</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Failure</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">&quot;error1&quot;</span><span class="o">))</span>
 <span class="k">val</span> <span class="n">v2</span><span class="k">:</span> <span class="kt">Validation</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Failure</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">&quot;error2&quot;</span><span class="o">))</span>
@@ -12513,7 +12518,7 @@ Apply(Select(Ident(TermName(&#34;ValidationApplicative&#34;)), TermName(&#34;map
 <span class="n">println</span><span class="o">(</span><span class="n">resultWhenApplicative</span><span class="o">)</span>
 <span class="c1">// &gt; Failure(List(error1, error2))</span>
 </pre></div>
-<p>This is what we wanted! We used a for comprehension but our macro detected that <code>map2</code> could be used!</p>
+<p>This is what we wanted! We used a for comprehension but our macro detected that <code>map2</code> could be used and thus both errors were reported!</p>
 <p>Now let's test it with an expression that really needs <code>flatMap</code>:</p>
 <div class="highlight"><pre><span></span><span class="k">val</span> <span class="n">resultWhenMonad</span> <span class="k">=</span> <span class="n">app_for</span> <span class="o">{</span>
     <span class="k">for</span> <span class="o">{</span>
