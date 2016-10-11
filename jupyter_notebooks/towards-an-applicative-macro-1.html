@@ -11757,9 +11757,9 @@ div#notebook {
 
 <span class="nf">sum</span> <span class="ow">::</span> <span class="kt">Maybe</span> <span class="kt">Int</span>
 <span class="nf">sum</span> <span class="ow">=</span> 
-    <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key1&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">val1</span> <span class="ow">-&gt;</span> 
-        <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key2&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">val2</span> <span class="ow">-&gt;</span> 
-            <span class="n">return</span> <span class="p">(</span><span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span><span class="p">))))</span>
+    <span class="n">findVal</span> <span class="s">&quot;key1&quot;</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="n">val1</span> <span class="ow">-&gt;</span> 
+        <span class="n">findVal</span> <span class="s">&quot;key2&quot;</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="n">val2</span> <span class="ow">-&gt;</span> 
+            <span class="n">return</span> <span class="p">(</span><span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span><span class="p">)</span>
 </pre></div>
 <p>you can write:</p>
 <div class="highlight"><pre><span></span><span class="nf">sum</span> <span class="ow">::</span> <span class="kt">Maybe</span> <span class="kt">Int</span>
@@ -11774,7 +11774,7 @@ div#notebook {
    <span class="n">return</span> <span class="n">val2</span>
 </pre></div>
 <p>In this case the second monadic value depends on the result of the first monadic value. Unlike the previous example this can only be achieved with something as powerful as <code>Monad</code>.</p>
-<p>When programming we want to use the least powerful abstraction and in functional programming this translates into using the least specific typeclass. In this case the least powerful abstraction that allows us to join values in different contexts into one is <code>Applicative</code>. We can rewrite the first example like this:</p>
+<p>When programming we want to use the least powerful abstraction and in functional programming this translates into using the least specific typeclass. The least powerful abstraction that allows us to join values in different contexts into one is <a href="http://www.staff.city.ac.uk/~ross/papers/Applicative.pdf"><code>Applicative</code></a>. We can rewrite the first example like this:</p>
 <div class="highlight"><pre><span></span><span class="nf">add</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
 
 <span class="nf">sum</span> <span class="ow">=</span> <span class="n">add</span> <span class="o">&lt;$&gt;</span> <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key1&quot;</span><span class="p">)</span> <span class="o">&lt;*&gt;</span> <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key2&quot;</span><span class="p">)</span>
@@ -11794,16 +11794,26 @@ div#notebook {
    <span class="n">data2</span> <span class="ow">&lt;-</span> <span class="n">fetchData</span> <span class="s">&quot;key2&quot;</span>
    <span class="n">return</span> <span class="p">(</span><span class="n">data1</span><span class="p">,</span><span class="n">data2</span><span class="p">)</span>
 </pre></div>
-<p>In this situation the <code>do</code> expression is desugared into <code>&gt;&gt;=</code> applications. Thus the fetches are done sequentially. This is because the first monadic value must be computed before computing the one in the second line. Thus, by trying to use a more intuitive and readable notation we are incurring in a performance loss.</p>
+<p>In this situation the <code>do</code> expression is desugared into <code>&gt;&gt;=</code> applications. Then the fetches will be executed sequentially and not concurrently. This is because the first monadic value must be computed before computing the one in the second line. Thus, by trying to use a more intuitive and readable notation we are incurring in a performance loss.</p>
 <p>But the problem is not just readability. When you are making changes to a codebase you must be aware that the change may allow you to use <code>Applicative</code> instead of monad. This may happen if, for example you are changing a line of a long <code>do</code> expression.</p>
-<p>Wouldn't it be cool if <code>do</code> expressions would use <code>Monad</code> just when they are strictly necessary and <code>Applicative</code> where possible? This would allow us to always use the <code>do</code> notation without having to worry if we are using the correct typeclass. This is precisely the topic of Haxl's follow-up <a href="http://research.microsoft.com/en-us/um/people/simonpj/papers/list-comp/applicativedo.pdf">paper</a>. There is a <a href="https://ghc.haskell.org/trac/ghc/wiki/ApplicativeDo">proposal</a> in the Haskell community to include this behaviour in the GHC.</p>
-<blockquote><p>You may be asking "doesn't this break the "law" that says that Applicative and Monad should behave consistently?" More concretely I think that law is described as fullfilling the following equation:</p>
-<p><code>fa &gt;&gt;= (\a -&gt; fb &gt;&gt;= (\b -&gt; return (f a b))) == f &lt;$&gt; fa &lt;*&gt; fb</code></p>
-<p>Well, the applicative-do transformation would break this law for types that return <em>different</em> values at each side of this equation. But it's still a useful transformation if it's more efficient to use <code>Applicative</code> than `Monad to compute the <em>same</em> value.</p>
+<p>Wouldn't it be cool if <code>do</code> expressions would use <code>Monad</code> just when they are strictly necessary and <code>Applicative</code> where possible? This would allow us to always use the <code>do</code> notation without having to worry if we are using the correct typeclass. This is precisely the topic of Haxl's follow-up <a href="http://research.microsoft.com/en-us/um/people/simonpj/papers/list-comp/applicativedo.pdf">paper</a>. There is a <a href="https://ghc.haskell.org/trac/ghc/wiki/ApplicativeDo">proposal</a> in the Haskell community to include this behaviour in the GHC. This kind of transformation would allow us to treat values that have an <code>Applicative</code> or <code>Monad</code> instance with the same universal notation: the do expression.</p>
+<blockquote><p>You may be asking "doesn't this break the 'law' that says that Applicative and Monad should behave consistently?" More concretely I think that law is described as fulfilling the following equation:</p>
+<div class="highlight"><pre><span></span><span class="nf">fa</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="n">a</span> <span class="ow">-&gt;</span> 
+    <span class="n">fb</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="n">b</span> <span class="ow">-&gt;</span> 
+        <span class="n">return</span> <span class="p">(</span><span class="n">f</span> <span class="n">a</span> <span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="n">f</span> <span class="o">&lt;$&gt;</span> <span class="n">fa</span> <span class="o">&lt;*&gt;</span> <span class="n">fb</span>
+</pre></div>
+<p>Well, the applicative-do transformation would break this law for types that return <em>different</em> values at each side of this equation. But it's still a useful transformation if it's more efficient to use <code>Applicative</code> than <code>Monad</code> to compute the <em>same</em> value.</p>
 <p>But in the other cases there is another answer: Sometimes it's worth to break the laws if your intentions are pure. This is the case of <code>Fetch</code> in which the value returned may differ in shape but at the end should reflect the same data.</p>
 </blockquote>
-<p>This post is about trying to do the same in Scala. First, remember that Scala's <code>for</code> comprehensions are similar to Haskell's <code>do</code> expressions: they just call <code>flatMap</code> for each <code>&lt;-</code> except for the last one which will be a <code>map</code> call.</p>
-<p>Let's start with our very own definition of a <code>Validation</code> which will be similar to <a href="https://github.com/scalaz/scalaz">Scalaz</a>'s <code>ValidationNel</code> or <a href="https://github.com/typelevel/cats">Cat</a>'s <code>ValidatedNel</code>:</p>
+<p>This post is about trying to do the same transformation in Scala. First, remember that Scala's <code>for</code> comprehensions are similar to Haskell's <code>do</code> expressions: they just call <code>flatMap</code> for each <code>&lt;-</code> except for the last one which will be a <code>map</code> call. The first example that we previously wrote in Haskell can be translated to Scala like this:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">findVal</span><span class="o">(</span><span class="n">key</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
+
+<span class="k">for</span> <span class="o">{</span>
+    <span class="n">val1</span> <span class="k">&lt;-</span> <span class="n">findVal</span><span class="o">(</span><span class="s">&quot;key1&quot;</span><span class="o">)</span>
+    <span class="n">val2</span> <span class="k">&lt;-</span> <span class="n">findVal</span><span class="o">(</span><span class="s">&quot;key2&quot;</span><span class="o">)</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span>
+</pre></div>
+<p>Let's start with our very own definition of a <code>Validation</code> which will be similar to <a href="https://github.com/scalaz/scalaz">Scalaz</a>'s <code>ValidationNel</code> or <a href="https://github.com/typelevel/cats">Cat</a>'s <code>ValidatedNel</code> though it will be less general:</p>
 
 </div>
 </div>
@@ -11908,7 +11918,7 @@ defined <span class="ansi-green-fg">object </span><span class="ansi-cyan-fg">Val
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Our definition of <code>Applicative</code> is a little bit different from the usual formulation which describes a function <code>ap</code> (with type <code>F[A =&gt; B] =&gt; F[A] =&gt; F[B]</code>). As it turns out both formulations are equivalent: you can convince yourself by implementing one in terms of the other.</p>
-<p>Another thing to notice is that when <code>flatMap</code> fails it will fail with the error of the first <code>Validation</code> value. In contrast the <code>Applicative</code> instance says that if both of the values are failed then we can accumulate the errors.</p>
+<p>Another thing to notice is that when <code>flatMap</code> fails it will fail with the error of the first <code>Validation</code> value (because there is in fact, no other way to do this). In contrast, the <code>Applicative</code> instance says that if both values are <code>Failure</code>s then we can accumulate the errors.</p>
 <p>Let's see an example. First with <code>flatMap</code>:</p>
 
 </div>
@@ -12004,7 +12014,7 @@ defined <span class="ansi-green-fg">object </span><span class="ansi-cyan-fg">Val
     <span class="n">okAge</span>       <span class="k">&lt;-</span> <span class="n">validateAge</span>
 <span class="o">}</span> <span class="k">yield</span> <span class="nc">NewUserData</span><span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">,</span> <span class="n">okFullName</span><span class="o">,</span> <span class="n">okAge</span><span class="o">)</span>
 </pre></div>
-<p>If we used a for comprehension we would be making a mistake because if there is one error only that one is going to be returned. We can use Applicative and some syntactic sugar like the one in Scalaz to get something like this:</p>
+<p>If we used a for comprehension sequencing each validation then we would be making a mistake because if there is one error only that one is going to be returned. We can use Applicative and some syntactic sugar like the one in Scalaz to get something like this:</p>
 <div class="highlight"><pre><span></span><span class="k">for</span> <span class="o">{</span>
     <span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">validateFirstNameField</span> <span class="o">|@|</span> 
                                   <span class="n">validateLastNameField</span><span class="o">).</span><span class="n">tupled</span> <span class="o">|@|</span> 
@@ -12013,7 +12023,7 @@ defined <span class="ansi-green-fg">object </span><span class="ansi-cyan-fg">Val
 <span class="o">}</span> <span class="k">yield</span> <span class="nc">NewUserData</span><span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">,</span> <span class="n">okFullName</span><span class="o">,</span> <span class="n">okAge</span><span class="o">)</span>
 </pre></div>
 <p>This works but it may be less readable. More importantly this is coupled to the current computation structure. You can imagine what may happen with more fields and more complex dependencies between those fields.</p>
-<h2 id="Towards-an-applicative-for-macro">Towards an applicative-for macro<a class="anchor-link" href="#Towards-an-applicative-for-macro">&#182;</a></h2><p>It would be very useful if this could be done automatically by the compiler. In Scala the for comprehensions syntax is just another phase of the compiler. So when a macro inspects this code it will be already desugared into a nested sequence of <code>flatMap</code>s and <code>map</code>s. Let's see if we can build a macro that replaces <code>flatMap</code>s and <code>map</code>s by <code>map2</code>s when possible.</p>
+<h2 id="Towards-an-applicative-for-macro">Towards an applicative-for macro<a class="anchor-link" href="#Towards-an-applicative-for-macro">&#182;</a></h2><p>It would be very useful if this could be done automatically by the compiler. In Scala the for comprehensions syntax is just another phase of the compiler. So when a macro inspects this code it will be already desugared into a nested sequence of <code>flatMap</code>s and <code>map</code>s. Let's see if we can build a macro that replaces <code>flatMap</code>s and <code>map</code>s by <code>Applicative.map2</code>s when possible.</p>
 <p>We are going to start with a very simple example:</p>
 
 </div>
@@ -12198,7 +12208,7 @@ Function(List(ValDef(Modifiers(PARAM), TermName(&#34;x&#34;), TypeTree(), EmptyT
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If the <code>functionBody</code> calls <code>map</code> or <code>flatMap</code> over some expression, then we must identify if that expression uses <code>firstTermArgument</code>. If that's the case then we can't do anything, one expression depends on the other and <code>flatMap</code> is the right choice. But if not, then that's an opportunity to use <code>Applicative</code>'s <code>map2</code> instead of <code>flatMap</code>. Let's first define a function <code>usesTerm</code> that will indicate if a term is used in a expression:</p>
+<p>If the <code>functionBody</code> calls <code>map</code> or <code>flatMap</code> over some expression, then we must identify if that expression uses <code>firstTermArgument</code>. If that's the case then we can't do anything, one expression depends on the other and <code>flatMap</code> is the right choice. But if not, then that's an opportunity to use <code>Applicative</code>'s <code>map2</code> instead of <code>flatMap</code>. Let's first define a function <code>usesTerm</code> that will indicate if a term is used in some expression:</p>
 
 </div>
 </div>
@@ -12386,11 +12396,11 @@ Function(List(ValDef(Modifiers(PARAM), TermName(&#34;y&#34;), TypeTree(), EmptyT
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-scala"><pre><span></span><span class="n">showRaw</span><span class="o">(</span><span class="n">firstMonadicValue</span><span class="o">)</span>
-<span class="n">showRaw</span><span class="o">(</span><span class="n">firstArgumentTerm</span><span class="o">)</span>
-<span class="n">showRaw</span><span class="o">(</span><span class="n">secondMonadicValue</span><span class="o">)</span>
-<span class="n">showRaw</span><span class="o">(</span><span class="n">secondArgumentTerm</span><span class="o">)</span>
-<span class="n">showRaw</span><span class="o">(</span><span class="n">innerExpr</span><span class="o">)</span>
+<div class=" highlight hl-scala"><pre><span></span><span class="n">println</span><span class="o">(</span><span class="n">firstMonadicValue</span><span class="o">)</span>
+<span class="n">println</span><span class="o">(</span><span class="n">firstArgumentTerm</span><span class="o">)</span>
+<span class="n">println</span><span class="o">(</span><span class="n">secondMonadicValue</span><span class="o">)</span>
+<span class="n">println</span><span class="o">(</span><span class="n">secondArgumentTerm</span><span class="o">)</span>
+<span class="n">println</span><span class="o">(</span><span class="n">innerExpr</span><span class="o">)</span>
 </pre></div>
 
 </div>
@@ -12402,24 +12412,21 @@ Function(List(ValDef(Modifiers(PARAM), TermName(&#34;y&#34;), TypeTree(), EmptyT
 
 
 <div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cmd5.$ref$cmd4.v1
+val x = _
+cmd5.$ref$cmd4.v2
+val y = _
+x.$plus(y)
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt"></div>
 
 
 <div class="output_text output_subarea ">
-<pre><span class="ansi-cyan-fg">res12_0</span>: <span class="ansi-green-fg">String</span> = <span class="ansi-green-fg">&#34;&#34;&#34;
-Select(Select(Ident(TermName(&#34;cmd5&#34;)), TermName(&#34;$ref$cmd4&#34;)), TermName(&#34;v1&#34;))
-&#34;&#34;&#34;</span>
-<span class="ansi-cyan-fg">res12_1</span>: <span class="ansi-green-fg">String</span> = <span class="ansi-green-fg">&#34;&#34;&#34;
-ValDef(Modifiers(PARAM), TermName(&#34;x&#34;), TypeTree(), EmptyTree)
-&#34;&#34;&#34;</span>
-<span class="ansi-cyan-fg">res12_2</span>: <span class="ansi-green-fg">String</span> = <span class="ansi-green-fg">&#34;&#34;&#34;
-Select(Select(Ident(TermName(&#34;cmd5&#34;)), TermName(&#34;$ref$cmd4&#34;)), TermName(&#34;v2&#34;))
-&#34;&#34;&#34;</span>
-<span class="ansi-cyan-fg">res12_3</span>: <span class="ansi-green-fg">String</span> = <span class="ansi-green-fg">&#34;&#34;&#34;
-ValDef(Modifiers(PARAM), TermName(&#34;y&#34;), TypeTree(), EmptyTree)
-&#34;&#34;&#34;</span>
-<span class="ansi-cyan-fg">res12_4</span>: <span class="ansi-green-fg">String</span> = <span class="ansi-green-fg">&#34;&#34;&#34;
-Apply(Select(Ident(TermName(&#34;x&#34;)), TermName(&#34;$plus&#34;)), List(Ident(TermName(&#34;y&#34;))))
-&#34;&#34;&#34;</span></pre>
+<pre></pre>
 </div>
 
 </div>
@@ -12482,7 +12489,7 @@ Apply(Select(Ident(TermName(&#34;ValidationApplicative&#34;)), TermName(&#34;map
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Unfortunately I haven't found a way to compile and execute expressions from a REPL. I think there is the function <code>compile</code> in the <a href="http://www.scala-lang.org/api/2.11.0-RC4/scala-compiler/index.html#scala.tools.reflect.ToolBox"><code>ToolBox</code></a> trait but I haven't found a way to use it from a REPL. That'd be useful for a faster development process. If you know how, please tell me!</p>
+<p>Unfortunately I haven't found a way to compile and execute expressions from a REPL. There exists the function <code>compile</code> in the <a href="http://www.scala-lang.org/api/2.11.0-RC4/scala-compiler/index.html#scala.tools.reflect.ToolBox"><code>ToolBox</code></a> trait but I haven't found a way to use it from a REPL. That'd be useful for a faster development process. If you know how, please tell me!</p>
 <p>Anyway, what comes next is just the code I wrote in a sbt project. You can find the full working code <a href="https://github.com/miguel-vila/applicative-for/tree/afa1ea6316bd77e4b4401a1e97d584786e21a655">here</a>. Putting it all together here is our macro implementation:</p>
 <div class="highlight"><pre><span></span><span class="k">def</span> <span class="n">app_for_impl</span><span class="o">(</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)(</span><span class="n">valid</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">M</span><span class="o">])</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">M</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
     <span class="k">import</span> <span class="nn">c.universe._</span>
