@@ -11751,8 +11751,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Towards-an-applicative-for-macro">Towards an applicative-for macro<a class="anchor-link" href="#Towards-an-applicative-for-macro">&#182;</a></h1><p>(This post is a Jupyter notebook that you can run. You can download it <a href="https://github.com/miguel-vila/applicative-for/blob/dde6400906f60778efea75f3a673b75e31740319/towards-an-applicative-macro-1.ipynb">here</a>)</p>
-<p>Some time ago with the release of the Haskell's <a href="https://hackage.haskell.org/package/haxl">Haxl</a> library the same authors realized that the <code>do</code> notation in Haskell could use some improvements. The <code>do</code> notation can be used to "flatten" deep nestings of <code>&gt;&gt;=</code> applications. For example instead of writting something like this:</p>
+<h1 id="Towards-an-applicative-for-macro">Towards an applicative-for macro<a class="anchor-link" href="#Towards-an-applicative-for-macro">&#182;</a></h1><p>Some time ago with the release of the Haskell's <a href="https://hackage.haskell.org/package/haxl">Haxl</a> library the same authors realized that the <code>do</code> notation in Haskell could use a improvement. In it's current form the <code>do</code> notation can be used to "flatten" deep nestings of <code>&gt;&gt;=</code> applications. For example instead of writting something like this:</p>
 <div class="highlight"><pre><span></span><span class="nf">findVal</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="kt">Int</span>
 <span class="nf">findVal</span> <span class="n">key</span> <span class="ow">=</span> <span class="o">...</span> <span class="c1">-- some function definition</span>
 
@@ -11769,7 +11768,7 @@ div#notebook {
          <span class="n">return</span> <span class="p">(</span><span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span><span class="p">)</span>
 </pre></div>
 <p>This makes it easier to read the expression and to understand what's going on. Haskell's compiler simply desugars this notation into <code>&gt;&gt;=</code> applications. The <code>do</code> notation is specially readable because you can interpret it as follows: At the left side of a <code>&lt;-</code> you will find the "extracted" value of the monadic value at the right side.</p>
-<p>Now as you may have noticed in the previous example we are not using the complete power of the <code>Monad</code> typeclass. We are just calling <code>&gt;&gt;=</code> because we want to have the values inside the monadic values in the same place so we can express our desired computation: <code>(val1 + val2)</code>. But <code>Monad</code> is more powerful than that! For example we can express something like this:</p>
+<p>As you may have noticed in the previous example we are not using the full power of the <code>Monad</code> typeclass. We are just calling <code>&gt;&gt;=</code> because we want to have the values inside the monadic values in the same place so we can express our desired computation: <code>(val1 + val2)</code>. But <code>Monad</code> is more powerful than that! For example we can express something like this:</p>
 <div class="highlight"><pre><span></span><span class="kr">do</span> <span class="n">val1</span> <span class="ow">&lt;-</span> <span class="n">findVal</span> <span class="s">&quot;key1&quot;</span>
    <span class="n">val2</span> <span class="ow">&lt;-</span> <span class="n">findVal</span> <span class="p">(</span><span class="s">&quot;key&quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">val1</span><span class="p">)</span>
    <span class="n">return</span> <span class="n">val2</span>
@@ -11780,8 +11779,8 @@ div#notebook {
 
 <span class="nf">sum</span> <span class="ow">=</span> <span class="n">add</span> <span class="o">&lt;$&gt;</span> <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key1&quot;</span><span class="p">)</span> <span class="o">&lt;*&gt;</span> <span class="p">(</span><span class="n">findVal</span> <span class="s">&quot;key2&quot;</span><span class="p">)</span>
 </pre></div>
-<p>If you are thinking this is less readable than the <code>do</code> version you are on to something. As it turns out for the <code>Maybe</code> monad there is not much difference between choosing one style over the other because both alternatives have a similar performance. But there are other monads in which it is preferrable to use <code>Applicative</code> when possible. The first one that comes to my mind is precisely Haxl's <code>Fetch</code> monad. With the applicative instance for <code>Fetch</code> independent data fetches can be done concurrently. Even more if they access the same data source then the query can be batched.</p>
-<p>For instance in the following situation:</p>
+<p>If you are thinking this is less readable than the <code>do</code> version you are on to something. As it turns out for the <code>Maybe</code> monad there is not much difference between choosing one style over the other because both alternatives pretty much do the same. But there are other monads in which it is preferrable to use <code>Applicative</code> when possible. The first one that comes to my mind is precisely Haxl's <code>Fetch</code> monad. <code>Fetch</code> is a concurrency monad for fetching data from remote sources. With the applicative instance for <code>Fetch</code> independent data fetches can be done concurrently. Even more, if they access the same data source then the query can be batched.</p>
+<p>For instance in the following situation we are using <code>Applicative</code> so the fetches will be done concurrently and if they are fetches for the same data type then they will be batched:</p>
 <div class="highlight"><pre><span></span><span class="nf">fetchData</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">Fetch</span> <span class="kt">Data</span>
 <span class="nf">fetchData</span> <span class="n">key</span> <span class="ow">=</span> <span class="o">...</span> <span class="c1">-- build fetch value</span>
 
@@ -11790,16 +11789,21 @@ div#notebook {
 <span class="nf">dataTuple</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Data</span><span class="p">,</span><span class="kt">Data</span><span class="p">)</span>
 <span class="nf">dataTuple</span> <span class="ow">=</span> <span class="n">join</span> <span class="o">&lt;$&gt;</span> <span class="n">fetchData</span> <span class="s">&quot;key1&quot;</span> <span class="o">&lt;*&gt;</span> <span class="n">fetchData</span> <span class="s">&quot;key2&quot;</span>
 </pre></div>
-<p>The same final result can be expressed with <code>do</code>:</p>
+<p>But in contrast if we try to express the same with a <code>do</code> expression like this:</p>
 <div class="highlight"><pre><span></span><span class="kr">do</span> <span class="n">data1</span> <span class="ow">&lt;-</span> <span class="n">fetchData</span> <span class="s">&quot;key1&quot;</span>
    <span class="n">data2</span> <span class="ow">&lt;-</span> <span class="n">fetchData</span> <span class="s">&quot;key2&quot;</span>
    <span class="n">return</span> <span class="p">(</span><span class="n">data1</span><span class="p">,</span><span class="n">data2</span><span class="p">)</span>
 </pre></div>
-<p>But there is a catch: given that in this situation the <code>do</code> expression is desugared into <code>&gt;&gt;=</code> applications then the fetches are done sequentially. This is because the first monadic value must be computed before computing the one in the second line. Thus, by trying to use a more intuitive and readable notation we are incurring in a performance loss.</p>
-<p>But the problem is not just readability. When you are making changes to a codebase you must be aware that the change may allow you to use <code>Applicative</code> instead of monad. This may happen if, for example you are changing a line of a <code>do</code> expression.</p>
+<p>In this situation the <code>do</code> expression is desugared into <code>&gt;&gt;=</code> applications. Thus the fetches are done sequentially. This is because the first monadic value must be computed before computing the one in the second line. Thus, by trying to use a more intuitive and readable notation we are incurring in a performance loss.</p>
+<p>But the problem is not just readability. When you are making changes to a codebase you must be aware that the change may allow you to use <code>Applicative</code> instead of monad. This may happen if, for example you are changing a line of a long <code>do</code> expression.</p>
 <p>Wouldn't it be cool if <code>do</code> expressions would use <code>Monad</code> just when they are strictly necessary and <code>Applicative</code> where possible? This would allow us to always use the <code>do</code> notation without having to worry if we are using the correct typeclass. This is precisely the topic of Haxl's follow-up <a href="http://research.microsoft.com/en-us/um/people/simonpj/papers/list-comp/applicativedo.pdf">paper</a>. There is a <a href="https://ghc.haskell.org/trac/ghc/wiki/ApplicativeDo">proposal</a> in the Haskell community to include this behaviour in the GHC.</p>
-<p>Now, let's see in Scala how useful this could be. First, remember that Scala's <code>for</code> comprehensions are similar to Haskell's <code>do</code> expressions: they just call <code>flatMap</code> for each <code>&lt;-</code> except for the last one which will be a <code>map</code> call.</p>
-<p>Let's start with our very own definition of a <code>Validation</code> which will be similar to Scalaz's <code>ValidationNel</code> or Cat's <code>ValidatedNel</code>:</p>
+<blockquote><p>You may be asking "doesn't this break the "law" that says that Applicative and Monad should behave consistently?" More concretely I think that law is described as fullfilling the following equation:</p>
+<p><code>fa &gt;&gt;= (\a -&gt; fb &gt;&gt;= (\b -&gt; return (f a b))) == f &lt;$&gt; fa &lt;*&gt; fb</code></p>
+<p>Well, the applicative-do transformation would break this law for types that return <em>different</em> values at each side of this equation. But it's still a useful transformation if it's more efficient to use <code>Applicative</code> than `Monad to compute the <em>same</em> value.</p>
+<p>But in the other cases there is another answer: Sometimes it's worth to break the laws if your intentions are pure. This is the case of <code>Fetch</code> in which the value returned may differ in shape but at the end should reflect the same data.</p>
+</blockquote>
+<p>This post is about trying to do the same in Scala. First, remember that Scala's <code>for</code> comprehensions are similar to Haskell's <code>do</code> expressions: they just call <code>flatMap</code> for each <code>&lt;-</code> except for the last one which will be a <code>map</code> call.</p>
+<p>Let's start with our very own definition of a <code>Validation</code> which will be similar to <a href="https://github.com/scalaz/scalaz">Scalaz</a>'s <code>ValidationNel</code> or <a href="https://github.com/typelevel/cats">Cat</a>'s <code>ValidatedNel</code>:</p>
 
 </div>
 </div>
@@ -11991,6 +11995,7 @@ defined <span class="ansi-green-fg">object </span><span class="ansi-cyan-fg">Val
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Unlike <code>withFlatmap</code> this one returns both errors. And if both <code>v1</code> and <code>v2</code> were to be successfull then both expressions would return the same value.</p>
 <p>Now, let's imagine we have a web form with a bunch of fields, each one of which has to be validated. But when the form is submitted and contains errors we don't want to bother the user by just reporting the first error. We would like to report the majority of independent errors:</p>
 <div class="highlight"><pre><span></span><span class="k">for</span> <span class="o">{</span>
     <span class="n">okFirstName</span> <span class="k">&lt;-</span> <span class="n">validateFirstNameField</span>
@@ -12001,10 +12006,10 @@ defined <span class="ansi-green-fg">object </span><span class="ansi-cyan-fg">Val
 </pre></div>
 <p>If we used a for comprehension we would be making a mistake because if there is one error only that one is going to be returned. We can use Applicative and some syntactic sugar like the one in Scalaz to get something like this:</p>
 <div class="highlight"><pre><span></span><span class="k">for</span> <span class="o">{</span>
-    <span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">,</span> <span class="n">okAge</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">validateFirstNameField</span> <span class="o">|@|</span> 
-                                         <span class="n">validateLastNameField</span> <span class="o">|@|</span> 
-                                         <span class="n">validateAge</span><span class="o">).</span><span class="n">tupled</span>
-    <span class="n">okFullName</span>                       <span class="k">&lt;-</span> <span class="n">validateFullName</span><span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">)</span>
+    <span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">validateFirstNameField</span> <span class="o">|@|</span> 
+                                  <span class="n">validateLastNameField</span><span class="o">).</span><span class="n">tupled</span> <span class="o">|@|</span> 
+    <span class="o">(</span><span class="n">okFullName</span><span class="o">,</span> <span class="n">okAge</span><span class="o">)</span>       <span class="k">&lt;-</span> <span class="o">(</span><span class="n">validateFullName</span><span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">)</span> <span class="o">|@|</span>
+                                  <span class="n">validateAge</span><span class="o">).</span><span class="n">tupled</span>
 <span class="o">}</span> <span class="k">yield</span> <span class="nc">NewUserData</span><span class="o">(</span><span class="n">okFirstName</span><span class="o">,</span> <span class="n">okLastName</span><span class="o">,</span> <span class="n">okFullName</span><span class="o">,</span> <span class="n">okAge</span><span class="o">)</span>
 </pre></div>
 <p>This works but it may be less readable. More importantly this is coupled to the current computation structure. You can imagine what may happen with more fields and more complex dependencies between those fields.</p>
@@ -12428,7 +12433,7 @@ Apply(Select(Ident(TermName(&#34;x&#34;)), TermName(&#34;$plus&#34;)), List(Iden
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>And let's combine them with <code>ValidationApplicative.map2</code>. We will describe our desired expression with a <a href="http://docs.scala-lang.org/overviews/quasiquotes/intro.html">quasiquote</a>:</p>
+<p>Finally let's combine them with <code>ValidationApplicative.map2</code>. We will describe our desired expression with a <a href="http://docs.scala-lang.org/overviews/quasiquotes/intro.html">quasiquote</a>:</p>
 
 </div>
 </div>
@@ -12531,11 +12536,20 @@ Apply(Select(Ident(TermName(&#34;ValidationApplicative&#34;)), TermName(&#34;map
 <span class="c1">// Failure(List(error1))</span>
 </pre></div>
 <p>It works, just like a a normal for comprehension!</p>
-<h2 id="What's-next?">What's next?<a class="anchor-link" href="#What's-next?">&#182;</a></h2><p>This macro is not fully functional though. It doesn't account for a lot of situations:</p>
+<h2 id="What's-next?">What's next?<a class="anchor-link" href="#What's-next?">&#182;</a></h2><p>This macro is not fully functional, though. It doesn't account for a lot of situations:</p>
 <ul>
 <li>The pattern matches are unsafe and don't produce good error messages when they fail. </li>
-<li>This works just for two level expressions, but for comprehensions can be longer. </li>
-<li>This macro doesn't account for more subtle uses of a monad result like pattern matches. </li>
+<li>This works just for two level expressions, but for comprehensions can be longer.</li>
+<li>This macro doesn't account for more subtle uses of a monad result like pattern matches. For example:</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">firstName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">lastName</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+
+<span class="k">for</span> <span class="o">{</span>
+    <span class="n">person</span> <span class="k">@</span> <span class="nc">Person</span><span class="o">(</span><span class="k">_</span><span class="o">,</span><span class="k">_</span><span class="o">,</span><span class="n">age</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="n">validatePerson</span>
+    <span class="k">_</span>                        <span class="k">&lt;-</span> <span class="k">if</span><span class="o">(</span><span class="n">age</span> <span class="o">&lt;</span> <span class="mi">18</span><span class="o">)</span> <span class="n">validateMinor</span><span class="o">(</span><span class="n">person</span><span class="o">)</span> <span class="k">else</span> <span class="n">validateAdult</span><span class="o">(</span><span class="n">person</span><span class="o">)</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">something</span>
+</pre></div>
+<ul>
 <li>There is the issue of generalizing this for any type and not just for our own <code>Validation</code>.</li>
 <li>Also I'm not sure if the pattern matches are as general as they can be.</li>
 </ul>
