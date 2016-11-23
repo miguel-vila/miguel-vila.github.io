@@ -8,9 +8,27 @@
         <link href="/images/favicon.ico" rel="icon">
         <meta name="viewport" content="width=device-width" />
         <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        $if(title)$
+        <meta name="og:title" content="$title$" />
+        <meta name="twitter:title" content="$title$" />
+        $endif$
+
         $if(description)$
         <meta name="description" content="$description$" />
+        <meta name="og:description" content="$description$" />
+        <meta name="twitter:description" content="$description$" />
         $endif$
+
+        <meta name="og:type" content="website" />
+        <meta property="twitter:card" content="summary"/>
+        <meta property="twitter:site" content="@mglvl"/>
+
+        $if(image)$
+        <meta name="og:image" content="$image$" />
+        <meta name="twitter:image" content="$image$" />
+        $endif$
+
         <title>
             $if(title)$
                 $title$
