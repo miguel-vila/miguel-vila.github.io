@@ -66,19 +66,21 @@
 <p><em>Sorry</em> por el <a href="http://dle.rae.es/?w=parsear">spanglish</a> en este <em>post</em>.</p>
 </div>
 </div>
-<p>¿Qué significa <em>parsear</em>? Es el proceso de coger una secuencia de <em>tokens</em> (usualmente caracteres) y construir alguna estructura de datos. Esta estructura de datos usualmente tiene significado dentro del dominio del programa. Si nuestro objetivo es manipular números enteros entonces el tipo de nuestro <em>parser</em> podría ser:</p>
+<p>¿Qué significa <em>parsear</em>? Es el proceso de tomar una secuencia de <em>tokens</em> (usualmente caracteres) y construir alguna estructura de datos. Esta estructura de datos usualmente tiene significado dentro del dominio del programa.</p>
+<p>La idea de <em>parsear</em> por ejemplo expresiones aritméticas (y hacerlo con la precedencia correcta) siempre se me ha hecho intimidante. Es el tipo de problema al que no sabía como aproximarme. Pero gracias a un acercamiento funcional esa tarea se vuelve más accesible y entendible. Este acercamiento consiste en describir qué es un <em>parser</em> en terminos de funciones.</p>
+<p>Intentémos describir cómo se vería una función que <em>parsea</em> alguna estructura de datos. Si nuestro objetivo es manipular números enteros entonces el tipo de nuestro <em>parser</em> podría ser:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">String =&gt; Int</code></pre></div>
 <p>En cambio si nuestro objetivo es manipular <code>Float</code>s entonces podría ser:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">String =&gt; Float</code></pre></div>
-<p>Algo de terminología: cuando decimos que queremos “<em>parsear</em>” un entero queremos decir que vamos a coger una cadena de caracteres y vamos a identificar un entero dentro de ella.</p>
+<p>Algo de terminología: cuando decimos que queremos “<em>parsear</em>” un entero queremos decir que vamos a tomar una cadena de caracteres y vamos a identificar un entero dentro de ella.</p>
 <h2 id="refinando-la-definición">Refinando la definición</h2>
 <p>En general si nuestro objetivo es <em>parsear</em> algo de tipo <code>A</code> entonces el tipo de nuestro <em>parser</em> será:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">String =&gt; A</code></pre></div>
 <p>Creemos un <em>type alias</em> para esto:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">type</span> Parser[A] = String =&gt; A</code></pre></div>
-<p>Pero esto no tiene en cuenta varias cosas. La primera es que esto no tiene en cuenta las fallas. Podríamos usar un tipo como <code>Either</code> pero un acercamiento más simple es una lista que estará vacía si al intentar <em>parsear</em> se produjo un error. Nuestro tipo refinado será:</p>
+<p>Pero esto no tiene en cuenta varias cosas. La primera es que esto no tiene en cuenta los errores que se pueden producir al intentar <em>parsear</em> alguna estructura que no tiene sentido. Podríamos usar un tipo como <code>Either</code> pero un acercamiento más simple es una lista que estará vacía si al intentar <em>parsear</em> se produjo un error. Nuestro tipo refinado será:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">type</span> Parser[A] = String =&gt; List[A]</code></pre></div>
-<p>Por último queremos combinar nuestros <em>parsers</em> para expresar <em>parsers</em> más complejos. Digamos que queremos <em>parsear</em> expresiones que son sumas. Por ejemplo cadenas como “123+456”. Y digamos que tenemos algo que <em>parsea</em> un número y algo que parsea el signo <code>+</code>. Entonces deberíamos poder combinar ambos de la siguiente forma: “Primero <em>parsee</em> el primer número, después <em>parsee</em> el signo más y por último <em>parsee</em> el segundo número”. Pero bajo nuestro esquema actual no hay forma de hacerlo por que nuestras funciones <em>parseadoras</em> hacen “demasiado”. La cosa funciona bien para una cadena que toda consiste de un número:</p>
+<p>Por último queremos combinar nuestros <em>parsers</em> para expresar <em>parsers</em> más complejos. Digamos que queremos <em>parsear</em> expresiones que son sumas. Por ejemplo cadenas como “123+456”. Y digamos que tenemos algo que <em>parsea</em> un número y algo que parsea el signo <code>+</code>. Entonces deberíamos poder combinar ambos de la siguiente forma: “Primero <em>parsee</em> el primer número, después <em>parsee</em> el signo más y por último <em>parsee</em> el segundo número”. Pero bajo nuestro esquema actual no hay forma de hacerlo por que nuestras funciones <em>parseadoras</em> hacen “demasiado”. La cosa funciona bien para una cadena que en su totalidad consiste de un número:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> parseNumber: Parser[Int] = ???
 <span class="fu">parseNumber</span>(<span class="st">&quot;123&quot;</span>)
 <span class="co">//List(123)</span></code></pre></div>
@@ -88,25 +90,32 @@
 <span class="co">//List()</span></code></pre></div>
 <p>Falla justificadamente por que toda la cadena <code>&quot;123+456&quot;</code> no es un número. Más sin embargo el principio de la cadena sí es un número. Ahora mismo el significado de nuestro tipo <code>Parser</code> es demasiado estricto. Es “<em>parsee</em> <strong>toda</strong> la cadena de entrada y devuelva un valor si es posible”. Pero para poder <strong>“componer”</strong> con otros <em>parsers</em> quisieramos ejecutar ese <em>parser</em> para que identifique el <strong>primer</strong> número que pueda y una vez hecho eso disponer del <strong>resto de la cadena</strong> para que podamos <em>parsear</em> otras cosas. Podemos ajustar nuestra definición para que no necesariamente <em>parsee</em> toda la cadena de entrada y para que devuelva el resto de cadena que no fue utilizada durante el <em>parseo</em>. Ajustando el tipo tenemos lo siguiente:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">type</span> Parser[A] = String =&gt; List[(A,String)]</code></pre></div>
+<div class="note">
+<p class="aside-header">
+<strong>Nota aparte</strong> <span class="clickable">(Click!)</span>
+</p>
+<div class="note-content">
 <p>Este tipo también se puede leer en como una rima en inglés (Tomado de <a href="https://www.amazon.com/Programming-Haskell-Graham-Hutton-ebook/dp/B01JGMEA3U/">Programming in Haskell</a> por Graham Hutton):</p>
 <p><em>A parser for things</em></p>
 <p><em>Is a function from strings</em></p>
 <p><em>To lists of pairs</em></p>
 <p><em>Of things and strings</em></p>
+</div>
+</div>
 <p>Para facilitarnos la cosa un poco no vamos a hacer que nuestro tipo <code>Parser</code> sea un alias sino que esté contenido como el atributo de una clase:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> Parser[A](run: String =&gt; List[(A,String)]) <span class="kw">extends</span> AnyRef {
 
 }</code></pre></div>
 <p>Esto nos permitirá agregar métodos.</p>
-<h2 id="unos-parsers-básicos">Unos <em>parsers</em> básicos</h2>
-<p>El <em>parser</em> más básico que podemos escribir es el que consume el primer caracter de una cadena, si es que existe:</p>
+<h2 id="un-parser-muy-básico">Un <em>parser</em> muy básico</h2>
+<p>Uno de los <em>parsers</em> más básicos que podemos escribir es el que consume el primer caracter de una cadena, si es que existe:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> parseChar: Parser[Char] = 
     Parser { str =&gt;
         <span class="kw">if</span>(str.<span class="fu">isEmpty</span>)
             List.<span class="fu">empty</span>
         <span class="kw">else</span>
             List( (str.<span class="fu">head</span>, str.<span class="fu">tail</span>) )
-    }                                                        </code></pre></div>
+    }</code></pre></div>
 <p>Pero si queremos reconocer un solo dígito necesitamos reconocer si un caracter es o no un número. Podemos agregar una función <code>filter</code> que nos permita filtrar los resultados de un <em>parseo</em>:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> Parser[A](run : String =&gt; List[(A,String)]) <span class="kw">extends</span> AnyRef { self =&gt; <span class="co">//(1)</span>
                                                                        
@@ -145,6 +154,7 @@
 <span class="kw">val</span> parseBoolean = ???</code></pre></div>
 <p>Para hacer esto podemos tomar dos <em>parsers</em>, ejecutar el primero sobre la cadena de entrada y si eso arroja un resultado retornarlo, de lo contrario retornar lo que devuelva ejecutar el segundo <em>parser</em>:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> Parser[A](run : String =&gt; List[(A,String)]) <span class="kw">extends</span> AnyRef { self =&gt;
+
     <span class="kw">def</span> <span class="fu">or</span>(other: =&gt; Parser[A]): Parser[A] = Parser { str =&gt;
         <span class="kw">val</span> firstResult = self.<span class="fu">run</span>(str)
         <span class="kw">if</span>(!firstResult.<span class="fu">isEmpty</span>) {
@@ -153,6 +163,7 @@
             other.<span class="fu">run</span>(str)
         }
     }
+
 }</code></pre></div>
 <p>Y así podemos describir el anterior <em>parser</em> como:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> parseBoolean = parseTrue or parseFalse</code></pre></div>
@@ -178,7 +189,7 @@
     }
   }
 }</code></pre></div>
-<p>Pero acá estamos repitiendo mucho de lo que hicimos antes: no estamos aprovechando el hecho de que ya definimos un <code>parseDigit</code> y un <code>parseChar</code>. El patrón general que estamos buscando es el siguiente: ejecutamos un <em>parser</em>, con lo que queda de cadena sin procesar ejecutamos otro <em>parser</em> y si ambos son exitosos combinar los valores parseados de alguna forma. La firma de la función que podríamos estar buscando es algo como:</p>
+<p>Pero acá estamos repitiendo mucho de lo que hicimos antes: no estamos aprovechando el hecho de que ya definimos un <code>parseDigit</code> y un <code>parseChar</code>. El patrón general que estamos buscando es el siguiente: ejecutamos un <em>parser</em>, con lo que queda de cadena sin procesar ejecutamos otro <em>parser</em> y si ambos son exitosos combinamos los valores parseados de alguna forma. La firma de la función que podríamos estar buscando es algo como:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">(Parser[A], Parser[B], (A,B) =&gt; C) =&gt; Parser[C]</code></pre></div>
 <p>Creo que usualmente esta operación se llama <code>map2</code>. La podríamos implementar así:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> map2[A,B,C](p1: Parser[A], p2: Parser[B], f: (A,B) =&gt; C): Parser[C] = 
@@ -193,9 +204,9 @@
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> idParser: Parser[Id] = 
     <span class="fu">map2</span>(parseDigit, parseChar.<span class="fu">filter</span>(isUpperCase), (n: Int, c: Char) =&gt; <span class="fu">Id</span>(n,c) )</code></pre></div>
 <p>Mucho más consiso así, ¿no?</p>
-<p>Todas estas funciones que tomán uno o más <code>Parser</code>s y retornan uno nuevo son denominadas <strong>combinadoras</strong>. Aquí yace la riqueza del acercamiento funcional: en vez de describir explícitamente paso a paso lo que el <code>Parser</code> debe hacer podemos usar funciones combinadoras muy pequeñas y poco a poco expresar lo que deseamos.</p>
+<p>Todas estas funciones que tomán uno o más <code>Parser</code>s y retornan uno nuevo son denominadas <strong>combinadoras</strong>. Aquí yace la riqueza del acercamiento funcional: en vez de describir explícitamente paso a paso lo que el <code>Parser</code> debe hacer podemos usar funciones combinadoras y poco a poco expresamos lo que deseamos.</p>
 <h2 id="una-algebra-con-un-constructor-base">Una algebra con un constructor base</h2>
-<p>Hasta ahora pareciera que estamos construyendo una algebra. Como es usual nos puede servir una función que coja un valor cualquiera y lo encierre como un valor dentro de la algebra. Podemos llamar esta función <code>succeed</code> por que es como construir un <em>parser</em> que siempre será exitoso con el valor que le pasemos:</p>
+<p>Hasta ahora pareciera que estamos construyendo una algebra que nos permite combinar valores de tipo <code>Parser</code>. Como es usual nos puede servir una función que coja un valor cualquiera y lo encierre como un valor dentro de la algebra. Podemos llamar esta función <code>succeed</code> por que es como construir un <em>parser</em> que siempre será exitoso con el valor que le pasemos:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> succeed[A](value: A): Parser[A] = Parser { str =&gt; (value,str) }</code></pre></div>
 <p>Está función nos servirá más adelante para definir ciertos casos base.</p>
 <h2 id="repeticiones">Repeticiones</h2>
@@ -231,7 +242,7 @@ parseAs.<span class="fu">run</span>(<span class="st">&quot;xxx&quot;</span>)
     }</code></pre></div>
 <p>Eso funciona cuando sabemos cuantas repeticiones queremos:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> twoXs = <span class="fu">repN</span>(parseChar.<span class="fu">filter</span>(_ == 'X'), <span class="dv">2</span>)
-<span class="fu">twoXs</span>(<span class="st">&quot;XXA&quot;</span>)
+twoXs.<span class="fu">run</span>(<span class="st">&quot;XXA&quot;</span>)
 <span class="co">// List((List('X', 'X'), &quot;A&quot;))</span></code></pre></div>
 <p>Con esto podríamos construir un <em>parser</em> para el caso especial de cuando el número es <code>2</code>:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="fu">map2</span>(
@@ -261,10 +272,26 @@ parseAs.<span class="fu">run</span>(<span class="st">&quot;xxx&quot;</span>)
     }
   )
   
-<span class="fu">parseNandReps</span>(<span class="st">&quot;2XX&quot;</span>)
+parseNandReps.<span class="fu">run</span>(<span class="st">&quot;2XX&quot;</span>)
 <span class="co">// List((List('X', 'X'), &quot;&quot;))</span>
-<span class="fu">parseNandReps</span>(<span class="st">&quot;3XX&quot;</span>)
+parseNandReps.<span class="fu">run</span>(<span class="st">&quot;3XX&quot;</span>)
 <span class="co">// List()</span></code></pre></div>
+<p>Este es un ejemplo de algo que las expresiones regulares no pueden hacer: interpretar el resultado de un <em>parseo</em> parcial para continuar <em>parseando</em>.</p>
+<h2 id="solo-el-principio">Solo el principio</h2>
+<p>Con estas bases se pueden construir <em>parsers</em> para cosas más complejas: por ejemplo expresiones aritméticas, JSON <em>objects</em> o incluso podemos construir el árbol de sintáxis de un lenguaje de programación. Incluso para cosas más simples pueden reemplazar expresiones regulares y pueden servir para terminar con código más entendible.</p>
+<h2 id="fuentes-y-otros-enlaces">Fuentes y otros enlaces</h2>
+<p>Este <em>post</em> está basado en lo que aprendí leyendo varias fuentes:</p>
+<ul>
+<li>El Capítulo 9 de <a href="https://www.manning.com/books/functional-programming-in-scala">Functional Programming in Scala</a>: Toman un acercamiento distinto para explicar la idea general de <em>parser combinators</em>.</li>
+<li>Múltiples artículos por Erik Meijer y Graham Hutton: <a href="http://www.cs.nott.ac.uk/~pszgmh/monparsing.pdf">Este</a> es bastante detallado y <a href="http://www.cs.nott.ac.uk/~pszgmh/pearl.pdf">este</a> es mucho más consiso.</li>
+</ul>
+<p>Varias librerias que implementan de formas distintas la misma idea:</p>
+<ul>
+<li>En JavaScript está <a href="https://github.com/zkat/mona">mona</a></li>
+<li>En Scala: <a href="https://github.com/scala/scala-parser-combinators">uno de la librería estándar</a> y <a href="http://www.lihaoyi.com/fastparse/">FastParse</a></li>
+<li>En Haskell: <a href="https://wiki.haskell.org/Parsec">Parsec</a> y también está <a href="https://hackage.haskell.org/package/attoparsec">Attoparsec</a></li>
+</ul>
+<p>Una forma alternativa (no funcional) de <em>parsear</em> es <a href="https://en.wikipedia.org/wiki/Recursive_descent_parser">esta</a>.</p>
 </div>
     </article>
     <footer>
