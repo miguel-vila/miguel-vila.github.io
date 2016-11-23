@@ -14,9 +14,14 @@ _Sorry_ por el [spanglish](http://dle.rae.es/?w=parsear) en este _post_.
 </div>
 </div>
 
-¿Qué significa _parsear_? Es el proceso de tomar una secuencia de _tokens_ (usualmente caracteres) y construir alguna estructura de datos. Esta estructura de datos usualmente tiene significado dentro del dominio del programa.
+¿Qué significa _parsear_? Es el proceso de tomar una secuencia de _tokens_ (usualmente caracteres) y construir alguna estructura de datos. Esta estructura de datos usualmente tiene significado dentro del dominio de un programa. Por ejemplo puede ser un objeto JSON: 
 
-La idea de _parsear_ por ejemplo expresiones aritméticas (y hacerlo con la precedencia correcta) siempre se me ha hecho intimidante. Es el tipo de problema al que no sabía como aproximarme. Pero gracias a un acercamiento funcional esa tarea se vuelve más accesible y entendible. Este acercamiento consiste en describir qué es un _parser_ en terminos de funciones.
+* Tomamos una cadena de caracteres como `"{ "foo":"bar" , "baz": 1 }"`.
+* Retornamos una estructura como `Map(foo -> "bar" , baz -> 1)`
+
+## Una aproximación funcional
+
+La idea de construir un _parser_ siempre se me ha hecho intimidante. Es el tipo de problema al que no sabía como aproximarme. Pero gracias a un acercamiento funcional esa tarea se vuelve más accesible y entendible. Este acercamiento consiste en describir qué es un _parser_ en terminos de funciones.
 
 Intentémos describir cómo se vería una función que _parsea_ alguna estructura de datos. Si nuestro objetivo es manipular números enteros entonces el tipo de nuestro _parser_ podría ser:
 
@@ -30,7 +35,6 @@ En cambio si nuestro objetivo es manipular `Float`s entonces podría ser:
 String => Float
 ```
 
-Algo de terminología: cuando decimos que queremos "_parsear_" un entero queremos decir que vamos a tomar una cadena de caracteres y vamos a identificar un entero dentro de ella.
 
 ## Refinando la definición
 
@@ -294,7 +298,11 @@ def rep[A](pa: Parser[A]): Parser[List[A]] =
     map2(pa, rep(pa), (a:A, tl: List[A]) => a :: tl ) or succeed(List.empty)
 ```
 
-pero resulta que si intentamos usar `rep` vamos a obtener un _overflow_ de la pila de ejecución. Esto es por que la definición recursiva se está expandiendo indefinidamente:
+Esto funciona así:
+
+El primer parser (lo que va antes del `or`) se encarga de _parsear_ una lista no vacía de caracteres. Si ese primer _parser_ falla el `or` se encargará de reintentar con el segundo que siempre va a ser exitoso con una lista vacía. El primer _parser_ funciona _parseando_ una sola instancia (el argumento `pa`), después **recursivamente** _parsea_ otra lista de repeticiones del resto de la cadena y une los dos resultados concatenándolos.
+
+Pero resulta que si intentamos usar `rep` vamos a obtener un _overflow_ de la pila de ejecución. Esto es por que la definición recursiva se está expandiendo indefinidamente:
 
 ```scala
 rep(charA) == map2(charA, rep(charA), ...) or (...)
@@ -302,13 +310,11 @@ rep(charA) == map2(charA, rep(charA), ...) or (...)
            == etc...
 ```
 
-El problema es que antes de que se ejecute `map2` se deben evaluar sus argumentos. Esto se puede solucionar haciendo que el segundo argumento de `map2` sea _call-by-name_ de forma tal que las invocaciones no lo evaluan inmediatamente:
+El problema es que antes de que se ejecute `map2` se deben evaluar sus argumentos. Esto se puede solucionar haciendo que el segundo argumento de `map2` sea [_call by name_](https://www.safaribooksonline.com/library/view/programming-scala/9780596801908/ch08s12.html) de forma tal que las invocaciones no lo evaluan inmediatamente:
 
 ```scala
 def map2[A,B,C](p1: Parser[A], p2: => Parser[B], f: (A,B) => C): Parser[C] = ...
 ```
-
-Esto tiene la ventaja de que si el primer _parser_ que se le pasa a `map2` falla entonces toda la invocación va a fallar inmediatamente sin tener que inspeccionar el segundo argumento. Esta es la forma en la que la recursión se detiene en el primer ejemplo (`"AAAAxxx"`): en un punto la recursión intentará parsear el caracter `A` con una cadena que empieza por `x`, lo que va a causar que el _parseo_ falle, lo que ocasionará que se retorne el caso alternativo del `or`, que es una lista vacía. Esta lista vacía será la cola de lo que veniamos construyendo en el `map2`.
 
 ## Cuando el contexto importa
 
@@ -384,6 +390,10 @@ Este es un ejemplo de algo que las expresiones regulares no pueden hacer: interp
 ## Solo el principio
 
 Con estas bases se pueden construir _parsers_ para cosas más complejas: por ejemplo expresiones aritméticas, JSON _objects_ o incluso podemos construir el árbol de sintáxis de un lenguaje de programación. Incluso para cosas más simples pueden reemplazar expresiones regulares y pueden servir para terminar con código más entendible.
+
+Por ejemplo para _parsear_ expresiones aritméticas en una hoja de cálculo escribí [esto](https://github.com/miguel-vila/hoja-calculo/blob/3a2206569a0019117a5488cc533bb4c3a21051b7/client/src/main/scala/spreadsheet/parsing/Parser.scala#L7). Son ménos de 60 líneas de código y usan la librería estándar de _parser combinators_ de Scala. Esa librería tiene muchas más funciones de las que describí acá, pero la idea base es la misma.
+
+Así que si algún día necesitan _parsear_ algo pueden usar esta aproximación. Es fácil de entender y el código resultante suele ser legible.
 
 ## Fuentes y otros enlaces
 
