@@ -14,7 +14,11 @@ _Sorry_ por el [spanglish](http://dle.rae.es/?w=parsear) en este _post_.
 </div>
 </div>
 
-¿Qué significa _parsear_? Es el proceso de coger una secuencia de _tokens_ (usualmente caracteres) y construir alguna estructura de datos. Esta estructura de datos usualmente tiene significado dentro del dominio del programa. Si nuestro objetivo es manipular números enteros entonces el tipo de nuestro _parser_ podría ser:
+¿Qué significa _parsear_? Es el proceso de tomar una secuencia de _tokens_ (usualmente caracteres) y construir alguna estructura de datos. Esta estructura de datos usualmente tiene significado dentro del dominio del programa.
+
+La idea de _parsear_ por ejemplo expresiones aritméticas (y hacerlo con la precedencia correcta) siempre se me ha hecho intimidante. Es el tipo de problema al que no sabía como aproximarme. Pero gracias a un acercamiento funcional esa tarea se vuelve más accesible y entendible. Este acercamiento consiste en describir qué es un _parser_ en terminos de funciones.
+
+Intentémos describir cómo se vería una función que _parsea_ alguna estructura de datos. Si nuestro objetivo es manipular números enteros entonces el tipo de nuestro _parser_ podría ser:
 
 ```scala
 String => Int
@@ -26,7 +30,7 @@ En cambio si nuestro objetivo es manipular `Float`s entonces podría ser:
 String => Float
 ```
 
-Algo de terminología: cuando decimos que queremos "_parsear_" un entero queremos decir que vamos a coger una cadena de caracteres y vamos a identificar un entero dentro de ella.
+Algo de terminología: cuando decimos que queremos "_parsear_" un entero queremos decir que vamos a tomar una cadena de caracteres y vamos a identificar un entero dentro de ella.
 
 ## Refinando la definición
 
@@ -42,13 +46,13 @@ Creemos un _type alias_ para esto:
 type Parser[A] = String => A
 ```
 
-Pero esto no tiene en cuenta varias cosas. La primera es que esto no tiene en cuenta las fallas. Podríamos usar un tipo como `Either` pero un acercamiento más simple es una lista que estará vacía si al intentar _parsear_ se produjo un error. Nuestro tipo refinado será:
+Pero esto no tiene en cuenta varias cosas. La primera es que esto no tiene en cuenta los errores que se pueden producir al intentar _parsear_ alguna estructura que no tiene sentido. Podríamos usar un tipo como `Either` pero un acercamiento más simple es una lista que estará vacía si al intentar _parsear_ se produjo un error. Nuestro tipo refinado será:
 
 ```scala
 type Parser[A] = String => List[A]
 ```
 
-Por último queremos combinar nuestros _parsers_ para expresar _parsers_ más complejos. Digamos que queremos _parsear_ expresiones que son sumas. Por ejemplo cadenas como "123+456". Y digamos que tenemos algo que _parsea_ un número y algo que parsea el signo `+`. Entonces deberíamos poder combinar ambos de la siguiente forma: "Primero _parsee_ el primer número, después _parsee_ el signo más y por último _parsee_ el segundo número". Pero bajo nuestro esquema actual no hay forma de hacerlo por que nuestras funciones _parseadoras_ hacen "demasiado". La cosa funciona bien para una cadena que toda consiste de un número:
+Por último queremos combinar nuestros _parsers_ para expresar _parsers_ más complejos. Digamos que queremos _parsear_ expresiones que son sumas. Por ejemplo cadenas como "123+456". Y digamos que tenemos algo que _parsea_ un número y algo que parsea el signo `+`. Entonces deberíamos poder combinar ambos de la siguiente forma: "Primero _parsee_ el primer número, después _parsee_ el signo más y por último _parsee_ el segundo número". Pero bajo nuestro esquema actual no hay forma de hacerlo por que nuestras funciones _parseadoras_ hacen "demasiado". La cosa funciona bien para una cadena que en su totalidad consiste de un número:
 
 ```scala
 val parseNumber: Parser[Int] = ???
@@ -70,6 +74,10 @@ Falla justificadamente por que toda la cadena `"123+456"` no es un número. Más
 type Parser[A] = String => List[(A,String)]
 ```
 
+<div class="note">
+<p class="aside-header"><strong>Nota aparte</strong> <span class="clickable">(Click!)</span></p>
+
+<div class="note-content">
 Este tipo también se puede leer en como una rima en inglés (Tomado de [Programming in Haskell](https://www.amazon.com/Programming-Haskell-Graham-Hutton-ebook/dp/B01JGMEA3U/) por Graham Hutton):
 
 _A parser for things_
@@ -79,6 +87,8 @@ _Is a function from strings_
 _To lists of pairs_
 
 _Of things and strings_
+</div>
+</div>
 
 Para facilitarnos la cosa un poco no vamos a hacer que nuestro tipo `Parser` sea un alias sino que esté contenido como el atributo de una clase:
 
@@ -90,9 +100,9 @@ case class Parser[A](run: String => List[(A,String)]) extends AnyRef {
 
 Esto nos permitirá agregar métodos.
 
-## Unos _parsers_ básicos
+## Un _parser_ muy básico
 
-El _parser_ más básico que podemos escribir es el que consume el primer caracter de una cadena, si es que existe:
+Uno de los _parsers_ más básicos que podemos escribir es el que consume el primer caracter de una cadena, si es que existe:
 
 ```scala
 val parseChar: Parser[Char] = 
@@ -101,7 +111,7 @@ val parseChar: Parser[Char] =
             List.empty
         else
             List( (str.head, str.tail) )
-    }                                                        
+    }
 ```
 
 Pero si queremos reconocer un solo dígito necesitamos reconocer si un caracter es o no un número. Podemos agregar una función `filter` que nos permita filtrar los resultados de un _parseo_:
@@ -167,6 +177,7 @@ Para hacer esto podemos tomar dos _parsers_, ejecutar el primero sobre la cadena
 
 ```scala
 case class Parser[A](run : String => List[(A,String)]) extends AnyRef { self =>
+
     def or(other: => Parser[A]): Parser[A] = Parser { str =>
         val firstResult = self.run(str)
         if(!firstResult.isEmpty) {
@@ -175,6 +186,7 @@ case class Parser[A](run : String => List[(A,String)]) extends AnyRef { self =>
             other.run(str)
         }
     }
+
 }
 ```
 
@@ -215,7 +227,7 @@ val idParser: Parser[Id] = Parser { str =>
 }
 ```
 
-Pero acá estamos repitiendo mucho de lo que hicimos antes: no estamos aprovechando el hecho de que ya definimos un `parseDigit` y un `parseChar`. El patrón general que estamos buscando es el siguiente: ejecutamos un _parser_, con lo que queda de cadena sin procesar ejecutamos otro _parser_ y si ambos son exitosos combinar los valores parseados de alguna forma. La firma de la función que podríamos estar buscando es algo como:
+Pero acá estamos repitiendo mucho de lo que hicimos antes: no estamos aprovechando el hecho de que ya definimos un `parseDigit` y un `parseChar`. El patrón general que estamos buscando es el siguiente: ejecutamos un _parser_, con lo que queda de cadena sin procesar ejecutamos otro _parser_ y si ambos son exitosos combinamos los valores parseados de alguna forma. La firma de la función que podríamos estar buscando es algo como:
 
 ```scala
 (Parser[A], Parser[B], (A,B) => C) => Parser[C]
@@ -244,11 +256,11 @@ val idParser: Parser[Id] =
 
 Mucho más consiso así, ¿no?
 
-Todas estas funciones que tomán uno o más `Parser`s y retornan uno nuevo son denominadas **combinadoras**. Aquí yace la riqueza del acercamiento funcional: en vez de describir explícitamente paso a paso lo que el `Parser` debe hacer podemos usar funciones combinadoras muy pequeñas y poco a poco expresar lo que deseamos.
+Todas estas funciones que tomán uno o más `Parser`s y retornan uno nuevo son denominadas **combinadoras**. Aquí yace la riqueza del acercamiento funcional: en vez de describir explícitamente paso a paso lo que el `Parser` debe hacer podemos usar funciones combinadoras y poco a poco expresamos lo que deseamos.
 
 ## Una algebra con un constructor base
 
-Hasta ahora pareciera que estamos construyendo una algebra. Como es usual nos puede servir una función que coja un valor cualquiera y lo encierre como un valor dentro de la algebra. Podemos llamar esta función `succeed` por que es como construir un _parser_ que siempre será exitoso con el valor que le pasemos:
+Hasta ahora pareciera que estamos construyendo una algebra que nos permite combinar valores de tipo `Parser`. Como es usual nos puede servir una función que coja un valor cualquiera y lo encierre como un valor dentro de la algebra. Podemos llamar esta función `succeed` por que es como construir un _parser_ que siempre será exitoso con el valor que le pasemos:
 
 ```scala
 def succeed[A](value: A): Parser[A] = Parser { str => (value,str) }
@@ -315,7 +327,7 @@ Eso funciona cuando sabemos cuantas repeticiones queremos:
 
 ```scala
 val twoXs = repN(parseChar.filter(_ == 'X'), 2)
-twoXs("XXA")
+twoXs.run("XXA")
 // List((List('X', 'X'), "A"))
 ```
 
@@ -361,8 +373,29 @@ val parseNandReps =
     }
   )
   
-parseNandReps("2XX")
+parseNandReps.run("2XX")
 // List((List('X', 'X'), ""))
-parseNandReps("3XX")
+parseNandReps.run("3XX")
 // List()
 ``` 
+
+Este es un ejemplo de algo que las expresiones regulares no pueden hacer: interpretar el resultado de un _parseo_ parcial para continuar _parseando_.
+
+## Solo el principio
+
+Con estas bases se pueden construir _parsers_ para cosas más complejas: por ejemplo expresiones aritméticas, JSON _objects_ o incluso podemos construir el árbol de sintáxis de un lenguaje de programación. Incluso para cosas más simples pueden reemplazar expresiones regulares y pueden servir para terminar con código más entendible.
+
+## Fuentes y otros enlaces
+
+Este _post_ está basado en lo que aprendí leyendo varias fuentes:
+
+* El Capítulo 9 de [Functional Programming in Scala](https://www.manning.com/books/functional-programming-in-scala): Toman un acercamiento distinto para explicar la idea general de _parser combinators_.
+* Múltiples artículos por Erik Meijer y Graham Hutton: [Este](http://www.cs.nott.ac.uk/~pszgmh/monparsing.pdf) es bastante detallado y [este](http://www.cs.nott.ac.uk/~pszgmh/pearl.pdf) es mucho más consiso.
+
+Varias librerias que implementan de formas distintas la misma idea:
+
+* En JavaScript está [mona](https://github.com/zkat/mona)
+* En Scala: [uno de la librería estándar](https://github.com/scala/scala-parser-combinators) y [FastParse](http://www.lihaoyi.com/fastparse/)
+* En Haskell: [Parsec](https://wiki.haskell.org/Parsec) y también está [Attoparsec](https://hackage.haskell.org/package/attoparsec)
+
+Una forma alternativa (no funcional) de _parsear_ es [esta](https://en.wikipedia.org/wiki/Recursive_descent_parser).
