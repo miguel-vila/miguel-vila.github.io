@@ -7,8 +7,16 @@
         <description><![CDATA[Blog personal de Miguel Vilá]]></description>
         <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Sun, 09 Oct 2016 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Wed, 23 Nov 2016 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Parseando con funciones</title>
+    <link>http://miguel-vila.github.io/posts/2016-11-23-parseando-con-funciones.html</link>
+    <description><![CDATA[Cómo podemos parsear usando solamente funciones y combinandolas]]></description>
+    <pubDate>Wed, 23 Nov 2016 00:00:00 UT</pubDate>
+    <guid>http://miguel-vila.github.io/posts/2016-11-23-parseando-con-funciones.html</guid>
+    <dc:creator>Miguel Vilá</dc:creator>
+</item>
+<item>
     <title>Towards an applicative-for macro</title>
     <link>http://miguel-vila.github.io/posts/2016-10-09-towards-an-applicative-for-macro.html</link>
     <description><![CDATA[The first steps on building a macro that calls Applicative's functions when possible]]></description>
@@ -38,14 +46,6 @@
     <description><![CDATA[Some progress on the C project and a change of plans]]></description>
     <pubDate>Sat, 27 Aug 2016 00:00:00 UT</pubDate>
     <guid>http://miguel-vila.github.io/posts/2016-08-27-week-2-at-rc.html</guid>
-    <dc:creator>Miguel Vilá</dc:creator>
-</item>
-<item>
-    <title>My first week at Recurse Center</title>
-    <link>http://miguel-vila.github.io/posts/2016-08-22-first-week-at-rc.html</link>
-    <description><![CDATA[How my first week at Recurse Center went]]></description>
-    <pubDate>Mon, 22 Aug 2016 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2016-08-22-first-week-at-rc.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 
