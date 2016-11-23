@@ -8,6 +8,9 @@
         <link href="/images/favicon.ico" rel="icon">
         <meta name="viewport" content="width=device-width" />
         <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+        $if(description)$
+        <meta name="description" content="$description$" />
+        $endif$
         <title>
             $if(title)$
                 $title$
