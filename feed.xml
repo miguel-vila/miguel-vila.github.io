@@ -7,8 +7,16 @@
         <description><![CDATA[Blog personal de Miguel Vilá]]></description>
         <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Wed, 23 Nov 2016 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Thu, 29 Dec 2016 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Algunas cosas que quiero hacer en el 2017</title>
+    <link>http://miguel-vila.github.io/posts/2016-12-29-algunas-cosa-para-el-2017.html</link>
+    <description><![CDATA[Algunas cosas que quiero lograr en el 2017]]></description>
+    <pubDate>Thu, 29 Dec 2016 00:00:00 UT</pubDate>
+    <guid>http://miguel-vila.github.io/posts/2016-12-29-algunas-cosa-para-el-2017.html</guid>
+    <dc:creator>Miguel Vilá</dc:creator>
+</item>
+<item>
     <title>Parseando con funciones</title>
     <link>http://miguel-vila.github.io/posts/2016-11-23-parseando-con-funciones.html</link>
     <description><![CDATA[Cómo podemos parsear usando solamente funciones y combinandolas]]></description>
@@ -38,14 +46,6 @@
     <description><![CDATA[My third week at RC: a little more focused, a little elss confused]]></description>
     <pubDate>Sat, 03 Sep 2016 00:00:00 UT</pubDate>
     <guid>http://miguel-vila.github.io/posts/2016-09-03-week-3-at-rc.html</guid>
-    <dc:creator>Miguel Vilá</dc:creator>
-</item>
-<item>
-    <title>Second week at RC</title>
-    <link>http://miguel-vila.github.io/posts/2016-08-27-week-2-at-rc.html</link>
-    <description><![CDATA[Some progress on the C project and a change of plans]]></description>
-    <pubDate>Sat, 27 Aug 2016 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2016-08-27-week-2-at-rc.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 
