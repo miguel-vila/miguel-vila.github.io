@@ -4,7 +4,7 @@
     <channel>
         <title>Miguel Vilá</title>
         <link>http://miguel-vila.github.io</link>
-        <description><![CDATA[Blog personal de Miguel Vilá]]></description>
+        <description><![CDATA[Miguel Vilá's personal blog]]></description>
         <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
         <lastBuildDate>Sat, 31 Dec 2016 00:00:00 UT</lastBuildDate>
