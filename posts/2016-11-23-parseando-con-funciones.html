@@ -229,7 +229,7 @@
 <p>Ahora podemos reescribir <code>idParser</code> así:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> idParser: Parser[Id] = 
     <span class="fu">map2</span>(parseDigit, parseChar.<span class="fu">filter</span>(isUpperCase), (n: Int, c: Char) =&gt; <span class="fu">Id</span>(n,c) )</code></pre></div>
-<p>Mucho más consiso así, ¿no?</p>
+<p>Mucho más conciso así, ¿no?</p>
 <p>Todas estas funciones que tomán uno o más <code>Parser</code>s y retornan uno nuevo son denominadas <strong>combinadoras</strong>. Aquí yace la riqueza del acercamiento funcional: en vez de describir explícitamente paso a paso lo que el <code>Parser</code> debe hacer podemos usar funciones combinadoras y poco a poco expresamos lo que deseamos.</p>
 <h2 id="una-algebra-con-un-constructor-base">Una algebra con un constructor base</h2>
 <p>Hasta ahora pareciera que estamos construyendo una algebra que nos permite combinar valores de tipo <code>Parser</code>. Como es usual nos puede servir una función que coja un valor cualquiera y lo encierre como un valor dentro de la algebra. Podemos llamar esta función <code>succeed</code> por que es como construir un <em>parser</em> que siempre será exitoso con el valor que le pasemos:</p>
@@ -312,7 +312,7 @@ parseNandReps.<span class="fu">run</span>(<span class="st">&quot;3XX&quot;</span
 <p>Este <em>post</em> está basado en lo que aprendí leyendo varias fuentes:</p>
 <ul>
 <li>El Capítulo 9 de <a href="https://www.manning.com/books/functional-programming-in-scala">Functional Programming in Scala</a>: Toman un acercamiento distinto para explicar la idea general de <em>parser combinators</em>.</li>
-<li>Múltiples artículos por Erik Meijer y Graham Hutton: <a href="http://www.cs.nott.ac.uk/~pszgmh/monparsing.pdf">Este</a> es bastante detallado y <a href="http://www.cs.nott.ac.uk/~pszgmh/pearl.pdf">este</a> es mucho más consiso.</li>
+<li>Múltiples artículos por Erik Meijer y Graham Hutton: <a href="http://www.cs.nott.ac.uk/~pszgmh/monparsing.pdf">Este</a> es bastante detallado y <a href="http://www.cs.nott.ac.uk/~pszgmh/pearl.pdf">este</a> es mucho más conciso.</li>
 </ul>
 <p>Varias librerias que implementan de formas distintas la misma idea:</p>
 <ul>
