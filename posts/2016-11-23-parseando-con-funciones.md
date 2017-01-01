@@ -258,7 +258,7 @@ val idParser: Parser[Id] =
     map2(parseDigit, parseChar.filter(isUpperCase), (n: Int, c: Char) => Id(n,c) )
 ```
 
-Mucho más consiso así, ¿no?
+Mucho más conciso así, ¿no?
 
 Todas estas funciones que tomán uno o más `Parser`s y retornan uno nuevo son denominadas **combinadoras**. Aquí yace la riqueza del acercamiento funcional: en vez de describir explícitamente paso a paso lo que el `Parser` debe hacer podemos usar funciones combinadoras y poco a poco expresamos lo que deseamos.
 
@@ -400,7 +400,7 @@ Así que si algún día necesitan _parsear_ algo pueden usar esta aproximación.
 Este _post_ está basado en lo que aprendí leyendo varias fuentes:
 
 * El Capítulo 9 de [Functional Programming in Scala](https://www.manning.com/books/functional-programming-in-scala): Toman un acercamiento distinto para explicar la idea general de _parser combinators_.
-* Múltiples artículos por Erik Meijer y Graham Hutton: [Este](http://www.cs.nott.ac.uk/~pszgmh/monparsing.pdf) es bastante detallado y [este](http://www.cs.nott.ac.uk/~pszgmh/pearl.pdf) es mucho más consiso.
+* Múltiples artículos por Erik Meijer y Graham Hutton: [Este](http://www.cs.nott.ac.uk/~pszgmh/monparsing.pdf) es bastante detallado y [este](http://www.cs.nott.ac.uk/~pszgmh/pearl.pdf) es mucho más conciso.
 
 Varias librerias que implementan de formas distintas la misma idea:
 
