@@ -101,3 +101,10 @@ h2 {
   margin: auto;
   margin-bottom: 30px;
 }
+
+.article-photo {
+  box-shadow: 8px 8px 10px #aaa;
+  display: block;
+  margin: auto;
+  margin: 25px;
+}

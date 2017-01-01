@@ -25,16 +25,16 @@ takeRecentFirst n = fmap (maybeTake n) . recentFirst
 
 --------------------------------------------------------------------------------
 
+serveFilesAt routePattern =
+  match routePattern $ do
+  route   idRoute
+  compile copyFileCompiler
+
 main :: IO ()
 main = hakyll $ do
-    match "images/**/*" $ do
-        route   idRoute
-        compile copyFileCompiler
-
-    match "scripts/*" $ do
-        route   idRoute
-        compile copyFileCompiler
-        
+    serveFilesAt "images/*"
+    serveFilesAt "images/**/*"
+    serveFilesAt "scripts/*"
     match "css/*" $ do
         route   idRoute
         compile compressCssCompiler
@@ -42,7 +42,7 @@ main = hakyll $ do
     -- build up tags 
     tags <- buildTags "posts/*" (fromCapture "tags/*.html")
     tagsRules tags $ \tag pattern -> do 
-        let title = "Posts etiquetados con \"" ++ tag ++ "\"" 
+        let title = "Posts tagged with \"" ++ tag ++ "\"" 
         route idRoute 
         compile $ do 
             posts <- recentFirst =<< loadAll pattern 
@@ -92,7 +92,7 @@ main = hakyll $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let archiveCtx =
                     listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Posts"               `mappend`
+                    constField "title" "Blog"                `mappend`
                     siteCtx
 
             makeItem ""
@@ -107,7 +107,7 @@ main = hakyll $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
                     listField "posts" postCtx (return $ maybeTake (Only 5) posts) `mappend`
-                    constField "title" "Inicio"              `mappend`
+                    constField "title" "Hi, there!"              `mappend`
                     siteCtx
 
             getResourceBody
@@ -130,7 +130,7 @@ draftCtx = defaultContext `mappend` activeClassField
 
 postCtx :: Context String
 postCtx =
-    dateFieldWith esTimeLocale "date" "%B %e de %Y" `mappend`
+    dateField "date" "%B %e %Y" `mappend`
     siteCtx
 
 siteCtx :: Context String
@@ -141,41 +141,10 @@ siteCtx =
 postCtxWithTags :: Tags -> Context String 
 postCtxWithTags tags = tagsField "tags" tags `mappend` postCtx
 
-esTimeLocale :: TimeLocale 
-esTimeLocale =  TimeLocale { 
-  wDays  = [("domingo", "dom"), ("lunes",     "lun"), 
-            ("martes",  "mar"), ("miercoles", "mie"), 
-            ("jueves",  "jue"), ("viernes",   "vie"), 
-            ("sábado",  "sab")], 
-
-  months = [("Enero",      "ene"), ("Febrero",  "feb"), 
-            ("Marzo",      "mar"), ("Abril",    "abr"), 
-            ("Mayo",       "may"), ("Junio",    "jun"), 
-            ("Julio",      "jul"), ("Agosto",    "ago"), 
-            ("Septiembre", "sep"), ("Octubre",  "oct"), 
-            ("Noviembre",  "nov"), ("Diciembre", "dic")], 
-{--
-  intervals = [ ("año","años") 
-              , ("mes", "meses") 
-              , ("día","días") 
-              , ("hora","horas") 
-              , ("min","mins") 
-              , ("seg","segs") 
-              , ("useg","usegs") 
-              ], 
---}
-  amPm = (" de la mañana", " de la tarde"), 
-  dateTimeFmt = "%a %e %b %Y, %H:%M:%S %Z", 
-  dateFmt   = "%d/%m/%Y", 
-  timeFmt   = "%H:%M:%S", 
-  time12Fmt = "%I:%M:%S %p",
-  knownTimeZones = knownTimeZones defaultTimeLocale
-}
-
 feedConfig :: FeedConfiguration
 feedConfig = FeedConfiguration
     { feedTitle       = "Miguel Vilá"
-    , feedDescription = "Blog personal de Miguel Vilá"
+    , feedDescription = "Miguel Vilá's personal blog"
     , feedAuthorName  = "Miguel Vilá"
     , feedAuthorEmail = "miguelvilag@gmail.com"
     , feedRoot        = siteUrl
