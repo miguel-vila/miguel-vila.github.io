@@ -325,6 +325,7 @@ $$</span><br /></p>
 <p>Even for a class of algorithms that looks inherently imperative there are ways to avoid mutation and to end up with the very same algorithm using immutable data structures and higher-order functions like <code>fold</code> or <code>scan</code>. You could just translate the mutations into <code>State</code> monad values but that’s just too complex and unnecessary. There are simpler ways to functionally express the same thing.</p>
 <p>Is this worth it? Maybe not if you are used to the imperative approach, which already yields a purely functional solution up to observable mutation.</p>
 <p>If you want to know more <a href="http://jelv.is/blog/Lazy-Dynamic-Programming/">this</a> is an approach to solve DP problems with the top-down approach that relies on Haskell’s lazy semantics.</p>
+<p>You can run the code for this post in <a href="https://miguel-vila.github.io/jupyter_notebooks/dp-with-fp.html">this</a> jupyter notebook. The notebook’s source is <a href="https://github.com/miguel-vila/miguel-vila.github.io/blob/hakyll/jupyter_notebooks/dp-with-fp.ipynb">here</a>.</p>
 <div class="note">
 <p class="aside-header">
 <strong>Side note</strong> <span class="clickable">(Click!)</span>
