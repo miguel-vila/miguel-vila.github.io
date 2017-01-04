@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        
+        <meta property="og:title" content="Solving Dynamic Programming problems using Functional Programming (Redux)" />
+        <meta property="twitter:title" content="Solving Dynamic Programming problems using Functional Programming (Redux)" />
+        
+
+        
+        <meta name="description" content="How to implement Dynamic Programming algorithms using Functional Programming" />
+        <meta property="og:description" content="How to implement Dynamic Programming algorithms using Functional Programming" />
+        <meta property="twitter:description" content="How to implement Dynamic Programming algorithms using Functional Programming" />
+        
+
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="@mglvl" />
+
+        
+        <meta property="og:image" content="https://miguel-vila.github.io/images/dp-fp-1.png" />
+        <meta property="twitter:image" content="https://miguel-vila.github.io/images/dp-fp-1.png" />
+        
+
+        <title>
+            
+                Solving Dynamic Programming problems using Functional Programming (Redux)
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        if(window.location.hostname !== 'localhost'){
+            ga('create', 'UA-74778346-1', 'auto');
+            ga('send', 'pageview');
+        }
+    </script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Home</a>
+            <a href="../archive.html">Blog</a>
+            <a href="../resume_EN.pdf">Résumé</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
+            <a href="https://twitter.com/mglvl/">Twitter</a>
+            <a href="https://www.flickr.com/photos/77778296@N07/">Flickr</a>
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://slides.com/miguelvila/">Slides</a>
+        </nav>
+    </header>
+    <article>
+    <h2>Solving Dynamic Programming problems using Functional Programming (Redux)</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        January  3 2017
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/Functional%20Programming.html">Functional Programming</a>, <a href="../tags/Dynamic%20Programming.html">Dynamic Programming</a>, <a href="../tags/Scala.html">Scala</a>, <a href="../tags/Laziness.html">Laziness</a> 
+        
+    </div>
+    <hr>
+    <h2 id="going-top-down">Going top-down</h2>
+<p>Going back to <a href="https://miguel-vila.github.io/posts/2017-01-02-dp-with-fp.html">solving Dynamic Programming (DP) problems by using Functional Programming</a> I found <a href="http://jelv.is/blog/Lazy-Dynamic-Programming/">this</a> article. In the article they describe a way to solve DP problems in a top-down fashion by using laziness. Scala doesn’t have the same lazy semantics as Haskell. If we are going to try to follow their same approach we are going to need a lazy array: an array whose elements are computed just when they are needed. Here’s a very simple implementation of that idea:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">class</span> LazyVector[A](thunks: Vector[() =&gt; A]) {
+    
+    <span class="kw">private</span> <span class="kw">val</span> values: Array[Option[A]] = Array.<span class="fu">fill</span>(thunks.<span class="fu">length</span>)(None)
+    
+    <span class="kw">def</span> <span class="fu">apply</span>(i: Int): A = {
+        <span class="kw">if</span>(!<span class="fu">values</span>(i).<span class="fu">isDefined</span>) {
+            <span class="fu">values</span>(i) = Some( <span class="fu">thunks</span>(i)() )
+        }
+        <span class="fu">values</span>(i).<span class="fu">get</span>
+    }
+    
+    <span class="kw">def</span> last: A = <span class="fu">apply</span>(values.<span class="fu">length</span> - <span class="dv">1</span>)
+    
+}
+
+<span class="kw">object</span> LazyVector {
+    
+    <span class="kw">def</span> tabulate[A](n: Int)(f: Int =&gt; A): LazyVector[A] = {
+        <span class="kw">new</span> <span class="fu">LazyVector</span>( Vector.<span class="fu">tabulate</span>(n)( i =&gt; () =&gt; <span class="fu">f</span>(i) ) )
+    }
+
+    <span class="kw">def</span> tabulate[A](m: Int, n: Int)(f: (Int,Int) =&gt; A): LazyVector[LazyVector[A]] = {
+        <span class="fu">tabulate</span>(m)( i =&gt; <span class="fu">tabulate</span>(n)( j =&gt; <span class="fu">f</span>(i,j) ) )
+    }
+
+}</code></pre></div>
+<p>We construct an instance of <code>LazyVector</code> by providing a vector of computations. And when we try to access the i-th element of the vector we perform the computation if we hadn’t done it before and return the saved value. Under the hood we are using a mutable array but don’t worry, our intentions are pure.</p>
+<p>We also provide two useful <code>tabulate</code> constructors, similar to the ones <code>Vector</code> has.</p>
+<p>With this we can solve once again the <em>0/1 knapsack</em> problem:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">knapsack</span>(maxWeight: Int, value: Vector[Int], weight: Vector[Int]): Int = {
+    <span class="kw">val</span> n = value.<span class="fu">length</span>
+    <span class="kw">lazy</span> <span class="kw">val</span> solutions: LazyVector[LazyVector[Int]] = 
+        LazyVector.<span class="fu">tabulate</span>(n + <span class="dv">1</span>, maxWeight + <span class="dv">1</span>) { (i,j) =&gt;
+            <span class="kw">if</span>( i == <span class="dv">0</span> || j == <span class="dv">0</span> ) {
+                <span class="dv">0</span>
+            } <span class="kw">else</span> <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
+                Math.<span class="fu">max</span>( 
+                    <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j) , 
+                    <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>) 
+                )
+            } <span class="kw">else</span> {
+                <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j)
+            }
+        }
+    <span class="fu">solutions</span>(n)(maxWeight)
+}</code></pre></div>
+<p>There are a lot of interesting details here. First we define the matrix of solutions recursively: the function that builds it uses the <code>solutions</code> value (this is the reason we have to declare it as a <code>lazy val</code>, because we are referencing it before we are done defining it). Second: the base cases are just another clause in the function that describes the matrix. This has the same time complexity as we had before but space complexity of <span class="math inline"><em>O</em>(<em>n</em><em>W</em>)</span> which is not the best we can do if we are only interested in computing the maximum total value.</p>
+<p>There is an important advantage with this approach, though. The code is way more declarative. It doesn’t say how to iterate over the matrix of solutions in such a way that dependencies are pre-computed. It just says: here’s what the solution looks like, let the data structure’s laziness avoid re-computations.</p>
+<h2 id="returning-the-concrete-solution">Returning the concrete solution</h2>
+<p>If we also want to know <em>which</em> items conform the maximum total value then we have to record all the decisions we make, so the space complexity will be <span class="math inline"><em>O</em>(<em>n</em><em>W</em>)</span> anyway. This just implies returning more information when we are looking for the maximum:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> max[A](a: (Int, A), b: (Int, A)): (Int, A) =
+    <span class="kw">if</span>(a.<span class="fu">_1</span> &gt; b.<span class="fu">_1</span>)
+        a
+    <span class="kw">else</span>
+        b
+
+<span class="kw">def</span> <span class="fu">knapsackWithItems</span>(
+    maxWeight: Int, value: Vector[Int], weight: Vector[Int]): List[Int] = {
+    <span class="kw">val</span> n = value.<span class="fu">length</span>
+    <span class="kw">lazy</span> <span class="kw">val</span> solutions: LazyVector[LazyVector[(Int, List[Int])]] = 
+        LazyVector.<span class="fu">tabulate</span>(n + <span class="dv">1</span>, maxWeight + <span class="dv">1</span>) { (i,j) =&gt;
+            <span class="kw">if</span>( i == <span class="dv">0</span> || j == <span class="dv">0</span> ) {
+                (<span class="dv">0</span>, List.<span class="fu">empty</span>)
+            } <span class="kw">else</span> <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
+                <span class="kw">val</span> (including, itemsIds) = <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j - <span class="fu">weight</span>(i<span class="dv">-1</span>))
+                <span class="fu">max</span>( 
+                    <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j) ,
+                    (including + <span class="fu">value</span>(i<span class="dv">-1</span>), (i<span class="dv">-1</span>) :: itemsIds )
+                )
+            } <span class="kw">else</span> {
+                <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j)
+            }
+        }
+    <span class="kw">val</span> (_,items) = <span class="fu">solutions</span>(n)(maxWeight)
+    items
+}</code></pre></div>
+<p>Similarly we can solve <a href="https://projecteuler.net/problem=81">Project Euler’s 81-th problem</a> like this:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Instruction
+<span class="kw">case</span> <span class="kw">object</span> GoRight <span class="kw">extends</span> Instruction
+<span class="kw">case</span> <span class="kw">object</span> GoDown <span class="kw">extends</span> Instruction
+
+<span class="kw">def</span> <span class="fu">minPath</span>(values: Vector[Vector[Int]]): List[Instruction] = {
+    <span class="kw">val</span> m = values.<span class="fu">length</span>
+    <span class="kw">val</span> n = <span class="fu">values</span>(<span class="dv">0</span>).<span class="fu">length</span>
+    <span class="kw">lazy</span> <span class="kw">val</span> solutions: LazyVector[LazyVector[(Int, List[Instruction])]] = 
+        LazyVector.<span class="fu">tabulate</span>(m, n) { 
+            <span class="kw">case</span> (<span class="dv">0</span>,<span class="dv">0</span>) =&gt; (<span class="fu">values</span>(<span class="dv">0</span>)(<span class="dv">0</span>), List.<span class="fu">empty</span>)
+            <span class="kw">case</span> (<span class="dv">0</span>,j) =&gt; 
+                <span class="kw">val</span> (leftVal, leftInsts) = <span class="fu">solutions</span>(<span class="dv">0</span>)(j<span class="dv">-1</span>)
+                (<span class="fu">values</span>(<span class="dv">0</span>)(j) + leftVal, leftInsts ++ List(GoRight))
+            <span class="kw">case</span> (i,<span class="dv">0</span>) =&gt; 
+                <span class="kw">val</span> (upVal, upInsts) = <span class="fu">solutions</span>(i<span class="dv">-1</span>)(<span class="dv">0</span>)
+                (<span class="fu">values</span>(i)(<span class="dv">0</span>) + upVal, upInsts ++ List(GoDown))
+            <span class="kw">case</span> (i,j) =&gt;
+                <span class="kw">val</span> (leftVal, leftInsts) = <span class="fu">solutions</span>(i)(j<span class="dv">-1</span>)
+                <span class="kw">val</span> (upVal  , upInsts  ) = <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j)
+                <span class="kw">if</span>(leftVal &lt; upVal) {
+                    (leftVal + <span class="fu">values</span>(i)(j), leftInsts ++ List(GoRight))
+                } <span class="kw">else</span> {
+                    (upVal + <span class="fu">values</span>(i)(j)  , upInsts ++ List(GoDown))                    
+                }
+        }
+    <span class="kw">val</span> (_,insts) = <span class="fu">solutions</span>(m<span class="dv">-1</span>)(n<span class="dv">-1</span>)
+    insts
+}</code></pre></div>
+<h2 id="conclusions">Conclusions</h2>
+<p>This top-down approach has the disadvantage that it may consume more memory than we need (if we are just interested in the maximum / minimum value). But for the kind of problems where we <em>need</em> to have all the decisions then it’s worth it anyway. It produces very clear and declarative code. The only disadvantage I can think of is that it may produce stack-overflows for large inputs.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2017-01-03-dp-with-fp-redux.html";
+        this.page.identifier = "posts/2017-01-03-dp-with-fp-redux.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+        <div class="rc-scout"></div>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=e913a8c2facd4191d76c6f34cea12f75"></script>
+    </body>
+</html>

@@ -7,8 +7,16 @@
         <description><![CDATA[Miguel Vilá's personal blog]]></description>
         <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Mon, 02 Jan 2017 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Tue, 03 Jan 2017 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Solving Dynamic Programming problems using Functional Programming (Redux)</title>
+    <link>http://miguel-vila.github.io/posts/2017-01-03-dp-with-fp-redux.html</link>
+    <description><![CDATA[How to implement Dynamic Programming algorithms using Functional Programming]]></description>
+    <pubDate>Tue, 03 Jan 2017 00:00:00 UT</pubDate>
+    <guid>http://miguel-vila.github.io/posts/2017-01-03-dp-with-fp-redux.html</guid>
+    <dc:creator>Miguel Vilá</dc:creator>
+</item>
+<item>
     <title>Solving Dynamic Programming problems by using Functional Programming</title>
     <link>http://miguel-vila.github.io/posts/2017-01-02-dp-with-fp.html</link>
     <description><![CDATA[How to implement Dynamic Programming algorithms using Functional Programming]]></description>
@@ -38,14 +46,6 @@
     <description><![CDATA[Cómo podemos parsear usando solamente funciones y combinandolas]]></description>
     <pubDate>Wed, 23 Nov 2016 00:00:00 UT</pubDate>
     <guid>http://miguel-vila.github.io/posts/2016-11-23-parseando-con-funciones.html</guid>
-    <dc:creator>Miguel Vilá</dc:creator>
-</item>
-<item>
-    <title>Towards an applicative-for macro</title>
-    <link>http://miguel-vila.github.io/posts/2016-10-09-towards-an-applicative-for-macro.html</link>
-    <description><![CDATA[The first steps on building a macro that calls Applicative's functions when possible]]></description>
-    <pubDate>Sun, 09 Oct 2016 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2016-10-09-towards-an-applicative-for-macro.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 
