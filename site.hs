@@ -34,6 +34,7 @@ main :: IO ()
 main = hakyll $ do
     serveFilesAt "images/*"
     serveFilesAt "images/**/*"
+    serveFilesAt "code/*"
     serveFilesAt "scripts/*"
     match "css/*" $ do
         route   idRoute
