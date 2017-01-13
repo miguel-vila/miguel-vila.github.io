@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        
+        <meta property="og:title" content="Conway's Game Of Life in Elm" />
+        <meta property="twitter:title" content="Conway's Game Of Life in Elm" />
+        
+
+        
+        <meta name="description" content="Conway's Game Of Life in Elm" />
+        <meta property="og:description" content="Conway's Game Of Life in Elm" />
+        <meta property="twitter:description" content="Conway's Game Of Life in Elm" />
+        
+
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="@mglvl" />
+
+        
+        <meta property="og:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        <meta property="twitter:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        
+
+        <title>
+            
+                Conway's Game Of Life in Elm
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        if(window.location.hostname !== 'localhost'){
+            ga('create', 'UA-74778346-1', 'auto');
+            ga('send', 'pageview');
+        }
+    </script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Home</a>
+            <a href="../archive.html">Blog</a>
+            <a href="../resume_EN.pdf">Résumé</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
+            <a href="https://twitter.com/mglvl/">Twitter</a>
+            <a href="https://www.flickr.com/photos/77778296@N07/">Flickr</a>
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://slides.com/miguelvila/">Slides</a>
+        </nav>
+    </header>
+    <article>
+    <h2>Conway's Game Of Life in Elm</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        January 12 2017
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/Elm.html">Elm</a>, <a href="../tags/Functional%20Programming.html">Functional Programming</a>, <a href="../tags/Conway%27s%20Game%20Of%20Life.html">Conway's Game Of Life</a> 
+        
+    </div>
+    <hr>
+    <p><a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway’s Game Of Life</a> is a cellular automaton: just a very simple model of computation that pretends to emulate “life”. It consists of a grid of cells each one of which can be alive or dead. Taken from Wikipedia these are the rules:</p>
+<blockquote>
+<p>At each step in time, the following transitions occur:</p>
+</blockquote>
+<blockquote>
+<ul>
+<li>Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.</li>
+<li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+<li>Any live cell with more than three live neighbours dies, as if by overpopulation.</li>
+<li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+</ul>
+</blockquote>
+<p>You can see it live here (the column at the right side):</p>
+<div align="center">
+<blockquote class="instagram-media" data-instgrm-version="7" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
+<div style="padding:8px;">
+<div style=" background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;">
+<div style=" background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAMUExURczMzPf399fX1+bm5mzY9AMAAADiSURBVDjLvZXbEsMgCES5/P8/t9FuRVCRmU73JWlzosgSIIZURCjo/ad+EQJJB4Hv8BFt+IDpQoCx1wjOSBFhh2XssxEIYn3ulI/6MNReE07UIWJEv8UEOWDS88LY97kqyTliJKKtuYBbruAyVh5wOHiXmpi5we58Ek028czwyuQdLKPG1Bkb4NnM+VeAnfHqn1k4+GPT6uGQcvu2h2OVuIf/gWUFyy8OWEpdyZSa3aVCqpVoVvzZZ2VTnn2wU8qzVjDDetO90GSy9mVLqtgYSy231MxrY6I2gGqjrTY0L8fxCxfCBbhWrsYYAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;">
+
+</div>
+</div>
+<p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;">
+<a href="https://www.instagram.com/p/BNFcfHTA0K3/" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">Un vídeo publicado por Miguel Vilá (<span class="citation">@miguel_vila</span>)</a> el <time style=" font-family:Arial,sans-serif; font-size:14px; line-height:17px;" datetime="2016-11-21T20:09:29+00:00">21 de Nov de 2016 a la(s) 12:09 PST</time>
+</p>
+</div>
+</blockquote>
+<script async defer src="//platform.instagram.com/en_US/embeds.js"></script>
+</div>
+<p>That was an art installation called <em>With a Rhythmic Instinction to be Able to Travel Beyond Existing Forces of Life</em> by <a href="https://en.wikipedia.org/wiki/Philippe_Parreno">Phillippe Parreno</a>. You can even see it slows down from time to time when too much “collisions” happen.</p>
+<p>So I built the Game Of Life using <a href="http://elm-lang.org/">Elm</a> (code is <a href="https://github.com/miguel-vila/conway">here</a>). Elm is a functional language that targets front-end applications. It’s similar to Haskell but it doesn’t have type classes. It has a very dogmatic perspective on how to build applications (the so called <a href="https://guide.elm-lang.org/architecture/">Elm architecture</a>) which relies in function composition to produce components composition. You can play around with my implementation here:</p>
+<script type="text/javascript" src="../code/elm-conway.js"></script>
+<div id="elm-conway">
+
+</div>
+<script type="text/javascript">
+Elm.Conway.embed(document.getElementById("elm-conway"));
+</script>
+<p>It gets old very quickly.</p>
+<p>So, while building it I learned a bunch of things:</p>
+<h2 id="the-core-logic">The core logic</h2>
+<p>As it turns out the core logic (the step rules) are very easy to implement.</p>
+<p>Starting with some type definitions:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> alias <span class="dt">Cell</span> <span class="fu">=</span>
+    { active <span class="fu">:</span> <span class="dt">Bool</span>
+    , x <span class="fu">:</span> <span class="dt">Int</span>
+    , y <span class="fu">:</span> <span class="dt">Int</span>
+    }
+
+
+<span class="kw">type</span> alias <span class="dt">Grid</span> <span class="fu">=</span>
+    <span class="dt">Array</span> (<span class="dt">Array</span> <span class="dt">Cell</span>)</code></pre></div>
+<p>Then the core logic is here:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">updateCell <span class="fu">:</span> <span class="dt">Grid</span> <span class="ot">-&gt;</span> <span class="dt">Cell</span> <span class="ot">-&gt;</span> <span class="dt">Cell</span>
+updateCell grid cell <span class="fu">=</span>
+    <span class="kw">let</span>
+        neighbours <span class="fu">=</span>
+            getNeighbours cell grid
+
+        liveNeighbours <span class="fu">=</span>
+            List.length <span class="fu">&lt;|</span> List.filter <span class="fu">.</span>active neighbours
+
+        newState <span class="fu">=</span>
+            <span class="kw">if</span> cell<span class="fu">.</span>active <span class="kw">then</span>
+                liveNeighbours <span class="fu">==</span> <span class="dv">2</span> <span class="fu">||</span> liveNeighbours <span class="fu">==</span> <span class="dv">3</span>
+            <span class="kw">else</span>
+                liveNeighbours <span class="fu">==</span> <span class="dv">3</span>
+    <span class="kw">in</span>
+        { cell <span class="fu">|</span> active <span class="fu">=</span> newState }
+
+
+step <span class="fu">:</span> <span class="dt">Grid</span> <span class="ot">-&gt;</span> <span class="dt">Grid</span>
+step grid <span class="fu">=</span>
+    Array.map (Array.map (updateCell grid)) grid</code></pre></div>
+<p>You can see the other functions <a href="https://github.com/miguel-vila/conway/blob/7225158399d5ae41d39e6cac2464c1062743d8eb/src/Model.elm#L31-L60">here</a>. Those are also kind of simple.</p>
+<p>With this it’s very easy to create the <code>update</code> and <code>view</code> functions of the Elm architecture.</p>
+<h2 id="rendering">Rendering</h2>
+<p>I decided to use plain HTML elements because tracking which cell was clicked in a canvas is harder. In Elm every graphical element is rendered according to a function you describe, there are no templates or anything like that. The good thing about this is that you can continue to leverage the language when describing the views.</p>
+<p>Starting with your domain types like <code>Cell</code> you build an Html from it with a function, say <code>cellView: Cell -&gt; Html Msg</code>. Then for a composed type like <code>Grid</code> you create a function <code>gridView : Grid -&gt; Html Msg</code> by using the <code>cellView</code> function we built before. Thus, graphical component composition is achieved by composing functions which is something very simple! I think that idea is powerful, useful and simple.</p>
+<h2 id="random-grid-generation">Random grid generation</h2>
+<p>One interesting challenge was how to generate a random configuration of the grid with some of the cells alive and others dead. Elm’s <a href="http://package.elm-lang.org/packages/elm-lang/core/4.0.5/Random">Random</a> library has a very nice approach, which is usual in functional languages. For a boolean value they could have provided a function that, when called, would return a random boolean. The problem is that this function wouldn’t be purely functional because different invocations would result in different values being returned. A better way is to return something that can generate a random value. And then, when we want to generate a random value we use this generator to create a <code>Cmd Msg</code> value which we are going to give to Elm’s runtime. It will execute the random generation (that’s executing a side effect, possibly changing the state of a random seed) and will deliver us (through the <code>update</code> function) the result.</p>
+<p>Talking in code this is what we do:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- length of the square grid</span>
+n <span class="fu">=</span> <span class="dv">25</span>
+
+<span class="kw">type</span> <span class="dt">Msg</span>
+    <span class="fu">=</span> <span class="fu">...</span>
+    <span class="fu">|</span> <span class="fu">...</span>
+    <span class="fu">|</span> <span class="dt">GenerateRandomGrid</span>
+    <span class="fu">|</span> <span class="dt">SetRandomGrid</span> <span class="dt">Grid</span>
+
+update <span class="fu">:</span> <span class="dt">Msg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> ( <span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span> )
+update msg model <span class="fu">=</span>
+    <span class="kw">case</span> msg <span class="kw">of</span>
+        <span class="fu">...</span>
+        
+        <span class="dt">GenerateRandomGrid</span> <span class="ot">-&gt;</span>
+            model <span class="fu">!</span> [ generateRandomGrid ]
+
+        <span class="dt">SetRandomGrid</span> randGrid <span class="ot">-&gt;</span>
+            { model <span class="fu">|</span> grid <span class="fu">=</span> randGrid } <span class="fu">!</span> []
+
+generateRandomGrid <span class="fu">:</span> <span class="dt">Cmd</span> <span class="dt">Msg</span>
+generateRandomGrid <span class="fu">=</span>
+    Random.generate <span class="dt">SetRandomGrid</span> (randomGrid n)
+
+randomGrid <span class="fu">:</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Generator</span> <span class="dt">Grid</span>
+randomGrid n <span class="fu">=</span> <span class="fu">???</span></code></pre></div>
+<p><a href="http://package.elm-lang.org/packages/elm-lang/core/4.0.5/Random#generate"><code>Random.generate</code></a> is the function that “performs” the side effect. It creates a <code>Cmd Msg</code> that Elm’s runtime receives, produces a random value according to the generator and hands it back trough the <code>update</code> function.</p>
+<p>The strategy of delaying some computation and returning a representation of it is very common in functional programming. This allows us to have very declarative combinator functions.</p>
+<p>The question then is: how to build a <code>Generator Grid</code>? To do this we can start with something that generates a random boolean and from that we can build a <code>Generator Cell</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">randomCell <span class="fu">:</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Generator</span> <span class="dt">Cell</span>
+randomCell x y <span class="fu">=</span>
+    Random.map (\active <span class="ot">-&gt;</span> <span class="dt">Cell</span> active x y) Random.bool</code></pre></div>
+<p><code>Random.map</code> is one of those useful combinator functions I was talking about. It receives two things: a function and a generator and returns a new generator that applies the input function to the generated values.</p>
+<p>Now let’s say we want to generate a row of <code>n</code> cells with some index <code>x</code>. We could try something like this:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">randomRow <span class="fu">:</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Generator</span> (<span class="dt">Array</span> <span class="dt">Cell</span>)
+randomRow n x <span class="fu">=</span>
+    randomCell x
+        <span class="fu">|&gt;</span> Array.repeat n</code></pre></div>
+<p>But we are returning a <code>Array (Int -&gt; Generator Cell)</code>! We can apply the index for each element like this:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">randomRow <span class="fu">:</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Generator</span> (<span class="dt">Array</span> <span class="dt">Cell</span>)
+randomRow n x <span class="fu">=</span>
+    randomCell x
+        <span class="fu">|&gt;</span> Array.repeat n
+        <span class="fu">|&gt;</span> Array.indexedMap (\y getCellGen <span class="ot">-&gt;</span> getCellGen y)</code></pre></div>
+<p>A smart-ass way to do the same:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">randomRow <span class="fu">:</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Generator</span> (<span class="dt">Array</span> <span class="dt">Cell</span>)
+randomRow n x <span class="fu">=</span>
+    randomCell x
+        <span class="fu">|&gt;</span> Array.repeat n
+        <span class="fu">|&gt;</span> Array.indexedMap (<span class="fu">|&gt;</span>)</code></pre></div>
+<p>But we are still not returning a <code>Generator (Array Cell)</code>, we are returning a <code>Array (Generator Cell)</code>! Does this sound like a familiar problem? It turns out that this is a very common combinator in functional programming. In other languages this type flipping function (we want to exchange the types <code>Generator</code> and <code>Array</code>) is called <code>sequence</code>. Unfortunately the standard library doesn’t have it, but <a href="http://package.elm-lang.org/packages/elm-community/random-extra/latest"><code>Random.Extra</code></a> does. It’s called <code>together</code> there and it works on <code>List</code>, not <code>Array</code>.</p>
+<div class="note">
+<p class="aside-header">
+<strong>Aside</strong> <span class="clickable">(Click!)</span>
+</p>
+<div class="note-content">
+<p>In Haskell the function that turns a <code>[m a]</code> into a <code>m [a]</code> (similar to what we want to do here) is called <a href="https://hackage.haskell.org/package/base-4.9.0.0/docs/Prelude.html#v:sequence"><code>sequence</code></a>. I think it’s more common to use <a href="https://hackage.haskell.org/package/base-4.9.0.0/docs/Prelude.html#v:mapM"><code>mapM</code></a>, though. In Haskell there are type classes so this function can be generalized for every type in the <em>Applicative</em> type class (Haskell restricts to <em>Monad</em> but this is a historical error). In Elm this function must be implemented explicitly for each type that has the same interface as an <em>Applicative</em>.</p>
+</div>
+</div>
+<p>Thus, we can get what we want like this:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">randomRow <span class="fu">:</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Generator</span> (<span class="dt">Array</span> <span class="dt">Cell</span>)
+randomRow n x <span class="fu">=</span>
+    randomCell x
+        <span class="fu">|&gt;</span> List.repeat n
+        <span class="fu">|&gt;</span> List.indexedMap (<span class="fu">|&gt;</span>)
+        <span class="fu">|&gt;</span> Random.Extra.together
+        <span class="fu">|&gt;</span> Random.map Array.fromList</code></pre></div>
+<p>Now we want to use this function to generate a random grid of cells, given a number <code>n</code> (the number of rows and columns). Curiously the code is very similar:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">randomGrid <span class="fu">:</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Generator</span> <span class="dt">Grid</span>
+randomGrid n <span class="fu">=</span>
+    (randomRow n)
+        <span class="fu">|&gt;</span> List.repeat n
+        <span class="fu">|&gt;</span> List.indexedMap (<span class="fu">|&gt;</span>)
+        <span class="fu">|&gt;</span> Random.Extra.together
+        <span class="fu">|&gt;</span> Random.map Array.fromList</code></pre></div>
+<h2 id="coloring-patterns">Coloring patterns</h2>
+<p>During a run some interesting <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Examples_of_patterns">patterns</a> can arise. There is even a <a href="http://www.conwaylife.com/wiki/Category:Patterns">wiki section</a> classifying a lot of them. So I decided to give some specific color when some of these patterns arises.</p>
+<p>To do this I took a very simplistic approach:</p>
+<ol style="list-style-type: decimal">
+<li>Identify contiguous regions of live cells.</li>
+<li>For each of these regions try to match it against a set of templates of patterns.</li>
+<li>Those regions that matched some pattern will be shown with a different color.</li>
+</ol>
+<p>To do the first step I had to find the <a href="http://www.conwaylife.com/wiki/Category:Patterns">connected components</a> of live cells in the grid. I implemented Breadth First Search (BFS) from a specific cell like <a href="https://github.com/miguel-vila/conway/blob/7225158399d5ae41d39e6cac2464c1062743d8eb/src/Region.elm#L16-L45">this</a> and to identify the contiguous regions of live cells I run it repeatedly like <a href="https://github.com/miguel-vila/conway/blob/7225158399d5ae41d39e6cac2464c1062743d8eb/src/Region.elm#L82-L114">this</a>. Maybe for BFS I’m lacking a proper queue but other than that it didn’t turn out that difficult to implement that algorithm in a functional language.</p>
+<p>Next I try to match these regions with respect to a set of pattern’s templates. First I defined a template as a non empty list of templates and a template is just a non empty list of coordinates. These coordinates should be ordered by increasing <code>x</code> and then by increasing <code>y</code> (this makes it easier a later comparison). These are the types:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> alias <span class="dt">Template</span> <span class="fu">=</span>
+    <span class="dt">Cons</span> ( <span class="dt">Int</span>, <span class="dt">Int</span> )
+    
+<span class="kw">type</span> alias <span class="dt">Pattern</span> <span class="fu">=</span>
+    <span class="dt">Cons</span> <span class="dt">Template</span></code></pre></div>
+<p><code>Cons</code> is just the type of a non empty list, taken from the <a href="http://package.elm-lang.org/packages/hrldcpr/elm-cons/1.0.3/Cons">library</a> with the same name.</p>
+<p>To match a region against a pattern, we normalize the region by translating it to the origin as close as we can and we look for a template that matches. If some of the pattern’s templates is equal to the translated region then it’s a match:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">matchesPattern <span class="fu">:</span> <span class="dt">Pattern</span> <span class="ot">-&gt;</span> <span class="dt">Region</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+matchesPattern pattern region <span class="fu">=</span>
+    <span class="kw">let</span>
+        minx <span class="fu">=</span>
+            region
+                <span class="fu">|&gt;</span> Cons.map <span class="fu">.</span>x
+                <span class="fu">|&gt;</span> Cons.minimum
+
+        miny <span class="fu">=</span>
+            region
+                <span class="fu">|&gt;</span> Cons.map <span class="fu">.</span>y
+                <span class="fu">|&gt;</span> Cons.minimum
+
+        normalized <span class="fu">=</span>
+            region
+                <span class="fu">|&gt;</span> Cons.map (\{ x, y } <span class="ot">-&gt;</span> ( x <span class="fu">-</span> minx, y <span class="fu">-</span> miny ))
+    <span class="kw">in</span>
+        Cons.any (\p <span class="ot">-&gt;</span> p <span class="fu">==</span> normalized) pattern</code></pre></div>
+<p>This may not be the most efficient way to do this but it’s the first thing that came to my mind.</p>
+<p>And finally to find out which color, if any, a region must have I wrote something like this:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">patterns <span class="fu">:</span> <span class="dt">List</span> <span class="dt">Pattern</span>
+patterns <span class="fu">=</span> <span class="fu">...</span>
+
+colorPalette <span class="fu">:</span> <span class="dt">List</span> <span class="dt">Color</span>
+colorPalette <span class="fu">=</span> <span class="fu">...</span>
+
+patternsAndColors <span class="fu">:</span> <span class="dt">List</span> ( <span class="dt">Pattern</span>, <span class="dt">Color</span> )
+patternsAndColors <span class="fu">=</span>
+    List.Extra.zip patterns colorPalette
+
+getRegionColor <span class="fu">:</span> <span class="dt">Region</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Color</span>
+getRegionColor region <span class="fu">=</span>
+    find (\( pattern, _ ) <span class="ot">-&gt;</span> matchesPattern pattern region) patternsAndColors
+        <span class="fu">|&gt;</span> <span class="dt">Maybe</span><span class="fu">.</span>map (\( _, color ) <span class="ot">-&gt;</span> color)
+
+
+getRegionsColors <span class="fu">:</span> <span class="dt">List</span> <span class="dt">Region</span> <span class="ot">-&gt;</span> <span class="dt">List</span> ( <span class="dt">Region</span>, <span class="dt">Color</span> )
+getRegionsColors <span class="fu">=</span>
+    List.filterMap
+        (\region <span class="ot">-&gt;</span>
+            getRegionColor region
+                <span class="fu">|&gt;</span> <span class="dt">Maybe</span><span class="fu">.</span>map (\color <span class="ot">-&gt;</span> region <span class="ot">=&gt;</span> color)
+        )</code></pre></div>
+<h2 id="conclusion">Conclusion</h2>
+<p>This was a fun exercise! I enjoyed very much programming in Elm! This exercise didn’t have too many side effects, though. Just the random grid generation so I don’t know if that model scales to “real” applications. Also this project didn’t involve that much component composition (not only composing the views but also the <code>update</code> functions and the <code>Model</code> types). Nevertheless, Elm is a very cool language and the Elm architecture is fun to follow. I’m not sure if it allows all the kind of patterns that can arise when building more complex applications. But unlike, say Angular, you can understand what’s going at each part of your application. No magic binding or anything like that. I don’t think I will use Elm at my job but I hope to learn more about it in the future.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2017-01-12-gol-in-elm.html";
+        this.page.identifier = "posts/2017-01-12-gol-in-elm.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+        <div class="rc-scout"></div>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=e913a8c2facd4191d76c6f34cea12f75"></script>
+    </body>
+</html>
