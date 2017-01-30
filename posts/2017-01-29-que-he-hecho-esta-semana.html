@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        
+        <meta property="og:title" content="Algo de lo que hice esta semana (22/01/2016 - 29/01/2016)" />
+        <meta property="twitter:title" content="Algo de lo que hice esta semana (22/01/2016 - 29/01/2016)" />
+        
+
+        
+        <meta name="description" content="Algo de lo que hice esta semana (22/01/2016 - 29/01/2016)" />
+        <meta property="og:description" content="Algo de lo que hice esta semana (22/01/2016 - 29/01/2016)" />
+        <meta property="twitter:description" content="Algo de lo que hice esta semana (22/01/2016 - 29/01/2016)" />
+        
+
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="@mglvl" />
+
+        
+        <meta property="og:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        <meta property="twitter:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        
+
+        <title>
+            
+                Algo de lo que hice esta semana (22/01/2016 - 29/01/2016)
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        if(window.location.hostname !== 'localhost'){
+            ga('create', 'UA-74778346-1', 'auto');
+            ga('send', 'pageview');
+        }
+    </script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Home</a>
+            <a href="../archive.html">Blog</a>
+            <a href="../resume_EN.pdf">Résumé</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
+            <a href="https://twitter.com/mglvl/">Twitter</a>
+            <a href="https://www.flickr.com/photos/77778296@N07/">Flickr</a>
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://slides.com/miguelvila/">Slides</a>
+            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
+        </nav>
+    </header>
+    <article>
+    <h2>Algo de lo que hice esta semana (22/01/2016 - 29/01/2016)</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        January 29 2017
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/Vida.html">Vida</a> 
+        
+    </div>
+    <hr>
+    <p>Esta semana terminé de leer <a href="https://en.wikipedia.org/wiki/The_Double_(Saramago_novel)"><em>El hombre duplicado</em></a> de Saramago. No sé como describir la cosa, si decir si me gustó o no. Puedo decir que en su mayoría me gustó. Ahora recuerdo que la película <a href="http://www.imdb.com/title/tt2316411"><em>Enemy</em></a>, dirigida por Denis Villeneueve, es basada ligeramente en este libro, aunque creo con un distinto desenlace y enfoque. Ahora voy a empezar <a href="https://www.goodreads.com/book/show/7944987-sunset-park"><em>Sunset Park</em></a> de Paul Auster.</p>
+<p>También terminé el <a href="http://underscore.io/books/shapeless-guide/">libro</a> sobre <a href="https://github.com/milessabin/shapeless"><em>shapeless</em></a> que estaba leyendo. Puntos positivos: se enfoca en como usar la librería para hacer cosas útiles y la hace menos intimidante. El único punto negativo que le encuentro es que no tiene ejercicios que le permitan a uno validar si de verdad está entendiendo las cosas.</p>
+<p>Un detalle curioso: hablan del “patrón lema” que no es otra cosa que reusar operaciones ya existentes para implementar nuevas. El nombre del patrón se origina en las matemáticas: un lema se da cuando para demostrar ciertos teoremas se usan otros teoremas. Estos teoremas, que en el contexto de una demostración ayudan a demostrar otro teorema se denominan lemas. Reusar este término tiene una apariencia pedante para algo que como programadores hacemos en cada momento: invocar otras funciones para implementar otras funciones. Pero aquí el reuso tiene un significado distinto por que los “ops” corresponden a afirmaciones sobre los tipos. El ejemplo que ponen en el libro es el de implementar un “op” para extraer el penúltimo valor de un <code>HList</code>, reusando un “op” para sacar el segmento inicial de un <code>HList</code> y otro para sacar el último valor. En codigo:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> shapeless.<span class="fu">ops</span>.<span class="fu">hlist</span>
+
+<span class="kw">implicit</span> <span class="kw">def</span> hlistPenultimate[L &lt;: HList, M &lt;: HList, O](
+  <span class="kw">implicit</span>
+  init: hlist.<span class="fu">Init</span>.<span class="fu">Aux</span>[L, M],
+  last: hlist.<span class="fu">Last</span>.<span class="fu">Aux</span>[M, O]
+): Penultimate.<span class="fu">Aux</span>[L, O] =
+  <span class="kw">new</span> Penultimate[L] {
+    <span class="kw">type</span> Out = O
+    <span class="kw">def</span> <span class="fu">apply</span>(l: L): O =
+      last.<span class="fu">apply</span>(init.<span class="fu">apply</span>(l))
+                        
+  }</code></pre></div>
+<p>En este contexto el “lema” es la existencia de un <code>Init</code> y un <code>Last</code> y el “teorema” es la existencia de un <code>Penultimate</code>.</p>
+<p>Por otra parte usé <a href="http://elm-lang.org/">Elm</a> para graficar el problema del <a href="http://adventofcode.com/2016/day/8">día 8 de <em>Advent Of Code</em></a>:</p>
+<SCRIPT type="text/javascript" src="../code/elm-adv-8.js"></script>
+<div id="elm-adv-8">
+
+</div>
+<script type="text/javascript">
+Elm.Main.embed(document.getElementById("elm-adv-8"));
+</script>
+<p>Ví <a href="http://www.imdb.com/title/tt4645330/"><em>Denial</em></a> sobre el juicio por difamación de David Irving, un negacionista del holocausto. El título tiene multiples connotaciones. Por una parte está la obvia sobre los negacionistas del holocausto. Pero también hay otras instancias: la del racista que jura no serlo y la de la historiadora, Deborah Lipstadt, que decide negarse su derecho a expresarse para que los abogados puedan hacer su trabajo. Me quedo con la escena en la que conversan esto último.</p>
+<p>Este Domingo no salí en bici con mis amigos. Uno de ellos no iba a poder ir entonces creo que esto nos sirvió de excusa a los demás para no salir. Con sinceridad fue más pereza que otra cosa.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2017-01-29-que-he-hecho-esta-semana.html";
+        this.page.identifier = "posts/2017-01-29-que-he-hecho-esta-semana.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+        <div class="rc-scout"></div>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=e913a8c2facd4191d76c6f34cea12f75"></script>
+    </body>
+</html>
