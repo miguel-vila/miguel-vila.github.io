@@ -1,6 +1,6 @@
 ---
-title: Algo de lo que hice esta semana (22/01/2016 - 29/01/2016)
-description: Algo de lo que hice esta semana (22/01/2016 - 29/01/2016)
+title: Algo de lo que hice esta semana (22/01/2017 - 29/01/2017)
+description: Algo de lo que hice esta semana (22/01/2017 - 29/01/2017)
 tags: Vida
 ---
 
