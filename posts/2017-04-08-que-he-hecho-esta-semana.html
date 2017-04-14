@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        
+        <meta property="og:title" content="Algo de lo que hice esta semana (03/04/2017 - 08/04/2017)" />
+        <meta property="twitter:title" content="Algo de lo que hice esta semana (03/04/2017 - 08/04/2017)" />
+        
+
+        
+        <meta name="description" content="Algo de lo que hice esta semana (03/04/2017 - 08/04/2017)" />
+        <meta property="og:description" content="Algo de lo que hice esta semana (03/04/2017 - 08/04/2017)" />
+        <meta property="twitter:description" content="Algo de lo que hice esta semana (03/04/2017 - 08/04/2017)" />
+        
+
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="@mglvl" />
+
+        
+        <meta property="og:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        <meta property="twitter:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        
+
+        <title>
+            
+                Algo de lo que hice esta semana (03/04/2017 - 08/04/2017)
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        if(window.location.hostname !== 'localhost'){
+            ga('create', 'UA-74778346-1', 'auto');
+            ga('send', 'pageview');
+        }
+    </script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Home</a>
+            <a href="../archive.html">Blog</a>
+            <a href="../resume_EN.pdf">Résumé</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
+            <a href="https://twitter.com/mglvl/">Twitter</a>
+            <a href="https://www.flickr.com/photos/77778296@N07/">Flickr</a>
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://slides.com/miguelvila/">Slides</a>
+            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
+        </nav>
+    </header>
+    <article>
+    <h2>Algo de lo que hice esta semana (03/04/2017 - 08/04/2017)</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        April  8 2017
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/Vida.html">Vida</a> 
+        
+    </div>
+    <hr>
+    <p>Hace mucho tiempo no <em>posteo</em> nada entonces esto es más o menos un resumen de lo que he estado haciendo:</p>
+<p>Mi trabajo ha sido ciertamente retador en algunas cosas. Por una parte creo que ya atravesé una etapa en la que mi código es un poquito menos chambón y ya sé antecederme a posibles críticas. Tenemos un esquema de abrir <em>pull-requests</em>, dar <em>feedback</em> y solo hacer <em>merge</em> cuando al menos otros dos desarrolladores hayan dado su visto bueno. Al principio la cosa me costó por que me “daban” muy duro: que usar tal clase desde tal lado acoplaba el código, que mejor aislar ciertas responsabilidades, etc … Y la verdad es que no eran cosas difíciles de notar o corregir, eran más que todo mañas a las que me había acostumbrado. Creo que ahora soy mucho más conciente del código que escribo. Ahora mismo hemos pausado las tareas de desarrollo de <em>features</em> nuevos y estamos haciendo ajustes, algunos de ellos de infraestructura. Algunas cosas son relacionadas con loguear lo más que se pueda y consultarlo fácilmente en Kibana. De igual forma también extraemos métricas de monitoreo y las reportamos a Graphite para después consultarlas con Grafana.</p>
+<p>He estado haciendo las vueltas para la visa de trabajo. La cosa se ha demorado mucho más de lo que debería. Creo que en las próximas semanas voy a enviar los papeles y a la vuelta de 3 semanas debería tener una respuesta.</p>
+<p>Por otra parte he estado siguiendo <a href="https://courses.engr.illinois.edu/cs421/page/lectures/">este</a> curso sobre lenguajes de programación. Utiliza Haskell y está enfocado a intérpretes, no compiladores. Me salté algunas de las clases que tratan sobre cosas de Haskell con las que ya estaba familiarizado y ahora mismo voy en la parte de gramáticas. Ha sido relativamente divertido y he aprendido sobre el cálculo lambda, la notación de <em>big step semantics</em> y sobre <em>continuation passing style</em> (Aunque no sé bien como cuadra esto último con el resto del curso). Y algo relacionado que he estado haciendo es seguir <a href="https://web.archive.org/web/20071216140227/http://www.cs.indiana.edu/~aghuloum/compilers-tutorial-2006-09-16.pdf">este</a> tutorial sobre como construir un compilador incrementalmente. Estoy usando Haskell y no Common-lisp como en el tutorial.</p>
+<p>Sobre libros: leí <a href="https://www.goodreads.com/book/show/7945054-notas-al-pie-en-gaza">Notas al pie de Gaza</a> que es un trabajo periodístico en forma de novela gráfica sobre dos masacres de palestinos realizadas por el ejercito israelí en la decada de los 50s. Es más que todo un trabajo periodístico sobre esos dos incidentes y se basa en multiples entrevistas. Algo curioso es que el autor también narra como consiguió la información. Lo hizo en 2003 y durante esta época hubo desalojos forzados por parte de los israelíes. Basicamente derrumbaban casas de palestinos bajo diversas excusas: que alojaban insurgentes o que habían visto insurgentes cerca de las casas, que las casas escondían tuneles hacia Egipto, y así… .Entonces todos esos abusos actuales (que seguro hoy en 2017 persistirán) hacen eco de atrocidades peores que los israelíes cometieron 50 años antes.</p>
+<p>También leí <a href="https://www.goodreads.com/book/show/2334393.El_Aleph">El Aleph</a>. Creo que había leído algunos de estos cuentos cuando estaba en el colegio. Algo que me pareció raro es que muchos de los cuentos parecen ser el mismo, algunos tienen una similitud temática muy sútil que me es difícil de concretar. Los diferentes cuentos parecen compartir una temática de dualidad, o de enemistad, de obsesión mutua. No sabría como definirlo concretamente.</p>
+<p>Ahora empecé a leer <a href="https://www.goodreads.com/book/show/17841055-1984">1984</a>. Me ha gustado hasta ahora, tal vez excepto por lo inverosímil que me parece el “romance”.</p>
+<p>Ahora estoy intentando dejar de leer <em>blog posts</em>, o consumir material técnico a través de <em>Twitter</em>. Quiero concentrarme en leer libros y hacer tutoriales más profundos. Esto me recuerda <a href="https://lobste.rs/s/7wzss8/how_does_one_improve_as_intermediate">este</a> <em>thread</em> en <em>Lobsters</em>:</p>
+<p><img src="../images/lobsters-thread.png" style="display: block; margin-left: auto; margin-right: auto; padding: 0.5em; width: 85%;"></p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2017-04-08-que-he-hecho-esta-semana.html";
+        this.page.identifier = "posts/2017-04-08-que-he-hecho-esta-semana.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+        <div class="rc-scout"></div>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=e913a8c2facd4191d76c6f34cea12f75"></script>
+    </body>
+</html>
