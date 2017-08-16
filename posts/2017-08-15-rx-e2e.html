@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        
+        <meta property="og:title" content="Usando Reactive Extensions para ayudar tests e2e" />
+        <meta property="twitter:title" content="Usando Reactive Extensions para ayudar tests e2e" />
+        
+
+        
+        <meta name="description" content="Un pequeño post sobre como usé reactive extensions para ayudar a escribir tests end to end." />
+        <meta property="og:description" content="Un pequeño post sobre como usé reactive extensions para ayudar a escribir tests end to end." />
+        <meta property="twitter:description" content="Un pequeño post sobre como usé reactive extensions para ayudar a escribir tests end to end." />
+        
+
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="@mglvl" />
+
+        
+        <meta property="og:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        <meta property="twitter:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        
+
+        <title>
+            
+                Usando Reactive Extensions para ayudar tests e2e
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        if(window.location.hostname !== 'localhost'){
+            ga('create', 'UA-74778346-1', 'auto');
+            ga('send', 'pageview');
+        }
+    </script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Home</a>
+            <a href="../archive.html">Blog</a>
+            <a href="../resume_EN.pdf">Résumé</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
+            <a href="https://twitter.com/mglvl/">Twitter</a>
+            <a href="https://www.flickr.com/photos/77778296@N07/">Flickr</a>
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://slides.com/miguelvila/">Slides</a>
+            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
+        </nav>
+    </header>
+    <article>
+    <h2>Usando Reactive Extensions para ayudar tests e2e</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        August 15 2017
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/tests.html">tests</a>, <a href="../tags/reactive%20extensions.html">reactive extensions</a> 
+        
+    </div>
+    <hr>
+    <p>Este es un corto post mostrando algo que hice en mi trabajo y que me pareció interesante.</p>
+<p>En mi trabajo estamos desarrollando pruebas <em>end to end</em> (<em>e2e</em>) de multiples servicios. Entre los varios <em>features</em> que queríamos probar estaba la opción de resetear la contraseña. Este <em>feature</em>, muy común en varios sitios web, sigue un patrón similar:</p>
+<ol style="list-style-type: decimal">
+<li><p>El usuario olvida su contraseña. Se dirige a un formulario específico para esta situación e introduce la dirección de correo electrónico con la que se había registrado.</p></li>
+<li><p>Un correo es enviado al usuario conteniendo un enlace especial para resetear la contraseña.</p></li>
+<li><p>El usuario se loguea a su cuenta de correo y da click en el enlace contenido en el correo.</p></li>
+<li><p>El enlace lo dirige a un formulario dónde va a poder introducir una nueva contraseña.</p></li>
+<li><p>Una vez hecho esto la contraseña del usuario ha sido actualizada.</p></li>
+</ol>
+<p>Nada fuera de lo ordinario.</p>
+<p>La idea es hacer un <em>test</em> de todo el flujo, específicamente de los servicios del <em>back-end</em> que soportan esto. Estos son dos:</p>
+<ul>
+<li><strong>Iniciar reseteo de contraseña:</strong> Inicia el reseteo de contraseña dada una dirección de correo electrónico. Tiene como efecto secundario el envío de un correo con un enlace que contiene un <em>token</em> especial.</li>
+<li><strong>Modificar la contraseña con <em>token</em> especial:</strong> Actualiza la contraseña de una cuenta dados: la nueva contraseña, la dirección de correo electrónico y un token especial (enviado en el correo).</li>
+</ul>
+<p>Pero para <em>testear</em> el flujo completo deberíamos usar el primer servicio para iniciar el “reseteo”, después de alguna forma “abrir” la bandeja de entrada del correo del usuario, extraer el <em>token</em> y usarlo para consumir el segundo servicio. Así que la parte no obvia es ¿cómo podemos lograr ese “abrir la bandeja de entrada”?</p>
+<p>Voy a mostrar como lo hicimos y como encontramos que <a href="http://reactivex.io/"><em>reactive extensions</em></a> nos podría servir para lograrlo.</p>
+<p>Primero cabe decir que para enviar correos usamos <a href="https://aws.amazon.com/ses/"><em>SES</em></a> de Amazon. Nuestro código usa el <a href="https://aws.amazon.com/sdk-for-java/"><em>SDK</em></a> que realmente solo hace una solicitud HTTP a un servidor de Amazon. Además los <em>tests e2e</em> se ejecutan en un proceso distinto al servicio que queríamos <em>testear</em>.</p>
+<p>Decidimos hacer lo siguiente: los <em>tests</em> levantan un servidor embebido que simula ser <em>SES</em>, a este lo llamarémos <em>FakeSES</em>. Digamos que este servicio se levantó en el puerto <code>9999</code>. Entonces levantamos el servicio que querémos probar haciéndole pensar que <em>SES</em> se encuentra en <code>&lt;ip del _host_ que corre los tests&gt;:9999</code>.</p>
+<p>Nada fuera del otro mundo hasta ahora.</p>
+<p>Ahora, gracias a que los tests levantan <em>FakeSES</em> deberían poder inspeccionar las solicitudes de envíos de correos que le llegan. El problema sin embargo es que los tests se ejecutan por un lado mientras que <em>FakeSES</em> se debe ejecutar al mismo tiempo mientras atiende solicitudes. ¿Cómo conectar ambas cosas?</p>
+<p>Aquí es dónde entra <em>reactive extensions</em>. Lo que deseamos hacer es ofrecerle a los <em>tests</em> una <em>vista</em> de las solicitudes de envío que le llegan a <em>FakeSES</em>. ¡Un <code>Observable</code> encajaría muy bien acá! Digamos que este es nuestro código del servidor falso:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">SendEmailRequest</span>(subject: String, body: String, destination: String)
+
+<span class="kw">class</span> FakeSES {
+
+    <span class="kw">private</span> <span class="kw">def</span> <span class="fu">requestToSendEmailRequest</span>(request: HTTPRequest): SendEmailRequest =
+        ??? <span class="co">// no es relevante</span>
+
+    <span class="kw">private</span> <span class="kw">val</span> successResponse: HTTPResponse =
+        ??? <span class="co">// no es relevante</span>
+
+    <span class="kw">private</span> <span class="kw">def</span> <span class="fu">handleRequest</span>(request: HTTPRequest, response: HTTPResponse): Response = {
+        successResponse
+    }
+
+    <span class="co">// *************************</span>
+    <span class="co">// Alguna lógica que levanta </span>
+    <span class="co">// el servidor embebido y</span>
+    <span class="co">// simula ser SES usando la</span>
+    <span class="co">// función `handleRequest`</span>
+    <span class="co">// *************************</span>
+
+}</code></pre></div>
+<p>Entonces idealmente queremos que además tenga una propiedad que nos permita leer las solicitudes de envíos de correos, sin importar en qué momento llegaron o llegarán:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">class</span> FakeSES {
+
+    <span class="co">// ... lo mismo que antes</span>
+
+    <span class="kw">val</span> sendEmailRequests: Observable[SendEmailRequest] = ???
+    
+}</code></pre></div>
+<p>La pregunta es ¿como inicializar esta variable?</p>
+<p>Podemos hacer lo siguiente:</p>
+<ul>
+<li>Inicializamos una variable de tipo <code>BehaviorSubject[SendEmailRequest]</code>.</li>
+<li>Cada vez que llega una solicitud “escribimos” esta variable.</li>
+<li>Exponemos solamente el lado de “lectura”: es decir los que usen instancias de esta clase van a poder ver el <code>Observable</code> pero no el <code>BehaviorSubject</code>.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">class</span> FakeSES {
+
+    <span class="co">// ... lo mismo que antes</span>
+    
+    <span class="kw">private</span> <span class="kw">val</span> sendEmailRequestsSubject = BehaviorSubject[SendEmailRequest]
+
+    <span class="kw">private</span> <span class="kw">def</span> <span class="fu">handleRequest</span>(request: HTTPRequest, response: HTTPResponse): Response = {
+        sendEmailRequestsSubject.<span class="fu">onNext</span>(<span class="fu">requestToSendEmailRequest</span>(request))
+        successResponse
+    }
+
+
+    <span class="kw">val</span> sendEmailRequests: Observable[SendEmailRequest] = sendEmailRequestsSubject
+    
+}</code></pre></div>
+<p>Dado que <code>BehaviorSubject</code> es una subclase de <code>Observable</code> podemos hacer este último paso (si han visto los futuros y promesas sabrán que por ahí hay <a href="https://github.com/scala/scala/blob/804a4cc1ff9fa159c576be7c685dbb81220c11da/src/library/scala/concurrent/impl/Promise.scala#L21">una idea similar</a>)-</p>
+<p>Ahora veamos como se escribiría un test:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> org.<span class="fu">scalatest</span>.<span class="fu">concurrent</span>.<span class="fu">ScalaFutures</span>
+<span class="kw">import</span> org.<span class="fu">scalatest</span>.<span class="fu">_</span>
+<span class="kw">import</span> scala.<span class="fu">concurrent</span>.<span class="fu">duration</span>.<span class="fu">_</span>
+<span class="kw">import</span> scala.<span class="fu">concurrent</span>.<span class="fu">Await</span>
+<span class="kw">import</span> scala.<span class="fu">concurrent</span>.<span class="fu">ExecutionContext</span>.<span class="fu">Implicits</span>.<span class="fu">global</span>
+<span class="kw">import</span> scala.<span class="fu">concurrent</span>.<span class="fu">Future</span>
+
+<span class="kw">class</span> ResetPasswordTest 
+    <span class="kw">extends</span> WordSpec 
+    <span class="kw">with</span> MustMatchers 
+    <span class="kw">with</span> WordSpec
+    <span class="kw">with</span> BeforeAndAfterAll {
+
+    <span class="kw">val</span> fakeSES = <span class="kw">new</span> <span class="fu">FakeSES</span>()
+    
+    <span class="kw">def</span> <span class="fu">beforeAll</span>() = fakeSES.<span class="fu">start</span>()
+    
+    <span class="kw">def</span> <span class="fu">afterAll</span>() = fakeSES.<span class="fu">stop</span>()
+    
+    <span class="kw">val</span> email = <span class="st">&quot;some@email.com&quot;</span>
+    <span class="kw">val</span> oldPassword = <span class="st">&quot;asdfdgfad&quot;</span>
+    <span class="kw">val</span> newPassword = <span class="st">&quot;pas5w0rd&quot;</span>
+    
+    <span class="kw">def</span> <span class="fu">firstResetPasswordEmail</span>(): Future[SendEmailRequest] =
+        fakeSES.<span class="fu">sendEmailRequests</span>
+            .<span class="fu">filter</span>(_.<span class="fu">destination</span> == email)
+            .<span class="fu">filter</span>(_.<span class="fu">subject</span> == <span class="st">&quot;Forgot your password?&quot;</span>)
+            .<span class="fu">first</span>
+            .<span class="fu">toBlocking</span>
+            .<span class="fu">toFuture</span>
+            
+    <span class="co">// un cliente del servicio que queremos testear</span>
+    <span class="kw">val</span> service = ???
+    
+    <span class="kw">def</span> <span class="fu">extractResetToken</span>(email: SendEmailRequest): String =
+        ??? <span class="co">// no es relevante</span>
+    
+    <span class="st">&quot;The client&quot;</span> should {
+        <span class="st">&quot;execute the request password flow&quot;</span> in {
+            service.<span class="fu">createUser</span>(email, oldPassword)
+            service.<span class="fu">startPasswordReset</span>(email)
+            <span class="kw">val</span> resetEmail = Await.<span class="fu">result</span>(<span class="fu">firstResetPasswordEmail</span>(), <span class="fl">1.</span>second)
+            <span class="kw">val</span> resetToken = <span class="fu">extractResetToken</span>(resetEmail)
+            service.<span class="fu">resetPassword</span>(email, resetToken, newPassword).<span class="fu">statusCode</span> mustBe <span class="dv">200</span>
+            service.<span class="fu">login</span>(email, newPassword).<span class="fu">statusCode</span> mustBe <span class="dv">200</span>
+            service.<span class="fu">login</span>(email, oldPassword).<span class="fu">statusCode</span> mustBe <span class="dv">403</span>
+        }
+    }
+
+}</code></pre></div>
+<p>Aquí la función <code>firstResetPasswordEmail</code> nos permite filtrar el primer correo que nos interesa. Cabe notar que este código funciona sin importar si llegan otros correos (como por ejemplo un correo de bienvenida apenas el usuario se registra), sin importar en qué orden lleguen, etc… . Esto gracias a la naturaleza declarativa de <em>reactive extensions</em>.</p>
+<p>Y eso fue todo. Todavía no he encontrado un uso en “producción” de <em>reactive extensions</em> pero para esto me pareció útil.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2017-08-15-rx-e2e.html";
+        this.page.identifier = "posts/2017-08-15-rx-e2e.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+        <div class="rc-scout"></div>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=e913a8c2facd4191d76c6f34cea12f75"></script>
+    </body>
+</html>
