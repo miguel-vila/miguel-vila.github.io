@@ -41,16 +41,6 @@
         </script>
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-        if(window.location.hostname !== 'localhost'){
-            ga('create', 'UA-74778346-1', 'auto');
-            ga('send', 'pageview');
-        }
-    </script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
@@ -59,10 +49,7 @@
             <a href="../archive.html">Blog</a>
             <a href="../resume_EN.pdf">Résumé</a>
             <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
-            <a href="https://twitter.com/mglvl/">Twitter</a>
-            <a href="https://www.flickr.com/photos/77778296@N07/">Flickr</a>
             <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://slides.com/miguelvila/">Slides</a>
             <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
         </nav>
     </header>
@@ -97,36 +84,34 @@
 <p>This post is not so much an introduction to DP. As you will see it’s more about how to implement DP algorithms in a functional way when taking the bottom-up approach.</p>
 <h2 id="the-imperative-perspective">The imperative perspective</h2>
 <p>Dynamic programming problems, when solved in a bottom-up fashion, usually rely in some mutable data structure which holds the solutions for smaller subproblems. For example let’s explore the <a href="https://en.wikipedia.org/wiki/Knapsack_problem#0.2F1_knapsack_problem">0/1 knapsack problem</a>. <a href="https://www.youtube.com/watch?v=8LusJS5-AGo">This</a> and <a href="https://www.youtube.com/watch?v=xOlhR_2QCXY">this</a> are good videos about it and describe a solution. Here’s my summary of the problem:</p>
-<p>Given <span class="math inline"><em>n</em></span> items indexed <span class="math inline">1, 2, ⋯, <em>n</em></span> with values <span class="math inline"><em>v</em><sub><em>i</em></sub></span> and weights <span class="math inline"><em>w</em><sub><em>i</em></sub></span> find a subset of them with maximum total value that doesn’t exceed the input weight <span class="math inline"><em>W</em></span>. Each item may be included just once.</p>
+<p>Given <br /><span class="math display"><em>n</em></span><br /> items indexed <br /><span class="math display">1, 2, ⋯, <em>n</em></span><br /> with values <br /><span class="math display"><em>v</em><sub><em>i</em></sub></span><br /> and weights <br /><span class="math display"><em>w</em><sub><em>i</em></sub></span><br /> find a subset of them with maximum total value that doesn’t exceed the input weight <br /><span class="math display"><em>W</em></span><br />. Each item may be included just once.</p>
 <p>For example:</p>
-<p><br /><span class="math display">$$
+<p><br /><span class="math display">$$$$
 \begin{array}{c|lcccr}
 i &amp; 1 &amp; 2 &amp; 3 &amp; 4 &amp; 5 \\
 \hline
 \text{Weight (kg)} &amp; 1 &amp; 2 &amp; 4 &amp; 2 &amp; 3 \\
-\text{Value (\$)}  &amp; 3 &amp; 3 &amp; 5 &amp; 3 &amp; 7
-\end{array}
-$$</span><br /></p>
-<p>and maximum target weight <span class="math inline"><em>W</em> = 9</span>.</p>
-<p>You can select the items <span class="math inline">3</span>, <span class="math inline">4</span> and <span class="math inline">5</span> for a total weight of <span class="math inline">9</span> and a total value of <span class="math inline">15</span>. This is good but you could do even better by selecting items <span class="math inline">1</span>, <span class="math inline">2</span>, <span class="math inline">4</span> and <span class="math inline">5</span>. In this case we would get a total value of <span class="math inline">16</span> which is in fact the maximum you can get without exceeding the maximum weight of <span class="math inline">9</span>.</p>
+\text{Value (\$$</span><br />)} &amp; 3 &amp; 3 &amp; 5 &amp; 3 &amp; 7 \end{array} <span class="math inline">$$$</span>$</p>
+<p>and maximum target weight <br /><span class="math display"><em>W</em> = 9</span><br />.</p>
+<p>You can select the items <br /><span class="math display">3</span><br />, <br /><span class="math display">4</span><br /> and <br /><span class="math display">5</span><br /> for a total weight of <br /><span class="math display">9</span><br /> and a total value of <br /><span class="math display">15</span><br />. This is good but you could do even better by selecting items <br /><span class="math display">1</span><br />, <br /><span class="math display">2</span><br />, <br /><span class="math display">4</span><br /> and <br /><span class="math display">5</span><br />. In this case we would get a total value of <br /><span class="math display">16</span><br /> which is in fact the maximum you can get without exceeding the maximum weight of <br /><span class="math display">9</span><br />.</p>
 <p>To solve this problem in the general case we can first break it by considering subsets. Let’s start with a definition that allows us to express subsets of the problem:</p>
-<p><br /><span class="math display">$$
+<p><br /><span class="math display">$$$$
 M(i,j) = \begin{array}{ll}
 \text{Maximum total value we can get when considering} &amp; \\
 \text{the first } i \text{ items with a maximum weight of }j &amp;
 \end{array}
-$$</span><br /></p>
-<p>For each item we can have two choices: either we include it and gain it’s value but we have reduced our available weight. Or, on the other hand, we ignore it and never use it. These two possibilities totally exclude each other so if we compute the maximum between them for every item (and for every possible maximum weight <span class="math inline">&lt; = <em>W</em></span>) then we can get the overall maximum. And these two possibilities correspond to two subproblem definitions.</p>
+$$</span><br />$$</p>
+<p>For each item we can have two choices: either we include it and gain it’s value but we have reduced our available weight. Or, on the other hand, we ignore it and never use it. These two possibilities totally exclude each other so if we compute the maximum between them for every item (and for every possible maximum weight <br /><span class="math display">&lt; = <em>W</em></span><br />) then we can get the overall maximum. And these two possibilities correspond to two subproblem definitions.</p>
 <p>The recursive formula that express this is:</p>
-<p><br /><span class="math display">$$
+<p><br /><span class="math display">$$$$
 M(i,j) = Max\left\{ \begin{array}{ll}
-M(i-1,j-w_i) + v_i &amp; \text{Include the i-th item (possible when } j \geq w_i \text{ )} \\ 
+M(i-1,j-w_i) + v_i &amp; \text{Include the i-th item (possible when } j \geq w_i \text{ )} \\
 M(i-1,j) &amp; \text{Ignore the i-th item} \end{array} \right\}
-$$</span><br /></p>
-<p>According to this formula we can see that the problem <span class="math inline">(<em>i</em>, <em>j</em>)</span> depends on two subproblems: <span class="math inline">(<em>i</em> − 1, <em>j</em> − <em>w</em><sub><em>i</em></sub>)</span> and <span class="math inline">(<em>i</em> − 1, <em>j</em>)</span></p>
+$$</span><br />$$</p>
+<p>According to this formula we can see that the problem <br /><span class="math display">(<em>i</em>, <em>j</em>)</span><br /> depends on two subproblems: <br /><span class="math display">(<em>i</em> − 1, <em>j</em> − <em>w</em><sub><em>i</em></sub>)</span><br /> and <br /><span class="math display">(<em>i</em> − 1, <em>j</em>)</span><br /></p>
 <p>Here’s a diagram that describes the subproblem dependencies:</p>
 <p><img src="../images/dp-fp-1.png" style="display: block; margin-left: auto; margin-right: auto; padding: 0.5em; width: 30%;"></p>
-<p>The blue square represents a subproblem we are trying to solve. It depends on two other subproblems (the ones pointed by the arrows). And the final answer is the red square at the lower-right corner (the value <span class="math inline"><em>M</em>(<em>n</em>, <em>W</em>)</span>). It represents the solution when we consider all the elements and with the problem’s input weight. We can also see the “base” cases here: when considering no item the maximum value we can produce is <span class="math inline">0</span> and the same happens when the maximum weight is <span class="math inline">0</span> (this assumes all <span class="math inline"><em>w</em><sub><em>i</em></sub></span> &gt; 0).</p>
+<p>The blue square represents a subproblem we are trying to solve. It depends on two other subproblems (the ones pointed by the arrows). And the final answer is the red square at the lower-right corner (the value <br /><span class="math display"><em>M</em>(<em>n</em>, <em>W</em>)</span><br />). It represents the solution when we consider all the elements and with the problem’s input weight. We can also see the “base” cases here: when considering no item the maximum value we can produce is <br /><span class="math display">0</span><br /> and the same happens when the maximum weight is <br /><span class="math display">0</span><br /> (this assumes all <br /><span class="math display"><em>w</em><sub><em>i</em></sub></span><br /> &gt; 0).</p>
 <p>Drawing this kind of diagrams can be useful because it helps us to determine the shape of the iterations. In this case an element of a row depends on the values of the previous row. Thus we can build up solutions going down one row at a time.</p>
 <p>A traditional imperative solution can be:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">knapsack</span>(maxWeight: Int, value: Vector[Int], weight: Vector[Int]): Int = {
@@ -135,24 +120,24 @@ $$</span><br /></p>
     (<span class="dv">1</span> to n) foreach { i =&gt;
         (<span class="dv">1</span> to maxWeight) foreach { j =&gt;
             <span class="fu">solutions</span>(i)(j) = <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
-                Math.<span class="fu">max</span>( 
-                    <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j) , 
-                    <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>) 
+                Math.<span class="fu">max</span>(
+                    <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j) ,
+                    <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>)
                 )
             } <span class="kw">else</span> {
                 <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j)
             }
         }
-    } 
+    }
     <span class="fu">solutions</span>(n)(maxWeight)
 }</code></pre></div>
-<p>This iterates one row at a time and computes the solution given the recursive formula. The time complexity of this is <span class="math inline"><em>O</em>(<em>n</em><em>W</em>)</span> where <span class="math inline"><em>n</em></span> is the number of items to consider and <span class="math inline"><em>W</em></span> is the maximum weight. And the space complexity is also <span class="math inline"><em>O</em>(<em>n</em><em>W</em>)</span>.</p>
+<p>This iterates one row at a time and computes the solution given the recursive formula. The time complexity of this is <br /><span class="math display"><em>O</em>(<em>n</em><em>W</em>)</span><br /> where <br /><span class="math display"><em>n</em></span><br /> is the number of items to consider and <br /><span class="math display"><em>W</em></span><br /> is the maximum weight. And the space complexity is also <br /><span class="math display"><em>O</em>(<em>n</em><em>W</em>)</span><br />.</p>
 <div class="note">
 <p class="aside-header">
 <strong>Side note</strong> <span class="clickable">(Click!)</span>
 </p>
 <div class="note-content">
-<p>You may notice a difference in the code with respect to the recursive formula: we refer to <code>weight(i-1)</code> and <code>value(i-1)</code> and in the formula we refer to <span class="math inline"><em>w</em><sub><em>i</em></sub></span> and <span class="math inline"><em>v</em><sub><em>i</em></sub></span>. What’s the reason for this? It’s because our values and weights are zero-indexed on our code so we have to map <code>i</code> to the correct item. When <code>i</code> equals <code>0</code> we are not referring to the subset of items up to the first item; we refer to an empty subset of items. But when we <code>i</code> equals <code>1</code> we are pointing to the first item, which is <code>i-1</code> in the vectors <code>weight</code> and <code>value</code>.</p>
+<p>You may notice a difference in the code with respect to the recursive formula: we refer to <code>weight(i-1)</code> and <code>value(i-1)</code> and in the formula we refer to <br /><span class="math display"><em>w</em><sub><em>i</em></sub></span><br /> and <br /><span class="math display"><em>v</em><sub><em>i</em></sub></span><br />. What’s the reason for this? It’s because our values and weights are zero-indexed on our code so we have to map <code>i</code> to the correct item. When <code>i</code> equals <code>0</code> we are not referring to the subset of items up to the first item; we refer to an empty subset of items. But when we <code>i</code> equals <code>1</code> we are pointing to the first item, which is <code>i-1</code> in the vectors <code>weight</code> and <code>value</code>.</p>
 <p>We could have preserved the same indexing the formula has by putting some dummy value at the zero position of the weight and values array.</p>
 </div>
 </div>
@@ -164,19 +149,19 @@ $$</span><br /></p>
         <span class="kw">val</span> newSolutions = Array.<span class="fu">fill</span>(maxWeight + <span class="dv">1</span>)( <span class="dv">0</span> )
         (<span class="dv">1</span> to maxWeight) foreach { j =&gt;
             <span class="fu">newSolutions</span>(j) = <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
-                Math.<span class="fu">max</span>( 
-                    <span class="fu">solutions</span>(j) , 
-                    <span class="fu">solutions</span>(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>) 
+                Math.<span class="fu">max</span>(
+                    <span class="fu">solutions</span>(j) ,
+                    <span class="fu">solutions</span>(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>)
                 )
             } <span class="kw">else</span> {
                 <span class="fu">solutions</span>(j)
             }
         }
         solutions = newSolutions
-    } 
+    }
     <span class="fu">solutions</span>(maxWeight)
 }</code></pre></div>
-<p>The space complexity of this will be <span class="math inline"><em>O</em>(<em>W</em>)</span>.</p>
+<p>The space complexity of this will be <br /><span class="math display"><em>O</em>(<em>W</em>)</span><br />.</p>
 <h2 id="how-to-do-the-same-thing-functionally">How to do the same thing functionally?</h2>
 <p>How could we do the same thing functionally? One of the main objectives in functional programming is avoiding side-effects. The most prominent side-effect that we have here is the mutation of a data structure and this can be avoided with immutable data structures.</p>
 <p>But before doing that we should ask ourselves: is it worth it? Should someone calling the function <code>knapsack</code> care if it is implemented using mutable variables? My opinion is that no: it doesn’t matter if <code>knapsack</code> is implemented with or without mutability even from a functional programming point of view. Let me explain.</p>
@@ -202,8 +187,8 @@ $$</span><br /></p>
                 solutions &lt;- State.<span class="fu">get</span>[Vector[Vector[Int]]]
                 newVal = <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
                     Math.<span class="fu">max</span>(
-                        <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j) , 
-                        <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>) 
+                        <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j) ,
+                        <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>)
                     )
                 } <span class="kw">else</span> {
                     <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j)
@@ -225,8 +210,8 @@ $$</span><br /></p>
             newSolutions = <span class="dv">0</span> +: ( <span class="dv">1</span> to maxWeight ).<span class="fu">map</span> { j: Int =&gt;
                 <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
                     Math.<span class="fu">max</span>(
-                        <span class="fu">solutions</span>(j) , 
-                        <span class="fu">solutions</span>(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>) 
+                        <span class="fu">solutions</span>(j) ,
+                        <span class="fu">solutions</span>(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>)
                     )
                 } <span class="kw">else</span> {
                     <span class="fu">solutions</span>(j)
@@ -250,9 +235,9 @@ $$</span><br /></p>
 <p>To compute the new row we must do the same that we were doing before. Well, kind of: instead of modifying the input we are going to return a new row. To do this we can compute each value based on the column number, the row number and the values of the previous row:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> firstRow = Vector.<span class="fu">fill</span>(maxWeight + <span class="dv">1</span>)( <span class="dv">0</span> )
 <span class="kw">val</span> lastRow = (<span class="dv">1</span> to n).<span class="fu">foldLeft</span>(firstRow) { (upperRow, i) =&gt;
-    <span class="dv">0</span> +: (<span class="dv">1</span> to maxWeight).<span class="fu">map</span> { j =&gt; 
+    <span class="dv">0</span> +: (<span class="dv">1</span> to maxWeight).<span class="fu">map</span> { j =&gt;
         <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
-            Math.<span class="fu">max</span>( 
+            Math.<span class="fu">max</span>(
                 <span class="fu">upperRow</span>(j) ,
                 <span class="fu">upperRow</span>(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>)
             )
@@ -283,12 +268,12 @@ $$</span><br /></p>
 <p>Here <span class="math inline"><em>v</em>(<em>i</em>, <em>j</em>)</span> is the value stored at row <span class="math inline"><em>i</em></span> and column <span class="math inline"><em>j</em></span>.</p>
 <p>And, once again, let’s draw a diagram showing the dependencies:</p>
 <p><img src="../images/dp-fp-2.png" style="display: block; margin-left: auto; margin-right: auto; padding: 0.5em; width: 30%;"></p>
-<p>There is an important difference with respect to the base cases here. The minimal path for each value in the first row is simply the path that starts at <span class="math inline">(0, 0)</span> and goes right from there (this is the formula <span class="math inline"><em>R</em>(<em>i</em>, <em>j</em>)</span>, which is the accumulative <em>row</em> sum). Similarly, the minimal path for each value in the first column is the part that starts at <span class="math inline">(0, 0)</span> and goes down from there (this is the formula <span class="math inline"><em>C</em>(<em>i</em>, <em>j</em>)</span>, which is the accumulative <em>column</em> sum).</p>
-<p>Now, unlike the <em>0/1 knapsack problem</em>, the solution for <span class="math inline">(<em>i</em>, <em>j</em>)</span> not only depends on a value at the previous row it also depends on the previous value in the same row.</p>
+<p>There is an important difference with respect to the base cases here. The minimal path for each value in the first row is simply the path that starts at <br /><span class="math display">(0, 0)</span><br /> and goes right from there (this is the formula <br /><span class="math display"><em>R</em>(<em>i</em>, <em>j</em>)</span><br />, which is the accumulative <em>row</em> sum). Similarly, the minimal path for each value in the first column is the part that starts at <br /><span class="math display">(0, 0)</span><br /> and goes down from there (this is the formula <br /><span class="math display"><em>C</em>(<em>i</em>, <em>j</em>)</span><br />, which is the accumulative <em>column</em> sum).</p>
+<p>Now, unlike the <em>0/1 knapsack problem</em>, the solution for <br /><span class="math display">(<em>i</em>, <em>j</em>)</span><br /> not only depends on a value at the previous row it also depends on the previous value in the same row.</p>
 <p>Let’s start with the base cases: how to compute the accumulative sum of an array of numbers? <code>fold</code> can be used to combine all the values using a reducer function. But the intermediate results of that function aren’t kept, which is what we want: we don’t want to have the total sum. We want to get the accumulative sum. <code>scan</code> does this. It has the same parameters as <code>fold</code> but instead of returning just one value it’s going to return a vector of all the intermediate values:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">accumulativeSum</span>(nums: Vector[Int]): Vector[Int] =
     nums.<span class="fu">scanLeft</span>(<span class="dv">0</span>)(_ + _).<span class="fu">drop</span>(<span class="dv">1</span>)</code></pre></div>
-<p>The <code>drop(1)</code> is so we don’t include the entry with <span class="math inline">0</span> at the beginning.</p>
+<p>The <code>drop(1)</code> is so we don’t include the entry with <br /><span class="math display">0</span><br /> at the beginning.</p>
 <p>So the first row and the first column can be computed like this:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">minPath</span>(values: Vector[Vector[Int]]): Int = {
     <span class="kw">val</span> m = values.<span class="fu">length</span>
@@ -307,7 +292,7 @@ $$</span><br /></p>
         ??? <span class="co">// How to compute the new row?</span>
     }.<span class="fu">last</span>
 }</code></pre></div>
-<p>Now to compute say <span class="math inline"><em>M</em>(<em>i</em>, 1)</span> we’ll need to use two things: <span class="math inline"><em>M</em>(<em>i</em> − 1, 1)</span> which is in the upper row and <span class="math inline"><em>M</em>(<em>i</em>, 0)</span> which is a value in the very first column, at the left of <span class="math inline"><em>M</em>(<em>i</em>, 1)</span>. Then to compute <span class="math inline"><em>M</em>(<em>i</em>, 2)</span> we will need to use <span class="math inline"><em>M</em>(<em>i</em> − 1, 2)</span> and <span class="math inline"><em>M</em>(<em>i</em>, 1)</span> which is the value that we previously computed. The function <code>fold</code> can help us with using the last value to compute the next. But we also need to return all the list of intermediate values, not just the last one, so <code>scan</code> is the one we want. Putting it all together:</p>
+<p>Now to compute say <br /><span class="math display"><em>M</em>(<em>i</em>, 1)</span><br /> we’ll need to use two things: <br /><span class="math display"><em>M</em>(<em>i</em> − 1, 1)</span><br /> which is in the upper row and <br /><span class="math display"><em>M</em>(<em>i</em>, 0)</span><br /> which is a value in the very first column, at the left of <br /><span class="math display"><em>M</em>(<em>i</em>, 1)</span><br />. Then to compute <br /><span class="math display"><em>M</em>(<em>i</em>, 2)</span><br /> we will need to use <br /><span class="math display"><em>M</em>(<em>i</em> − 1, 2)</span><br /> and <br /><span class="math display"><em>M</em>(<em>i</em>, 1)</span><br /> which is the value that we previously computed. The function <code>fold</code> can help us with using the last value to compute the next. But we also need to return all the list of intermediate values, not just the last one, so <code>scan</code> is the one we want. Putting it all together:</p>
 <div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">minPath</span>(values: Vector[Vector[Int]]): Int = {
     <span class="kw">val</span> m = values.<span class="fu">length</span>
     <span class="kw">val</span> n = <span class="fu">values</span>(<span class="dv">0</span>).<span class="fu">length</span>
