@@ -4,8 +4,6 @@ description: Un pequeño refactor que hice en zio-metrics
 tags: Scala, ZIO, Open source
 ---
 
-Este es un post rápido para compartir algo pequeño que hice algún tiempo.
-
 Hace poco hice un Pull Request a una librería de métricas en Scala, con el objetivo de mejorar el API expuesto a usuarios.
 Resumiendo la cosa [`zio-metrics`](https://github.com/zio/zio-metrics) es una pequeña librería para publicar métricas
 con ZIO. La estamos usando para reportar una métrica a la medida pero al usarla, en su momento, me dí cuenta que
