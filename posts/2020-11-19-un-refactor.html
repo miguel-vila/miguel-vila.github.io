@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        
+        <meta property="og:title" content="Un pequeño refactor" />
+        <meta property="twitter:title" content="Un pequeño refactor" />
+        
+
+        
+        <meta name="description" content="Un pequeño refactor que hice en zio-metrics" />
+        <meta property="og:description" content="Un pequeño refactor que hice en zio-metrics" />
+        <meta property="twitter:description" content="Un pequeño refactor que hice en zio-metrics" />
+        
+
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="@mglvl" />
+
+        
+        <meta property="og:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        <meta property="twitter:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        
+
+        <title>
+            
+                Un pequeño refactor
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Home</a>
+            <a href="../archive.html">Blog</a>
+            <a href="../resume_EN.pdf">Résumé</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
+        </nav>
+    </header>
+    <article>
+    <h2>Un pequeño refactor</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        November 19 2020
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/Scala.html">Scala</a>, <a href="../tags/ZIO.html">ZIO</a>, <a href="../tags/Open%20source.html">Open source</a> 
+        
+    </div>
+    <hr>
+    <p>Este es un post rápido para compartir algo pequeño que hice algún tiempo.</p>
+<p>Hace poco hice un Pull Request a una librería de métricas en Scala, con el objetivo de mejorar el API expuesto a usuarios. Resumiendo la cosa <a href="https://github.com/zio/zio-metrics"><code>zio-metrics</code></a> es una pequeña librería para publicar métricas con ZIO. La estamos usando para reportar una métrica a la medida pero al usarla, en su momento, me dí cuenta que tenía unos detalles de diseño que no me gustaban.</p>
+<p>La librería funciona con una cola de métricas. Esta cola de métricas es muestreada de forma asíncrona para reportarlas:</p>
+<ul>
+<li>Hay un proceso que de forma continua lee esa cola y usa un cliente UDP para reportarlas.</li>
+<li>Cuando uno quiere reportar una métrica uno invoca una función que empuja un valor a esa cola.</li>
+</ul>
+<p>Un ejemplo, tomado de los docs viejos, de como se usaba antes:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> program = {
+    <span class="kw">val</span> messages = List(<span class="fl">1.0</span>, <span class="fl">2.2</span>, <span class="fl">3.4</span>, <span class="fl">4.6</span>, <span class="fl">5.1</span>, <span class="fl">6.0</span>, <span class="fl">7.9</span>)
+    <span class="kw">val</span> client   = <span class="fu">Client</span>()
+    client.<span class="fu">queue</span> &gt;&gt;= (queue =&gt; {
+      <span class="kw">implicit</span> <span class="kw">val</span> q = queue
+      <span class="kw">for</span> {
+        z &lt;- client.<span class="fu">listen</span>          <span class="co">// uses implicit 'q'</span>
+        opt &lt;- RIO.<span class="fu">foreach</span>(messages)(d =&gt; <span class="fu">Task</span>(<span class="fu">Counter</span>(<span class="st">&quot;clientbar&quot;</span>, d, <span class="fl">1.0</span>, Seq.<span class="fu">empty</span>[Tag])))
+        _   &lt;- RIO.<span class="fu">collectAll</span>(opt.<span class="fu">map</span>(m =&gt; client.<span class="fu">send</span>(q)(m)))
+      } <span class="kw">yield</span> z
+    })
+}</code></pre></div>
+<p>Hay varios detalles:</p>
+<ul>
+<li>Los usuarios de la librería <em>tienen</em> que llamar <code>.listen</code> para inicializar el proceso que va a extraer valores de la cola.</li>
+<li>Después de eso, cada vez que quieran enviar una métrica, tienen que proveer, además la referencia a la cola.</li>
+</ul>
+<p>Esto conlleva varios problemas:</p>
+<ul>
+<li>Un usuario puede olvidar llamar <code>.listen</code> perfectamente. Nada en la librería evitaría que esto pasase.</li>
+<li>Un usuario puede enviar una métrica con una referencia a una cola <em>distinta</em> a la que fué usada al llamar a <code>.listen</code>. Una vez más, nada en la librería evitaría que esto sucediera.</li>
+<li>Por último, tal vez no sea evidente en el ejemplo anterior, pero en programas más complicados, dónde los pasos de inicialización están muy alejados de los usos, puede resultar incómodo usar este API. Habría que propagar la referencia a la cola desde dónde se inicializó.</li>
+</ul>
+<p>En pocas palabras la cola es un detalle de implementación que el API está exponiendo.</p>
+<p>Debido a eso, me tomé el “atrevimiento” de abrir un <a href="https://github.com/zio/zio-metrics/issues/52"><em>issue</em></a>. Lo discutí con el autor de la librería y después abrí un <a href="https://github.com/zio/zio-metrics/pull/53">Pull request</a> para intentar arreglarlo.</p>
+<p>El resultado final implica que ahora ningún cliente tiene que pasar ninguna referencia a ninguna cola. El código anterior se transformó en:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> program = {
+    <span class="kw">val</span> messages = List(<span class="fl">1.0</span>, <span class="fl">2.2</span>, <span class="fl">3.4</span>, <span class="fl">4.6</span>, <span class="fl">5.1</span>, <span class="fl">6.0</span>, <span class="fl">7.9</span>)
+    <span class="kw">val</span> createClient = <span class="fu">Client</span>()
+    createClient.<span class="fu">use</span> { client =&gt;
+      <span class="kw">for</span> {
+        opt &lt;- RIO.<span class="fu">foreach</span>(messages)(d =&gt; <span class="fu">Task</span>(<span class="fu">Counter</span>(<span class="st">&quot;clientbar&quot;</span>, d, <span class="fl">1.0</span>, Seq.<span class="fu">empty</span>[Tag])))
+        _   &lt;- RIO.<span class="fu">collectAll</span>(opt.<span class="fu">map</span>(m =&gt; client.<span class="fu">sendM</span>(<span class="kw">true</span>)(m)))
+      } <span class="kw">yield</span> ()
+    }
+}</code></pre></div>
+<p>La diferencia principal es que ahora los constructores de los clientes retornan un <a href="https://zio.dev/docs/datatypes/datatypes_managed"><code>ZManaged</code></a> que encapsula la creación de la cola, y la inicialización del proceso que escucha la cola:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">def</span> <span class="fu">apply</span>(
+    bufferSize: Long,
+    timeout: Long,
+    queueCapacity: Int,
+    host: Option[String],
+    port: Option[Int]
+  ): ZManaged[ClientEnv, Throwable, Client] =
+    ZManaged.<span class="fu">make</span> {
+      <span class="kw">for</span> {
+        queue  &lt;- ZQueue.<span class="fu">bounded</span>[Metric](queueCapacity)
+        client = <span class="kw">new</span> <span class="fu">Client</span>(bufferSize, timeout, host, port)(queue)
+        fiber  &lt;- client.<span class="fu">listen</span>
+      } <span class="kw">yield</span> (client, fiber)
+    } { <span class="kw">case</span> (client, fiber) =&gt; client.<span class="fu">queue</span>.<span class="fu">shutdown</span> *&gt; fiber.<span class="fu">join</span>.<span class="fu">orDie</span> }
+      .<span class="fu">map</span>(_.<span class="fu">_1</span>)</code></pre></div>
+<p>A partir de ahí las instancias de <code>Client</code> contarán con una referencia fija y privada a una cola. Además serán libres de empujar mensajes a ella cuando requieran reportar una métrica, sin tener que obligar a los invocadores a que provean la cola correcta.</p>
+<p>Eso era todo, la lección principal es que uno no se tiene que aguantar APIs incómodos y que siempre hay forma de mejorarlos.</p>
+<p>Gracias a <a href="https://github.com/toxicafunk">toxicafunk</a> por permitirme contribuir esto y asistirme en el PR.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2020-11-19-un-refactor.html";
+        this.page.identifier = "posts/2020-11-19-un-refactor.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+        <div class="rc-scout"></div>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=e913a8c2facd4191d76c6f34cea12f75"></script>
+    </body>
+</html>
