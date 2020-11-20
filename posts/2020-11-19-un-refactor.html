@@ -67,8 +67,7 @@
         
     </div>
     <hr>
-    <p>Este es un post rápido para compartir algo pequeño que hice algún tiempo.</p>
-<p>Hace poco hice un Pull Request a una librería de métricas en Scala, con el objetivo de mejorar el API expuesto a usuarios. Resumiendo la cosa <a href="https://github.com/zio/zio-metrics"><code>zio-metrics</code></a> es una pequeña librería para publicar métricas con ZIO. La estamos usando para reportar una métrica a la medida pero al usarla, en su momento, me dí cuenta que tenía unos detalles de diseño que no me gustaban.</p>
+    <p>Hace poco hice un Pull Request a una librería de métricas en Scala, con el objetivo de mejorar el API expuesto a usuarios. Resumiendo la cosa <a href="https://github.com/zio/zio-metrics"><code>zio-metrics</code></a> es una pequeña librería para publicar métricas con ZIO. La estamos usando para reportar una métrica a la medida pero al usarla, en su momento, me dí cuenta que tenía unos detalles de diseño que no me gustaban.</p>
 <p>La librería funciona con una cola de métricas. Esta cola de métricas es muestreada de forma asíncrona para reportarlas:</p>
 <ul>
 <li>Hay un proceso que de forma continua lee esa cola y usa un cliente UDP para reportarlas.</li>
