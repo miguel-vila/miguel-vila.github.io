@@ -8,6 +8,8 @@ jobs:
           fingerprints:
             - "ae:39:c0:28:fa:93:2c:ae:8b:68:c5:a0:46:f0:5c:0e"
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
       - restore_cache:
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
           name: Restore Cached Dependencies
@@ -28,22 +30,22 @@ jobs:
       - run:
           name: Run tests
           command: stack --no-terminal test
-      # - run:
-      #     name: Build site
-      #     command: |
-      #       cd _site/ && git checkout master && git pull
-      #       cd ..
-      #       git checkout hakyll
-      #       stack --no-terminal exec site build
-      # - run:
-      #     name: Publish
-      #     command: |
-      #       git config --global user.email circleci@circleci
-      #       git config --global user.name CircleCI
-      #       cd _site
-      #       git add --all
-      #       git commit -m "Update (`date '+%F %T %Z'`) [ci skip]"
-      #       git push origin master
+      - run:
+          name: Build site
+          command: |
+            cd _site/ && git checkout master && git pull
+            cd ..
+            git checkout hakyll
+            stack --no-terminal exec site build
+      - run:
+          name: Publish
+          command: |
+            git config --global user.email circleci@circleci
+            git config --global user.name CircleCI
+            cd _site
+            git add --all
+            git commit -m "Update (`date '+%F %T %Z'`) [ci skip]"
+            git push origin master
       - save_cache:
           name: Cache Dependencies
           key: miguel-blog-{{ checksum "stack.yaml" }}
