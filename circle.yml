@@ -13,11 +13,11 @@ jobs:
           name: Restore Cached Dependencies
           keys:
             - miguel-blog-{{ checksum "stack.yaml" }}
-      - run:
-          name: Prepare
-          command: |
-            git submodule init
-            git submodule update
+      # - run:
+      #     name: Prepare
+      #     command: |
+      #       git submodule init
+      #       git submodule update
       - run:
           name: Resolve/Update Dependencies
           command: stack --no-terminal setup
