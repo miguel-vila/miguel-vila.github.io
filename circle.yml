@@ -12,8 +12,7 @@ jobs:
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
           name: Restore Cached Dependencies
           keys:
-            - cci-demo-haskell-v1-{{ checksum "stack.yaml" }}-{{ checksum "package.yaml" }}
-            - cci-demo-haskell-v1-{{ checksum "stack.yaml" }}
+            - miguel-blog-{{ checksum "stack.yaml" }}
       - run:
           name: Resolve/Update Dependencies
           command: stack --no-terminal setup
@@ -26,9 +25,20 @@ jobs:
       - run:
           name: Build site
           command: stack --no-terminal exec site build
+      - run:
+          name: Publish
+          command: |
+            git submodule init
+            git submodule update
+            git config --global user.email circleci@circleci
+            git config --global user.name CircleCI
+            cd _site
+            git add --all
+            git commit -m "Update (`date '+%F %T %Z'`) [ci skip]"
+            git push origin master
       - save_cache:
           name: Cache Dependencies
-          key: cci-demo-haskell-v1-{{ checksum "stack.yaml" }}-{{ checksum "package.yaml" }}
+          key: miguel-blog-{{ checksum "stack.yaml" }}
           paths:
             - "/root/.stack"
             - ".stack-work"
