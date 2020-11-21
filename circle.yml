@@ -3,10 +3,10 @@ jobs:
   build:
     docker:
       - image: fpco/stack-build:lts
-        auth:
-          username: miguelvila
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
+      - add_ssh_keys:
+        fingerprints:
+          - "ae:39:c0:28:fa:93:2c:ae:8b:68:c5:a0:46:f0:5c:0e"
       - checkout
       - restore_cache:
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
@@ -32,3 +32,7 @@ jobs:
           paths:
             - "/root/.stack"
             - ".stack-work"
+general:
+  branches:
+    only:
+     - hakyll
