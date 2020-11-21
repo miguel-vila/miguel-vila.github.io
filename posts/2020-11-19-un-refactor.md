@@ -34,7 +34,7 @@ val program = {
 Hay varios detalles:
 
 - Los usuarios de la librería _tienen_ que llamar `.listen` para inicializar el proceso que va a extraer valores de la cola.
-- Después de eso, cada vez que quieran enviar una métrica, tienen que proveer, además la referencia a la cola.
+- Después de eso, cada vez que quieran enviar una métrica tienen que, además, proveer la referencia a la cola.
 
 Esto conlleva varios problemas:
 
