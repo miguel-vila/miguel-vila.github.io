@@ -5,8 +5,8 @@ jobs:
       - image: fpco/stack-build:lts
     steps:
       - add_ssh_keys:
-        fingerprints:
-          - "ae:39:c0:28:fa:93:2c:ae:8b:68:c5:a0:46:f0:5c:0e"
+          fingerprints:
+            - "ae:39:c0:28:fa:93:2c:ae:8b:68:c5:a0:46:f0:5c:0e"
       - checkout
       - restore_cache:
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
