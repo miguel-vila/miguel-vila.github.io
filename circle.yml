@@ -14,10 +14,15 @@ jobs:
           keys:
             - miguel-blog-{{ checksum "stack.yaml" }}
       - run:
+          name: Prepare
+          command: |
+            git submodule init
+            git submodule update
+      - run:
           name: Resolve/Update Dependencies
           command: stack --no-terminal setup
       - run:
-          name: Build
+          name: Stack build
           command: stack --no-terminal build
       - run:
           name: Run tests
@@ -28,8 +33,6 @@ jobs:
       - run:
           name: Publish
           command: |
-            git submodule init
-            git submodule update
             git config --global user.email circleci@circleci
             git config --global user.name CircleCI
             cd _site
