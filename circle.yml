@@ -34,15 +34,15 @@ jobs:
           name: Build site
           command: |
             stack --no-terminal exec site build
-      # - run:
-      #     name: Publish
-      #     command: |
-      #       git config --global user.email circleci@circleci
-      #       git config --global user.name CircleCI
-      #       cd _site
-      #       git add --all
-      #       git commit -m "Update (`date '+%F %T %Z'`) [ci skip]"
-      #       git push origin master
+      - run:
+          name: Publish
+          command: |
+            git config --global user.email circleci@circleci
+            git config --global user.name CircleCI
+            cd _site
+            git add --all
+            git commit -m "Update (`date '+%F %T %Z'`) [ci skip]"
+            git push origin master
       - save_cache:
           name: Cache Dependencies
           key: miguel-blog-{{ checksum "stack.yaml" }}
