@@ -9,7 +9,7 @@ jobs:
             - "ae:39:c0:28:fa:93:2c:ae:8b:68:c5:a0:46:f0:5c:0e"
       - checkout
       - run: git submodule sync
-      # - run: git submodule update --init
+      - run: git submodule update --remote
       - restore_cache:
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
           name: Restore Cached Dependencies
