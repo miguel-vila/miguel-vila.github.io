@@ -46,7 +46,7 @@ wasCreatedBetween start end task = ...
 Ahora, si comparamos esto con el acercamiento de programación orientada a objetos podríamos imaginarnos otra solución al mismo problema. Este acercamiento posiblemente implicará usar subtipos. Por ejemplo, usando el lado OOP de Scala podríamos llegar a esto:
 
 ```scala
-trait Filter {
+sealed trait Filter {
     def apply(tasks: List[Task]): List[Task]
 }
 
