@@ -7,8 +7,16 @@
         <description><![CDATA[Miguel Vilá's personal blog]]></description>
         <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Thu, 19 Nov 2020 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Mon, 07 Dec 2020 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Advent Of Code 2020 en Rust. Día 1</title>
+    <link>http://miguel-vila.github.io/posts/2020-12-07-aoc-rust-1.html</link>
+    <description><![CDATA[Mi solución en Rust al día 1 de Advent of Code 2020]]></description>
+    <pubDate>Mon, 07 Dec 2020 00:00:00 UT</pubDate>
+    <guid>http://miguel-vila.github.io/posts/2020-12-07-aoc-rust-1.html</guid>
+    <dc:creator>Miguel Vilá</dc:creator>
+</item>
+<item>
     <title>Un pequeño refactor</title>
     <link>http://miguel-vila.github.io/posts/2020-11-19-un-refactor.html</link>
     <description><![CDATA[Un pequeño refactor que hice en zio-metrics]]></description>
@@ -38,14 +46,6 @@
     <description><![CDATA[Algo de lo que hice estas semanas (06/02/2017 - 19/02/2017)]]></description>
     <pubDate>Wed, 01 Mar 2017 00:00:00 UT</pubDate>
     <guid>http://miguel-vila.github.io/posts/2017-03-01-que-he-hecho-esta-semana.html</guid>
-    <dc:creator>Miguel Vilá</dc:creator>
-</item>
-<item>
-    <title>Algo de lo que hice esta semana (22/01/2017 - 29/01/2017)</title>
-    <link>http://miguel-vila.github.io/posts/2017-01-29-que-he-hecho-esta-semana.html</link>
-    <description><![CDATA[Algo de lo que hice esta semana (22/01/2017 - 29/01/2017)]]></description>
-    <pubDate>Sun, 29 Jan 2017 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2017-01-29-que-he-hecho-esta-semana.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 

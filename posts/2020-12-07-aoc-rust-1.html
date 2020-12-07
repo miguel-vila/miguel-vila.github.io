@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        
+        <meta property="og:title" content="Advent Of Code 2020 en Rust. Día 1" />
+        <meta property="twitter:title" content="Advent Of Code 2020 en Rust. Día 1" />
+        
+
+        
+        <meta name="description" content="Mi solución en Rust al día 1 de Advent of Code 2020" />
+        <meta property="og:description" content="Mi solución en Rust al día 1 de Advent of Code 2020" />
+        <meta property="twitter:description" content="Mi solución en Rust al día 1 de Advent of Code 2020" />
+        
+
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="@mglvl" />
+
+        
+        <meta property="og:image" content="https://miguel-vila.github.io/images/rust-logo-blk.svg" />
+        <meta property="twitter:image" content="https://miguel-vila.github.io/images/rust-logo-blk.svg" />
+        
+
+        <title>
+            
+                Advent Of Code 2020 en Rust. Día 1 | Miguel Vil&aacute;
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Home</a>
+            <a href="../archive.html">Blog</a>
+            <a href="../resume_EN.pdf">Résumé</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png"></a>|
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
+        </nav>
+    </header>
+    <article>
+    <h2>Advent Of Code 2020 en Rust. Día 1</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        Dec 07 2020
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/Rust.html">Rust</a>, <a href="../tags/Advent%20of%20code.html">Advent of code</a> 
+        
+    </div>
+    <hr>
+    <p>Estoy intentando resolver problemas del <a href="https://adventofcode.com/2020">Advent of Code</a> de este año usando <a href="https://www.rust-lang.org/">Rust</a> y así aprender el lenguaje. La verdad creo que hace 4 años había intentado aprenderlo pero la verdad no recuerdo mucho. Recuerdo no haber entendido por completo el sistema de <em>borrowing</em> y otro montón de cosas. Pero esta vez quiero usar los ejercicios de Advent of Code como excusa para aprender.</p>
+<p>El problema del primer día consistía en, dada una lista de números, encontrar un par de ellos que sumados den <code>2020</code> y multiplicarlos. La segunda parte era hacer lo mismo pero encontrando 3 de ellos. Mi solución fue:</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::collections::HashSet;
+<span class="kw">mod</span> file_reading;
+
+<span class="kw">fn</span> find_pair(nums: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, target_sum: <span class="dt">i32</span>) -&gt; <span class="dt">Option</span>&lt;(<span class="dt">i32</span>, <span class="dt">i32</span>)&gt; {
+    <span class="kw">let</span> <span class="kw">mut</span> diffs: HashSet&lt;<span class="dt">i32</span>&gt; = HashSet::new();
+    <span class="kw">for</span> n <span class="kw">in</span> nums {
+        diffs.insert(*n);
+        <span class="kw">let</span> diff: <span class="dt">i32</span> = target_sum - n;
+        <span class="kw">if</span> diffs.contains(&amp;diff) {
+            <span class="kw">return</span> <span class="cn">Some</span>((diff, *n));
+        };
+    }
+    <span class="cn">None</span>
+}
+
+<span class="kw">fn</span> find_three(<span class="kw">mut</span> nums: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, target_sum: <span class="dt">i32</span>) -&gt; <span class="dt">Option</span>&lt;(<span class="dt">i32</span>, <span class="dt">i32</span>, <span class="dt">i32</span>)&gt; {
+    nums.sort();
+    <span class="kw">for</span> start <span class="kw">in</span> <span class="dv">0.</span>.(nums.len() - <span class="dv">2</span>) {
+        <span class="kw">let</span> <span class="kw">mut</span> mid = start + <span class="dv">1</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> end = nums.len() - <span class="dv">1</span>;
+        <span class="kw">while</span> mid &lt; end {
+            <span class="kw">let</span> total = nums[start] + nums[mid] + nums[end];
+            <span class="kw">if</span> total == target_sum {
+                <span class="kw">return</span> <span class="cn">Some</span>((nums[start], nums[mid], nums[end]));
+            } <span class="kw">else</span> <span class="kw">if</span> total &gt; target_sum {
+                end -= <span class="dv">1</span>
+            } <span class="kw">else</span> {
+                mid += <span class="dv">1</span>
+            }
+        }
+    }
+    <span class="cn">None</span>
+}
+
+<span class="kw">fn</span> main() {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Ok</span>(numbers) = file_reading::read_numbers(<span class="st">&quot;./input1.txt&quot;</span>) {
+        <span class="kw">let</span> target_sum = <span class="dv">2020</span>;
+        <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>((p1, p2)) = find_pair(&amp;numbers, target_sum) {
+            <span class="kw">let</span> product = p1 * p2;
+            <span class="pp">println!</span>(<span class="st">&quot;Part 1: {}&quot;</span>, product);
+        }
+        <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>((p1, p2, p3)) = find_three(numbers, target_sum) {
+            <span class="kw">let</span> product = p1 * p2 * p3;
+            <span class="pp">println!</span>(<span class="st">&quot;Part 2: {}&quot;</span>, product);
+        }
+    }
+}</code></pre></div>
+<p>La solución de la primera parte funciona con un <code>Hashset</code> que almacena los números vistos y permite preguntar rápido si ya vimos el otro número que sumado al actual permite sumar 2020. La segunda parte funciona de otra forma. Primero ordena los números y después hace una busqueda anidada, pero un poco inteligente.</p>
+<p>Pero mi objetivo no es hablar tanto de los algoritmos sino de Rust. En su mayoría tuve problemas poniendo los tipos y entendiendo los errores de compilación.</p>
+<p>Por ejemplo, para la primera parte:</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> find_pair(nums: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, target_sum: <span class="dt">i32</span>) -&gt; <span class="dt">Option</span>&lt;(<span class="dt">i32</span>, <span class="dt">i32</span>)&gt;</code></pre></div>
+<ul>
+<li><code>nums: &amp;Vec&lt;i32&gt;</code>: El primer argumento, es una referencia prestada e inmutable. Para propositos de la función podría ser simplemente una variable inmutable pero tuve que hacerla una referencia para que la siguiente llamada de la segunda parte, que va a compartir el mismo vector pero lo va a mutar. Pero para lo que necesita hacer la función esto no es un problema y se puede convertir en una referencia prestada. Tal vez ese sea el tipo más general que el</li>
+<li><code>target_sum: i32</code>: Este es la suma objetivo y no necesita ser cambiado a lo largo del programa. Ahora que lo pienso podría haver sido una variable con un <a href="https://doc.rust-lang.org/rust-by-example/scope/lifetime/static_lifetime.html"><em>lifetime</em> estático</a> pero tal vez eso es demasiado.</li>
+<li><code>Option&lt;(i32, i32)&gt;</code>: El resultado es una posible pareja de números. Si los parámetros de entrada hicieran imposible encontrar una pareja entonces retornariamos <code>None</code>.</li>
+</ul>
+<p>La segunda parte:</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> find_three(<span class="kw">mut</span> nums: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, target_sum: <span class="dt">i32</span>) -&gt; <span class="dt">Option</span>&lt;(<span class="dt">i32</span>, <span class="dt">i32</span>, <span class="dt">i32</span>)&gt;</code></pre></div>
+<p>Dado que necesito ordenar los números hice la variable mutable. Los otros tipos tienen una justificación similar a la primera parte.</p>
+<p>Por último creo que vale la pena hablar del módulo que escribí para leer <em>input</em> de archivos:</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::fs::File;
+<span class="kw">use</span> std::io::{<span class="kw">self</span>, BufRead};
+<span class="kw">use</span> std::num::ParseIntError;
+<span class="kw">use</span> std::path::Path;
+
+<span class="kw">pub</span> <span class="kw">fn</span> read_lines&lt;P: AsRef&lt;Path&gt;&gt;(filename: P) -&gt; io::<span class="dt">Result</span>&lt;io::Lines&lt;io::BufReader&lt;File&gt;&gt;&gt; {
+    <span class="kw">let</span> file = File::open(filename)?;
+    <span class="cn">Ok</span>(io::BufReader::new(file).lines())
+}
+
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> ReadingError {
+    IOError(io::Error),
+    ParsingError(ParseIntError),
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> read_numbers&lt;P: AsRef&lt;Path&gt;&gt;(filename: P) -&gt; <span class="dt">Result</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, ReadingError&gt; {
+    <span class="kw">let</span> <span class="kw">mut</span> vec = <span class="dt">Vec</span>::new();
+    <span class="kw">let</span> lines = read_lines(filename).map_err(ReadingError::IOError)?;
+    <span class="kw">for</span> line_it <span class="kw">in</span> lines {
+        <span class="kw">let</span> line = line_it.map_err(ReadingError::IOError)?;
+        <span class="kw">let</span> n: <span class="dt">i32</span> = line.parse().map_err(ReadingError::ParsingError)?;
+        vec.push(n);
+    }
+    <span class="cn">Ok</span>(vec)
+}</code></pre></div>
+<p>Siendo honesto la primera función fue copiada de Stackoverflow y no entiendo la firma por completo. Sé que está haciendo uso de un <em>generic</em> y una restrición de <em>trait</em> pero los tipos que no entiendo son:</p>
+<ul>
+<li><code>AsRef</code></li>
+<li><code>Path</code></li>
+<li><code>Lines</code></li>
+</ul>
+<p>Sin embargo tuve que implementar la otra función para leer un vector de números a partir de un archivo de entrada. Creo que hice un poco de manejo paranoíco de errores (no es como si alguno de esos errores fuera a suceder intentando resolver estos problemas), pero quería aprender a manejar y unificar errores en Rust. Podría haber resuelto el problema usando <code>.unwrap</code> pero esa no era la idea.</p>
+<p>Lo más curioso que puedo notar es el <a href="https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html">operador <code>?</code></a>, que sirve para “extraer” el valor de un <code>Result</code>. Cualquiera que venga de un lenguaje funcional reconece que esto es muy similar a como funcionan las monadas. Curiosamente creo que go-lang es famoso por tener un problema similar pero, hasta donde sé, no tienen alguna ayuda sintáctica como Rust.</p>
+<h2 id="conclusión">Conclusión</h2>
+<p>Eso es todo, creo que tengo que entender mucho mejor algunas cosas. El sistema de <em>borrowing</em> se me hace un poco complicado de interiorizar y desafortunadamente estoy acostumbrado a simplemente no pensar en eso. Es bueno entender cuál es la firma más general que necesita una función, y por qué. Por ejemplo si requiere <em>borrowing</em> o no, si es una referencia a una variable mutable o no, o si simplemente es una variable mutable. Hay cosas que me gustan, por ejemplo las cosas semi-funcionales como <code>Result</code> o <code>?</code> o los <em>enums</em>.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2020-12-07-aoc-rust-1.html";
+        this.page.identifier = "posts/2020-12-07-aoc-rust-1.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+        <div class="rc-scout"></div>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=e913a8c2facd4191d76c6f34cea12f75"></script>
+    </body>
+</html>
