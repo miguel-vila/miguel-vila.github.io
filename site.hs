@@ -131,7 +131,7 @@ draftCtx = defaultContext `mappend` activeClassField
 
 postCtx :: Context String
 postCtx =
-    dateField "date" "%b %m %Y" `mappend`
+    dateField "date" "%b %d %Y" `mappend`
     siteCtx
 
 siteCtx :: Context String
