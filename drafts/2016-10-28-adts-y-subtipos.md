@@ -119,12 +119,10 @@ play : Active -> PlayerMove -> Game
 
 Sin mucha sorpresa esto es fácil de hacer con subclases. Solo hay que hacer que la subclase implemente el método deseado.
 
-Todo esto es para decir que este otro caso de uso es soportado tanto por ADTs como por subtipos.
+Todo esto es para decir que este otro caso de uso es soportado tanto por ADTs como por subtipos, aúnque con ADTs tenemos que crear un tipo intermedio. 
 
 ## ¿Conclusión?
 
-Llegamos al final de este _post_ al punto en el debería concluir algo pero la verdad es que no se me ocurre nada. Ambos acercamientos se me hacen similares en capacidades. Es verdad que ambos determinan estílos completamente distintos de invocación. Pero esa me termina pareciendo una preferencia estética excepto en los casos dónde hay mutabilidad. En esos casos si preferiría tener un método junto a la información que es modificada, es decir el acercamiento de OOP. Pero más allá de eso ambos se me hacen muy similares.
+Ambos acercamientos se me hacen similares en capacidades. Es verdad que ambos determinan estílos completamente distintos de invocación. Pero esa me termina pareciendo una preferencia estética excepto en los casos dónde hay mutabilidad. En esos casos si preferiría tener un método junto a la información que es modificada, es decir el acercamiento de OOP. Pero más allá de eso ambos se me hacen muy similares.
 
 Creo que es una cuestión de preguntarse si los usos más avanzados de la herencia valen la pena. Me gusta el acercamiento de ADTs por su simplicidad: solamente son funciones constructoras y "deconstructoras" sobre un solo tipo. Y a partir de esos principios uno construye su sistema. Esa simplicidad se puede obtener muy similarmente con subtipos.
-
-¿Alguna opinión o respuesta?
