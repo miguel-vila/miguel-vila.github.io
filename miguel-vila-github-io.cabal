@@ -11,5 +11,6 @@ executable site
                        time == 1.5.0.1,
                        pandoc == 1.15.2.1,
                        pandoc-types == 1.12.4.5,
-                       hslua == 0.4.1
+                       hslua == 0.4.1,
+                       containers == 0.5.6.2
   default-language:    Haskell2010

@@ -1,1 +1,9 @@
-$partial("templates/post-list.html")$
+$for(postsWithYears)$
+    <h3>$year$</h3>
+    $for(posts)$
+        <div  style="margin:0.5em;">
+            <span class="post-meta" style="display:inline-block; width: 7.5%;">$simpleDate$</span>|
+            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="$url$">$title$</a></span>
+        </div>
+    $endfor$
+$endfor$

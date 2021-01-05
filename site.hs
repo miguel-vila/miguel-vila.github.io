@@ -2,9 +2,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
 import           Hakyll
+import           Hakyll.Web.Template.Context (getItemUTC)
 import           Control.Applicative
 import           Data.Time.Format (TimeLocale(..), defaultTimeLocale)
 import           Data.Maybe
+import           Data.Map (fromListWith, keys, (!))
+import           Data.Time.Format (formatTime)
 
 import           Text.Pandoc.Definition
 import           Text.Pandoc.Shared
@@ -23,12 +26,19 @@ maybeTake (Only n) = take n
 
 takeRecentFirst n = fmap (maybeTake n) . recentFirst
 
+sortAndGroup assocs = fromListWith (++) [(k, [v]) | (k, v) <- assocs]
+
 --------------------------------------------------------------------------------
 
 serveFilesAt routePattern =
   match routePattern $ do
   route   idRoute
   compile copyFileCompiler
+
+getYear :: MonadMetadata m => Identifier -> m String
+getYear id = do 
+    time <- getItemUTC defaultTimeLocale id
+    return $ formatTime defaultTimeLocale "%Y" time
 
 main :: IO ()
 main = hakyll $ do
@@ -91,9 +101,21 @@ main = hakyll $ do
         route idRoute
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
+            postsWithYears <- sortAndGroup <$> mapM (\post -> fmap (\year -> (year, post)) (getYear $ itemIdentifier post)) posts
+            let years = reverse $ keys postsWithYears
+            let postsItemsWithYears = mapM makeItem $ fmap (\year -> (year, postsWithYears ! year)) years
+
+            let postWithYearsCtx =
+                    listField "postsWithYears"
+                              (
+                                field "year" (return . fst . itemBody) `mappend`
+                                listFieldWith "posts" postCtx (return . snd . itemBody)
+                              )
+                              postsItemsWithYears
+
             let archiveCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Blog"                `mappend`
+                    postWithYearsCtx `mappend`
+                    constField "title" "Blog" `mappend`
                     siteCtx
 
             makeItem ""
@@ -132,6 +154,7 @@ draftCtx = defaultContext `mappend` activeClassField
 postCtx :: Context String
 postCtx =
     dateField "date" "%b %d %Y" `mappend`
+    dateField "simpleDate" "%b %d" `mappend`
     siteCtx
 
 siteCtx :: Context String
