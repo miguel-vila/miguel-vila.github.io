@@ -51,17 +51,21 @@
         </script>
         <script>
             const htmlEl = document.getElementsByTagName("html")[0];
-            
-            let _theme = htmlEl.dataset.theme || 'light'
+            console.log('local '+ window.localStorage.getItem('theme'))
+            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
             function setToggleText(theme) {
                 const themeTogglerEl = document.getElementById("theme-toggler");
                 themeTogglerEl.textContent = theme;
             }
-            
+            function setTheme(theme) {
+                window.localStorage.setItem('theme', _theme)
+                htmlEl.dataset.theme = _theme;
+            }
+            setTheme(_theme);
             const toggleTheme = () => {
                 setToggleText(_theme + ' mode');
                 _theme = _theme == 'light' ? 'dark': 'light';
-                htmlEl.dataset.theme = _theme;
+                setTheme(_theme)
             };
         </script>
     </head>
