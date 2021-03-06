@@ -40,14 +40,26 @@
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
         <script>
-            (function(){
-            var t,i,e,n=window,o=document,a=arguments,s="script",r=["config","track","identify","visit","push","call","trackForm","trackClick"],c=function(){var t,i=this;for(i._e=[],t=0;r.length>t;t++)(function(t){i[t]=function(){return i._e.push([t].concat(Array.prototype.slice.call(arguments,0))),i}})(r[t])};for(n._w=n._w||{},t=0;a.length>t;t++)n._w[a[t]]=n[a[t]]=n[a[t]]||new c;i=o.createElement(s),i.async=1,i.src="//static.woopra.com/js/w.js",e=o.getElementsByTagName(s)[0],e.parentNode.insertBefore(i,e)
-            })("woopra");
-        
-            woopra.config({
-                domain: 'miguel-vila.github.io'
-            });
-            woopra.track();
+            const htmlEl = document.getElementsByTagName("html")[0];
+            
+            let _theme = htmlEl.dataset.theme || 'light'
+            function setToggleText(theme) {
+                const themeTogglerEl = document.getElementById("theme-toggler");
+                themeTogglerEl.textContent = theme;
+            }
+            
+            const toggleTheme = () => {
+                _theme = _theme == 'light' ? 'dark': 'light';
+                setToggleText(_theme + ' mode');
+                htmlEl.dataset.theme = _theme;
+            };
+
+            // const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            // if (prefersDarkScheme.matches) { 
+            //      document.body.classList.add('dark-theme');
+            // } else {
+            //     document.body.classList.remove('dark-theme');
+            // }
         </script>
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -60,7 +72,8 @@
             <a href="./resume_EN.pdf">Résumé</a>
             <a href="./feed.xml"><img src="./images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
             <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
+            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>|
+            <a id="theme-toggler" class="clickable" onclick="toggleTheme();">light mode</a>
         </nav>
     </header>
     <article>
