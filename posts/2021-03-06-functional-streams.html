@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        
+        <meta property="og:title" content="The unreasonable effectiveness of functional streams" />
+        <meta property="twitter:title" content="The unreasonable effectiveness of functional streams" />
+        
+
+        
+        <meta name="description" content="On the unreasonable effectiveness of functional streams" />
+        <meta property="og:description" content="On the unreasonable effectiveness of functional streams" />
+        <meta property="twitter:description" content="On the unreasonable effectiveness of functional streams" />
+        
+
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="@mglvl" />
+
+        
+        <meta property="og:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        <meta property="twitter:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        
+
+        <title>
+            
+                The unreasonable effectiveness of functional streams | Miguel Vil&aacute;
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+        <script>
+            (function(){
+            var t,i,e,n=window,o=document,a=arguments,s="script",r=["config","track","identify","visit","push","call","trackForm","trackClick"],c=function(){var t,i=this;for(i._e=[],t=0;r.length>t;t++)(function(t){i[t]=function(){return i._e.push([t].concat(Array.prototype.slice.call(arguments,0))),i}})(r[t])};for(n._w=n._w||{},t=0;a.length>t;t++)n._w[a[t]]=n[a[t]]=n[a[t]]||new c;i=o.createElement(s),i.async=1,i.src="//static.woopra.com/js/w.js",e=o.getElementsByTagName(s)[0],e.parentNode.insertBefore(i,e)
+            })("woopra");
+        
+            woopra.config({
+                domain: 'miguel-vila.github.io'
+            });
+            woopra.track();
+        </script>
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <nav>
+            <a href="../">Home</a>
+            <a href="../archive.html">Blog</a>
+            <a href="../resume_EN.pdf">Résumé</a>
+            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
+            <a href="https://github.com/miguel-vila/">Github</a>
+            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
+        </nav>
+    </header>
+    <article>
+    <h2>The unreasonable effectiveness of functional streams</h2>
+    <div id="content" class="inside">
+    <div class="info">
+        
+        Mar 06 2021
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a href="../tags/Scala.html">Scala</a>, <a href="../tags/Functional%20Programming.html">Functional Programming</a>, <a href="../tags/Functional%20Streams.html">Functional Streams</a>, <a href="../tags/Concurrency.html">Concurrency</a> 
+        
+    </div>
+    <hr>
+    <p>Recently we had an interesting problem to solve which involved some “file” processing.</p>
+<p>We will be processing a large file stored in <a href="https://aws.amazon.com/s3/">S3</a>. We estimate it’s going to be very large, so just downloading it and reading it line by line won’t be feasible. Instead, we thought we could use <a href="https://zio.dev/docs/datatypes/datatypes_stream"><code>ZStream</code></a>s to read it fully and process it line by line. All of this without instantiating in memory the full file at any point.</p>
+<p>First thing to note is that AWS allows you to read segments of a file by using the <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35"><code>Range</code></a> HTTP header. You can specify the range of bytes from the object you want to read. For example <code>&quot;Range: bytes=100-299&quot;</code> means “give me the bytes starting, inclusive, the 100th byte, up to, inclusive, the 299th”.</p>
+<p>As it turns out, doing this with functional streams is really easy.</p>
+<p>First thing to figure out is how to split the file. Let’s say the file is 11 bytes long. Yeah, not so long, just so we can imagine how we would do it. And, let’s say we are going to fetch 3 bytes at a time. Then the ranges should be:</p>
+<ul>
+<li><code>0-2</code></li>
+<li><code>3-5</code></li>
+<li><code>6-8</code></li>
+<li><code>9-10</code></li>
+</ul>
+<p>We can write this function like this:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">splitInSegments</span>(
+    chunkSize: Long,
+    totalLength: Long
+): UStream[(Long, Long)] = {
+  <span class="fu">require</span>(chunkSize &lt;= totalLength)
+  <span class="fu">require</span>(totalLength &gt; <span class="dv">0</span>)
+  ZStream
+    .<span class="fu">iterate</span>((<span class="dv">0</span>, chunkSize - <span class="dv">1</span>): (Long, Long)) { <span class="kw">case</span> (_, previousEnd) =&gt;
+      <span class="kw">val</span> newEnd =
+        <span class="kw">if</span> (previousEnd + chunkSize &gt; totalLength - <span class="dv">1</span>) totalLength - <span class="dv">1</span>
+        <span class="kw">else</span> previousEnd + chunkSize
+      (previousEnd + <span class="dv">1</span>) -&gt; newEnd
+    }
+    .<span class="fu">takeUntil</span> { <span class="kw">case</span> (_, end) =&gt;
+      end == totalLength - <span class="dv">1</span>
+    }
+}</code></pre></div>
+<p>So far, so good. Let’s start building the whole file. We’ll have some function that allows us to query S3:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">getObject</span>(request: GetObjectRequest): ZIO[S3Async, Exception, Array[Byte]] = ???</code></pre></div>
+<p>It uses AWS’s SDK <a href="https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html"><code>GetObject</code></a> operation. “Objects” are just what S3 calls files and this function is just calling that API given some request parameters.</p>
+<p>Let’s build a partial stream out of it:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">getBytesSegment</span>(bucket: String, key: String)(
+    start: Long,
+    end: Long
+): ZStream[S3Async, Exception, Byte] =
+  ZStream
+    .<span class="fu">fromEffect</span> {
+      <span class="fu">getObject</span>(
+        GetObjectRequest
+          .<span class="fu">builder</span>()
+          .<span class="fu">bucket</span>(bucket)
+          .<span class="fu">key</span>(key)
+          .<span class="fu">range</span>(s<span class="st">&quot;bytes=$start-$end&quot;</span>)
+          .<span class="fu">build</span>()
+      )
+    }
+    .<span class="fu">map</span>(_.<span class="fu">toIterable</span>)
+    .<span class="fu">flattenIterables</span></code></pre></div>
+<p>In this function we receive the “folder” (bucket in S3) and the “filename” (key in S3), and the range of bytes we want to retrieve. This is just wrapping the API call into a ZStream, nothing groundbreaking here.</p>
+<p>Now, we also need to know the total length of the object. We can use the <a href="https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html"><code>HeadObject</code></a> operation for this. Like <code>getObject</code> this is just a function from AWS’s SDK:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">headObject</span>(bucket: String, key: String): ZIO[S3Async, Exception, HeadObjectResponse] = ???</code></pre></div>
+<p>Now, we can start joining together some stuff.</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">bytesStream</span>(
+    bucket: String,
+    key: String
+): ZStream[S3Async, Exception, Byte] =
+  ZStream
+    .<span class="fu">fromEffect</span>(<span class="fu">headObject</span>(bucket, key))
+    .<span class="fu">flatMap</span> { metadata =&gt;
+      <span class="fu">splitInSegments</span>(
+        chunkSize = fetchSize,
+        totalLength = metadata.<span class="fu">contentLength</span>()
+      ).<span class="fu">flatMapPar</span>(concurrentFactor) { <span class="kw">case</span> (start, end) =&gt;
+        <span class="fu">getBytesSegment</span>(bucket, key)(start, end)
+      }
+    }</code></pre></div>
+<p>We are doing the requests in parallel, given some <code>concurrentFactor</code> and each request retrieves some fixed number of bytes given by <code>fetchSize</code>.</p>
+<p>A cool thing is that even though the requests go in parallel the order of the segments in the stream will be preserved.</p>
+<p>But we don’t want to process this file byte by byte, instead we want to each element of the stream to be one line of the file. Finally:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">linesStream</span>(
+    bucket: String,
+    key: String
+): ZStream[S3Async, Exception, String] =
+  <span class="fu">bytesStream</span>(bucket, key)
+    .<span class="fu">transduce</span>(ZTransducer.<span class="fu">utf8Decode</span> &gt;&gt;&gt; ZTransducer.<span class="fu">splitLines</span>)</code></pre></div>
+<p>The first transducer decodes batches of bytes into <code>String</code>s and the second one takes batches of <code>String</code>s and separates them into lines.</p>
+<p>And that’s it. The <code>linesStream</code> function returns a stream that can be processed with each element being a line from the original file.</p>
+<div class="note">
+<p class="aside-header">
+<strong>Aside</strong>
+</p>
+<div class="note-content">
+<p>Transducers is a topic I don’t understand completely and don’t think I have found comprehensive docs about it. Conceptually, they are supposed to be equivalent to a function <code>ZStream[I] =&gt; ZStream[O]</code>. To be more specific, they act on chunks of the input stream, producing chunks for the output stream. That’s the little I can get from reading <a href="https://github.com/zio/zio/blob/42f754e459a41013c61902dd2c75926dd87265d7/streams/shared/src/main/scala/zio/stream/ZTransducer.scala#L14">the signature at it’s definition</a>:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="co">// Contract notes for transducers:</span>
+<span class="co">// - When a None is received, the transducer must flush all of its internal state</span>
+<span class="co">//   and remain empty until subsequent Some(Chunk) values.</span>
+<span class="co">//</span>
+<span class="co">//   Stated differently, after a first push(None), all subsequent push(None) must</span>
+<span class="co">//   result in Chunk.empty.</span>
+<span class="kw">abstract</span> <span class="kw">class</span> ZTransducer[-R, +E, -I, +O](
+  <span class="kw">val</span> push: ZManaged[R, Nothing, Option[Chunk[I]] =&gt; ZIO[R, E, Chunk[O]]]
+)</code></pre></div>
+<p>The signature is a bit complicated to read. You could ignore the <code>ZManaged</code> part which I think is used just to allow streams close over some resource. So essentially it’s “just” a function:</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">Option[Chunk[I]] =&gt; ZIO[R, E, Chunk[O]]</code></pre></div>
+<p>(<code>Chunk</code> is ZIO’s immutable Array data type).</p>
+<p>This function is telling us that a <code>ZTransducer</code> is implemented by a function that may or may not receive a <code>Chunk[I]</code> and that effectfully returns a <code>Chunk[O]</code>. Being called with a <code>None</code>, according to the comment, means that</p>
+<p><code>ZTransducer</code>s can be composed just like functions with <code>&gt;&gt;&gt;</code>.</p>
+</div>
+</div>
+<p>After this you can do whatever you want, treating the <code>ZStream[S3Async, Exception, String]</code> as a file reader.</p>
+<p>And that’s the cool thing about functional streams. They allow you to treat complex processes as values that you can pass to other functions. Imagine the effort involved in doing something like this with Java’s concurrency primitives. You could submit each fetch to a <code>Thread</code>/<code>ExecutorService</code> to do it in parallel and you would have to keep things in order on your own. Doing this not blocking further processing would be really hard.</p>
+<div class="note">
+<p class="aside-header">
+<strong>Aside</strong>
+</p>
+<div class="note-content">
+<p><a href="https://fs2.io/#/getstarted/example?id=example">fs2</a> allows you to do very similar things. No surprise there given fs2 pre-dates ZIO.</p>
+</div>
+</div>
+<p>Maybe this is the killer feature of Functional Programming. Not so much anything about purity or parametricity. No need to talk about abstract stuff to see the value in this style of writing things. Just the easiness in which you can build complex logic flows without compromising efficiency or legibility.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2021-03-06-functional-streams.html";
+        this.page.identifier = "posts/2021-03-06-functional-streams.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </article>
+    <footer>
+        <hr>
+        <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+        <div class="rc-scout"></div>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=e913a8c2facd4191d76c6f34cea12f75"></script>
+    </body>
+</html>
