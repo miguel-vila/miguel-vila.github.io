@@ -59,17 +59,10 @@
             }
             
             const toggleTheme = () => {
-                _theme = _theme == 'light' ? 'dark': 'light';
                 setToggleText(_theme + ' mode');
+                _theme = _theme == 'light' ? 'dark': 'light';
                 htmlEl.dataset.theme = _theme;
             };
-
-            // const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-            // if (prefersDarkScheme.matches) { 
-            //      document.body.classList.add('dark-theme');
-            // } else {
-            //     document.body.classList.remove('dark-theme');
-            // }
         </script>
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -83,7 +76,7 @@
             <a href="/feed.xml"><img src="/images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
             <a href="https://github.com/miguel-vila/">Github</a>
             <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>|
-            <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">light mode</a>
+            <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a>
         </nav>
     </header>
     <article>
