@@ -120,3 +120,8 @@ h2 {
   margin: auto;
   margin: 25px;
 }
+
+html[data-theme="dark"] {
+  background:#000;
+  filter:invert(1) hue-rotate(180deg)
+ }
