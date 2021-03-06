@@ -137,7 +137,7 @@ And that's it. The `linesStream` function returns a stream that can be processed
 each element being a line from the original file.
 
 <div class="note">
-<p class="aside-header"><strong>Aside</strong></p>
+<p class="aside-header"><strong>Aside</strong> <span class="clickable">(Click!)</span></p>
 
 <div class="note-content">
 
@@ -188,7 +188,7 @@ fetch to a `Thread`/`ExecutorService` to do it in parallel and you would have to
 things in order on your own. Doing this not blocking further processing would be really hard.
 
 <div class="note">
-<p class="aside-header"><strong>Aside</strong></p>
+<p class="aside-header"><strong>Aside</strong> <span class="clickable">(Click!)</span></p>
 
 <div class="note-content">
 [fs2](https://fs2.io/#/getstarted/example?id=example) allows you to do very similar things.
