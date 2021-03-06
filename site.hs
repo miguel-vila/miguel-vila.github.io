@@ -1,6 +1,7 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
+import           Data.List (sortOn)
 import           Hakyll
 import           Hakyll.Web.Template.Context (getItemUTC)
 import           Control.Applicative
@@ -8,6 +9,8 @@ import           Data.Time.Format (TimeLocale(..), defaultTimeLocale)
 import           Data.Maybe
 import           Data.Map (fromListWith, keys, (!))
 import           Data.Time.Format (formatTime)
+import           Data.Time.Clock (UTCTime)
+import           Data.Ord (Down(..))
 
 import           Text.Pandoc.Definition
 import           Text.Pandoc.Shared
@@ -35,10 +38,17 @@ serveFilesAt routePattern =
   route   idRoute
   compile copyFileCompiler
 
-getYear :: MonadMetadata m => Identifier -> m String
-getYear id = do 
+type Year = String
+
+data DateAndYear =
+    DateAndYear { date :: UTCTime
+                , year :: Year                  
+                }
+  
+getTimeInfo :: MonadMetadata m => Identifier -> m DateAndYear
+getTimeInfo id = do 
     time <- getItemUTC defaultTimeLocale id
-    return $ formatTime defaultTimeLocale "%Y" time
+    return $ DateAndYear { date =time, year = formatTime defaultTimeLocale "%Y" time }
 
 main :: IO ()
 main = hakyll $ do
@@ -101,9 +111,10 @@ main = hakyll $ do
         route idRoute
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
-            postsWithYears <- sortAndGroup <$> mapM (\post -> fmap (\year -> (year, post)) (getYear $ itemIdentifier post)) posts
+            postsWithYears <- sortAndGroup <$> mapM (\post -> fmap (\timeInfo -> (year timeInfo, (date timeInfo, post))) (getTimeInfo $ itemIdentifier post)) posts
             let years = reverse $ keys postsWithYears
-            let postsItemsWithYears = mapM makeItem $ fmap (\year -> (year, postsWithYears ! year)) years
+            let postsSortedRecentFirst = map snd . sortOn (Down . fst)
+            let postsItemsWithYears = mapM makeItem $ fmap (\year -> (year, postsSortedRecentFirst (postsWithYears ! year))) years
 
             let postWithYearsCtx =
                     listField "postsWithYears"
