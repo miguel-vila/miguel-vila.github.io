@@ -158,7 +158,7 @@
 <p>And that’s it. The <code>linesStream</code> function returns a stream that can be processed with each element being a line from the original file.</p>
 <div class="note">
 <p class="aside-header">
-<strong>Aside</strong>
+<strong>Aside</strong> <span class="clickable">(Click!)</span>
 </p>
 <div class="note-content">
 <p>Transducers is a topic I don’t understand completely and don’t think I have found comprehensive docs about it. Conceptually, they are supposed to be equivalent to a function <code>ZStream[I] =&gt; ZStream[O]</code>. To be more specific, they act on chunks of the input stream, producing chunks for the output stream. That’s the little I can get from reading <a href="https://github.com/zio/zio/blob/42f754e459a41013c61902dd2c75926dd87265d7/streams/shared/src/main/scala/zio/stream/ZTransducer.scala#L14">the signature at it’s definition</a>:</p>
@@ -182,7 +182,7 @@
 <p>And that’s the cool thing about functional streams. They allow you to treat complex processes as values that you can pass to other functions. Imagine the effort involved in doing something like this with Java’s concurrency primitives. You could submit each fetch to a <code>Thread</code>/<code>ExecutorService</code> to do it in parallel and you would have to keep things in order on your own. Doing this not blocking further processing would be really hard.</p>
 <div class="note">
 <p class="aside-header">
-<strong>Aside</strong>
+<strong>Aside</strong> <span class="clickable">(Click!)</span>
 </p>
 <div class="note-content">
 <p><a href="https://fs2.io/#/getstarted/example?id=example">fs2</a> allows you to do very similar things. No surprise there given fs2 pre-dates ZIO.</p>
