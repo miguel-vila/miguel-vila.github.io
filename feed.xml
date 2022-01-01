@@ -7,8 +7,16 @@
         <description><![CDATA[Miguel Vilá's personal blog]]></description>
         <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Sat, 06 Mar 2021 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Sat, 01 Jan 2022 00:00:00 UT</lastBuildDate>
         <item>
+    <title>2021 en libros</title>
+    <link>http://miguel-vila.github.io/posts/2022-01-01-libros-2021.html</link>
+    <description><![CDATA[Algo de lo que leí en 2021]]></description>
+    <pubDate>Sat, 01 Jan 2022 00:00:00 UT</pubDate>
+    <guid>http://miguel-vila.github.io/posts/2022-01-01-libros-2021.html</guid>
+    <dc:creator>Miguel Vilá</dc:creator>
+</item>
+<item>
     <title>The unreasonable effectiveness of functional streams</title>
     <link>http://miguel-vila.github.io/posts/2021-03-06-functional-streams.html</link>
     <description><![CDATA[On the unreasonable effectiveness of functional streams]]></description>
@@ -38,14 +46,6 @@
     <description><![CDATA[Un pequeño refactor que hice en zio-metrics]]></description>
     <pubDate>Thu, 19 Nov 2020 00:00:00 UT</pubDate>
     <guid>http://miguel-vila.github.io/posts/2020-11-19-un-refactor.html</guid>
-    <dc:creator>Miguel Vilá</dc:creator>
-</item>
-<item>
-    <title>Usando Reactive Extensions para ayudar tests e2e</title>
-    <link>http://miguel-vila.github.io/posts/2017-08-15-rx-e2e.html</link>
-    <description><![CDATA[Un pequeño post sobre como usé reactive extensions para ayudar a escribir tests end to end.]]></description>
-    <pubDate>Tue, 15 Aug 2017 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2017-08-15-rx-e2e.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 
