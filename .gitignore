@@ -19,3 +19,4 @@ _site/
 _cache/
 site
 *.ipynb_checkpoints
+.history
