@@ -1,0 +1,16 @@
+@startuml
+skinparam componentStyle rectangle
+
+actor Clients
+database "Old Service Events Stream" as OldStream
+database "Old Database" as DB1
+database "New Database" as DB2
+
+Clients --> [New Service]
+[New Service] --> [Old Service]: sync write back
+[Old Service] --> DB1: DB write
+DB1 ..> OldStream: event
+OldStream <.. [Command processor] : async event reading
+[Command processor] --> DB2: DB write
+
+@enduml

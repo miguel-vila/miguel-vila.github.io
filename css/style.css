@@ -121,6 +121,12 @@ h2 {
   margin: 25px;
 }
 
+.article-centered-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 html[data-theme="dark"] {
   background:#000;
   filter:invert(1) hue-rotate(180deg)

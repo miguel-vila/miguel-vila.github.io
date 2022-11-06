@@ -1,0 +1,13 @@
+@startuml
+skinparam componentStyle rectangle
+
+actor Clients
+database "Old Database" as DB1
+database "New Database" as DB2
+
+Clients --> [New Service]
+[New Service] --> [Old Service]: sync writeback
+[Old Service] --> DB1: DB write
+[New Service] --> DB2: DB write
+
+@enduml

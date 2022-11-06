@@ -1,0 +1,16 @@
+@startuml
+skinparam componentStyle rectangle
+
+actor Clients
+database "Queue" as Q
+database "Old Database" as DB1
+database "New Database" as DB2
+
+Clients --> [New Service]
+[New Service] --> Q: single command
+Q <.. [Command processor] : async reading
+[Command processor] --> [Old Service]: sync write back
+[Old Service] --> DB1: DB write
+[Command processor] --> DB2: DB write
+
+@enduml

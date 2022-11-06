@@ -1,0 +1,10 @@
+@startuml
+skinparam componentStyle rectangle
+
+actor Clients
+database "Database" as DB
+
+Clients --> [Service]
+[Service] --> DB: DB write
+
+@enduml
