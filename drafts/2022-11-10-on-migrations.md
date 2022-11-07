@@ -19,8 +19,13 @@ things safe.
 
 ## Some requirements
 
+Before we start, let's list some of the requirements we had:
+
 - Zero downtime: this is an implicit assumption in most platforms nowadays.
-- Read clients of the old service should continue to be able to read old data, and new data. Reason for this is that some read clients would take a long time to migrate to the new API.
+Minimizing user impact is a given.
+- Read clients of the old service should continue to be able to read old data,
+and new data. Reason for this is that some read clients would take a long time
+to migrate to the new API.
 
 ## A few techniques
 
@@ -62,6 +67,13 @@ clients are still reading from the old service:
 
 <img src="/images/backfill-sync-write.png" class="article-centered-image"/>
 
+This requires a bit more detail if the new API receives more data than the old
+API and we want to store that data in the new database, but the high level idea
+is the same. This also presumes that the each new API operation has a single
+equivalent operation in the old API, which is not always the case.
+
+We could also attempt to synchronously write to both databases, but to do this
+safely we would have to use something like a [two-phase commit](https://en.wikipedia.org/wiki/Two-phase_commit_protocol).
 
 ## On-demand migrations
 
