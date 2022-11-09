@@ -5,16 +5,19 @@ on:
     branches:
       - hakyll
 jobs:
-  - uses: actions/checkout@v3
-  - uses: mstksg/setup-stack@v1
-  - name: update module
-    run: |
-      git submodule sync
-      git submodule update --remote
-  - name: stack setup
-    run: |
-      stack --no-terminal setup
-      stack --no-terminal build
-  - name: stack build
-    run: |
-      stack --no-terminal exec site build
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: mstksg/setup-stack@v1
+      - name: update module
+        run: |
+          git submodule sync
+          git submodule update --remote
+      - name: stack setup
+        run: |
+          stack --no-terminal setup
+          stack --no-terminal build
+      - name: stack build
+        run: |
+          stack --no-terminal exec site build
