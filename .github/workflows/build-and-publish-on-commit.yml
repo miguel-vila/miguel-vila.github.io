@@ -1,15 +1,34 @@
 name: build-and-publish-on-commit
+
 run-name: Build and publish on commit ${{github.sha}}
+
 on:
   push:
     branches:
       - hakyll
+
 jobs:
-  build-and-publish:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ghc: ['8.8.3', '8.10.5']
+        cabal: ['2.4.1.0', '3.0.0.0']
+        os: [ubuntu-latest]
+        resolver: [lts-3.22 , lts-17, lts-18, lts]
+        exclude:
+          # GHC 8.8+ only works with cabal v3+
+          - ghc: 8.8.3
+            cabal: 2.4.1.0
+    name: ${{ matrix.resolver }} (${{ matrix.ghc }}/${{ matrix.cabal }})
     steps:
       - uses: actions/checkout@v3
-      - uses: mstksg/setup-stack@v1
+      - name: Setup Haskell
+        uses: haskell/actions/setup@v1
+        with:
+          ghc-version: ${{ matrix.ghc }}
+          cabal-version: ${{ matrix.cabal }}
+          enable-stack: true
       - name: update module
         run: |
           git submodule sync
@@ -17,6 +36,7 @@ jobs:
       - name: stack setup
         run: |
           stack --no-terminal setup
+          stack init --resolver ${{ matrix.resolver }} --force
           stack --no-terminal build
       - name: stack build
         run: |
