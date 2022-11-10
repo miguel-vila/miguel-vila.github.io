@@ -71,10 +71,9 @@ jobs:
           git config --global user.name github-actions[bot]
           git add --all
           git commit -m "Update (`date '+%F %T %Z'`) - ${{ github.event.head_commit.message }} - [ci skip]"
-          git push origin master
 
-      # - name: push
-      #   uses: ad-m/github-push-action@v0.6.0
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     branch: master
+      - name: push
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: master
