@@ -12,14 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        # these versions are aligned with the versions used by the lts
         ghc: ['9.0.2']
         cabal: ['3.4.1.0']
         os: [ubuntu-latest]
         resolver: [lts-19.32]
-        exclude:
-          # GHC 8.8+ only works with cabal v3+
-          - ghc: 8.8.3
-            cabal: 2.4.1.0
     name: ${{ matrix.resolver }} (${{ matrix.ghc }}/${{ matrix.cabal }})
     steps:
       - uses: actions/checkout@v3
@@ -36,6 +33,15 @@ jobs:
       - name: build
         run: |
           stack --resolver ${{ matrix.resolver }} build --no-run-tests --no-run-benchmarks
+      - name: run tests
+        run: |
+          stack --resolver ${{ matrix.resolver }} test
       - name: hakyll build
         run: |
           stack --no-terminal exec site build
+      - name: publish
+        run: |
+          cd _site
+          git add --all
+          git commit -m "Update (`date '+%F %T %Z'`) [ci skip]"
+          git push origin master
