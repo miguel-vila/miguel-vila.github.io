@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ghc: ['8.10.5']
-        cabal: ['3.0.0.0']
+        ghc: ['9.0.2']
+        cabal: ['3.4.1.0']
         os: [ubuntu-latest]
-        resolver: [lts]
+        resolver: [lts-19.32]
         exclude:
           # GHC 8.8+ only works with cabal v3+
           - ghc: 8.8.3
