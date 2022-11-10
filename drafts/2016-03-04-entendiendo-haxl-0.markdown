@@ -1,5 +1,5 @@
 ---
-title: Entendiendo Haxl usando Scala: (Parte 0)
+title: 'Entendiendo Haxl usando Scala: (Parte 0)'
 description: Parte 0 de una serie de posts que intentan explicar Haxl usando Scala
 tags: Haxl, Haskell, Scala, Functional Programming, Free Monads, Monads, Applicative Functors, Concurrency
 ---

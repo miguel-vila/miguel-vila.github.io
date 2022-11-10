@@ -1,6 +1,6 @@
 ---
 title: Sobre Algebraic Data Types y Subtipos
-description: Un post corto sobre dos acercamientos distintos: Algebraic Data Types y Subtipos
+description: 'Un post corto sobre dos acercamientos distintos: Algebraic Data Types y Subtipos'
 tags: ADT, OOP, FP, Subtipos
 ---
 

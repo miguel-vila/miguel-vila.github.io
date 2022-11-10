@@ -45,7 +45,7 @@ data DateAndYear =
                 , year :: Year                  
                 }
   
-getTimeInfo :: MonadMetadata m => Identifier -> m DateAndYear
+getTimeInfo :: (MonadFail m, MonadMetadata m) => Identifier -> m DateAndYear
 getTimeInfo id = do 
     time <- getItemUTC defaultTimeLocale id
     return $ DateAndYear { date =time, year = formatTime defaultTimeLocale "%Y" time }
