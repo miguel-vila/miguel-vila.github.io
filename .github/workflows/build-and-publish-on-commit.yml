@@ -1,6 +1,6 @@
 name: build-and-publish-on-commit
 
-run-name: Build and publish on commit ${{github.sha}}
+run-name: "Build and publish on commit '${{ github.event.head_commit.message }}' / ${{ github.sha }}"
 
 on:
   push:
@@ -43,5 +43,5 @@ jobs:
         run: |
           cd _site
           git add --all
-          git commit -m "Update (`date '+%F %T %Z'`) [ci skip]"
+          git commit -m "Update (`date '+%F %T %Z'`) - ${{ github.event.head_commit.message }} - [ci skip]"
           git push origin master
