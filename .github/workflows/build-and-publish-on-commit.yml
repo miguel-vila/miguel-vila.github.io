@@ -64,9 +64,9 @@ jobs:
         run: |
           stack --no-terminal exec site build
 
-      - name: publish
-        run: |
-          cd _site
-          git add --all
-          git commit -m "Update (`date '+%F %T %Z'`) - ${{ github.event.head_commit.message }} - [ci skip]"
-          git push origin master
+      # - name: publish
+      #   run: |
+      #     cd _site
+      #     git add --all
+      #     git commit -m "Update (`date '+%F %T %Z'`) - ${{ github.event.head_commit.message }} - [ci skip]"
+      #     git push origin master
