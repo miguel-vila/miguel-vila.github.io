@@ -23,6 +23,7 @@ jobs:
         name: Checkout and submodules
         with:
           submodules: recursive
+          token: ${{ secrets.PAT_TOKEN }}
 
       - uses: actions/cache@v3
         name: Cache ~/.stack
