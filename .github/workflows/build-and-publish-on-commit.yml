@@ -74,3 +74,5 @@ jobs:
           git add --all
           git commit -m "Update (`date '+%F %T %Z'`) - ${{ github.event.head_commit.message }} - [ci skip]"
           git push origin master
+        with:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
