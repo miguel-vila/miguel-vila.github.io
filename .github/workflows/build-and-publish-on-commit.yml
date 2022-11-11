@@ -23,7 +23,7 @@ jobs:
         name: Checkout and submodules
         with:
           submodules: recursive
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ github.token }}
 
       - uses: actions/cache@v3
         name: Cache ~/.stack
