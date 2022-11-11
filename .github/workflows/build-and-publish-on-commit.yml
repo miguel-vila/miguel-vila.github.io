@@ -7,6 +7,9 @@ on:
     branches:
       - hakyll
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -68,13 +71,8 @@ jobs:
       - name: publish
         run: |
           cd _site
+          git remote set-url --push origin https://miguel-vila:$GITHUB_TOKEN@github.com/miguel-vila/miguel-vila.github.io.git
           git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
           git config --global user.name github-actions[bot]
           git add --all
           git commit -m "Update (`date '+%F %T %Z'`) - ${{ github.event.head_commit.message }} - [ci skip]"
-
-      - name: push
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: master
