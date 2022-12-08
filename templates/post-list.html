@@ -1,6 +1,11 @@
-$for(posts)$
-	<div  style="margin:0.5em;">
-	  	<span class="post-meta" style="display:inline-block; width: 15%;">$date$</span>|
-		   <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="$url$">$title$</a></span>
+<div class="archive__grid">
+	<div class="elem__archive">
+	$for(posts)$
+		<div>
+		<span class="post-meta">$date$</span>
+		<span class="spacer__post">|</span>
+		<span><a class="post-link" href="$url$">$title$</a></span>
 	</div>
-$endfor$
+	$endfor$
+</div>
+</div>

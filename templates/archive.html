@@ -1,9 +1,14 @@
-$for(postsWithYears)$
-    <h3>$year$</h3>
-    $for(posts)$
-        <div  style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">$simpleDate$</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="$url$">$title$</a></span>
+<div class="archive__grid">
+    $for(postsWithYears)$
+        <div class="elem__archive">
+            <span>$year$</span>
+            $for(posts)$
+                <div>
+                    <span class="post-meta">$simpleDate$</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="$url$">$title$</a></span>
+                </div>
+            $endfor$
         </div>
     $endfor$
-$endfor$
+</div>

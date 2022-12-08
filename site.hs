@@ -56,6 +56,7 @@ main = hakyll $ do
     serveFilesAt "images/**/*"
     serveFilesAt "code/*"
     serveFilesAt "scripts/*"
+    serveFilesAt "assets/*"
     match "css/*" $ do
         route   idRoute
         compile compressCssCompiler
