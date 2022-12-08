@@ -91,7 +91,9 @@
         
     </div>
     <hr>
-    <p><img src="../images/rc-w45-1.jpg" style="float: right; padding: 0.5em; width: 35%"></p>
+    <p class="image__article">
+<img src="../images/rc-w45-1.jpg" style="float: right; padding: 0.5em; width: 35%">
+</p>
 <p>It’s been some time since my last post. I’ve lost track of time and I wanted to be constant with these posts, more or less as a self-accountability mechanism. Here’s what I remember doing during the last two weeks, starting with the fourth week:</p>
 <p>I’ve been struggling to make “real progress” with what it’s supposed to be my main project. I feel I haven’t got to that “flow” zone in which I make sustainable and constant progress. Monday was Labor Day in the States and I decided to rest. On Tuesday I took some time for my C project and I got to test the COBS encoding and decoding in two different processes. There are still more tests to do, and some things to clean up. That project is very small but I would like to close it by giving it some final touches.</p>
 <p>On Wednesday and Thursday I continued with my raft implementation. I’m trying to setup some tests, specially for the failure cases. There are various kind of failures I’m interested in testing: complete node failures and disconnects or network partitions between nodes. I found that Akka provides a multi node testkit which should help me with that. I’m still trying to make the tests work, but so far that testkit looks very powerful.</p>

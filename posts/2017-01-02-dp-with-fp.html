@@ -136,7 +136,9 @@ M(i-1,j) &amp; \text{Ignore the i-th item} \end{array} \right\}
 $$</span></p>
 <p>According to this formula we can see that the problem <span class="math inline">(<em>i</em>,<em>j</em>)</span> depends on two subproblems: <span class="math inline">(<em>i</em>−1,<em>j</em>−<em>w</em><sub><em>i</em></sub>)</span> and <span class="math inline">(<em>i</em>−1,<em>j</em>)</span></p>
 <p>Here’s a diagram that describes the subproblem dependencies:</p>
-<p><img src="../images/dp-fp-1.png" style="display: block; margin-left: auto; margin-right: auto; padding: 0.5em; width: 30%;"></p>
+<p class="image__article">
+<img src="../images/dp-fp-1.png" style="display: block; margin-left: auto; margin-right: auto; padding: 0.5em; width: 30%;">
+</p>
 <p>The blue square represents a subproblem we are trying to solve. It depends on two other subproblems (the ones pointed by the arrows). And the final answer is the red square at the lower-right corner (the value <span class="math inline"><em>M</em>(<em>n</em>,<em>W</em>)</span>). It represents the solution when we consider all the elements and with the problem’s input weight. We can also see the “base” cases here: when considering no item the maximum value we can produce is <span class="math inline">0</span> and the same happens when the maximum weight is <span class="math inline">0</span> (this assumes all <span class="math inline"><em>w</em><sub><em>i</em></sub></span> &gt; 0).</p>
 <p>Drawing this kind of diagrams can be useful because it helps us to determine the shape of the iterations. In this case an element of a row depends on the values of the previous row. Thus we can build up solutions going down one row at a time.</p>
 <p>A traditional imperative solution can be:</p>
@@ -293,7 +295,9 @@ M(i,j-1) &amp; \text{Coming from the previous column and going right}
 $$</span></p>
 <p>Here <span class="math inline"><em>v</em>(<em>i</em>,<em>j</em>)</span> is the value stored at row <span class="math inline"><em>i</em></span> and column <span class="math inline"><em>j</em></span>.</p>
 <p>And, once again, let’s draw a diagram showing the dependencies:</p>
-<p><img src="../images/dp-fp-2.png" style="display: block; margin-left: auto; margin-right: auto; padding: 0.5em; width: 30%;"></p>
+<p class="image__article">
+<img src="../images/dp-fp-2.png" style="display: block; margin-left: auto; margin-right: auto; padding: 0.5em; width: 30%;">
+</p>
 <p>There is an important difference with respect to the base cases here. The minimal path for each value in the first row is simply the path that starts at <span class="math inline">(0,0)</span> and goes right from there (this is the formula <span class="math inline"><em>R</em>(<em>i</em>,<em>j</em>)</span>, which is the accumulative <em>row</em> sum). Similarly, the minimal path for each value in the first column is the part that starts at <span class="math inline">(0,0)</span> and goes down from there (this is the formula <span class="math inline"><em>C</em>(<em>i</em>,<em>j</em>)</span>, which is the accumulative <em>column</em> sum).</p>
 <p>Now, unlike the <em>0/1 knapsack problem</em>, the solution for <span class="math inline">(<em>i</em>,<em>j</em>)</span> not only depends on a value at the previous row it also depends on the previous value in the same row.</p>
 <p>Let’s start with the base cases: how to compute the accumulative sum of an array of numbers? <code>fold</code> can be used to combine all the values using a reducer function. But the intermediate results of that function aren’t kept, which is what we want: we don’t want to have the total sum. We want to get the accumulative sum. <code>scan</code> does this. It has the same parameters as <code>fold</code> but instead of returning just one value it’s going to return a vector of all the intermediate values:</p>

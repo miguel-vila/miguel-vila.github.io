@@ -91,7 +91,9 @@
         
     </div>
     <hr>
-    <p><img src="../images/rc-w3-1.jpg" style="float: left; padding: 0.5em; width: 35%"></p>
+    <p class="image__article">
+<img src="../images/rc-w3-1.jpg" style="float: left; padding: 0.5em; width: 35%">
+</p>
 <p>On Monday and Tuesday I worked on my C project. I was able to send one message from an actor in one machine to another one in another machine through a socket. It was mostly a simple process. What I want to do now is send multiple messages on the same connection and that’s why I was looking into <a href="https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing">COBS</a>. I have written some tests for the encoding and decoding side but it needs more work. Also I wanted to organize better my build process and <a href="http://github.com/satabdidas">Satabdi</a> helped me out with that. I feel like I’m advancing very slowly on this project.</p>
 <p>Also on Monday I attended <a href="http://groups.csail.mit.edu/mac/users/gjs/">Gerald J. Sussman</a>’s talk on Flexible Systems (<a href="https://vimeo.com/151465912">this</a> is a longer version of the talk). Sussman is one of the authors of <a href="https://mitpress.mit.edu/sicp/">SICP</a> which is the first book from which I learnt the very first notions of Functional Programming, even though the book is more general than that. It was very cool to see him and hear him in person. I didn’t ask him anything, though. I couldn’t think of any non-stupid thing to say. Some memorable quotes:</p>
 <blockquote>
@@ -103,7 +105,9 @@
 <blockquote>
 <p>“Any Lisp is better than none!”</p>
 </blockquote>
-<p><img src="../images/rc-w3-2.jpg" style="float: right; padding: 0.5em; width: 35%"></p>
+<p class="image__article">
+<img src="../images/rc-w3-2.jpg" style="float: right; padding: 0.5em; width: 35%">
+</p>
 <p>On Tuesday I attended the weekly code dojo and solved <a href="https://www.hackerrank.com/challenges/sherlock-and-the-beast">this</a> problem with <a href="http://github.com/vaibhavsagar">Vaibhav</a> using Haskell. Our code was very slow but afterwards Vaibhav was able to make it more efficient. <a href="https://gist.github.com/miguel-vila/9d843a954742d7c3d44c7b23f07f9e54#file-sherlock-hs">Here’s</a> the final version. It’s been a long time since I solved this kind of problem. This got me thinking about the fact that this solution may generalize for pair of numbers that are <a href="http://mathworld.wolfram.com/RelativelyPrime.html">relatively prime</a>. I swear I saw this kind of problem during some discrete math course I took, with the caveat that the solution may contain negative numbers.</p>
 <p>On Wednesday and Thursday I worked on my Raft implementation. I started to write a lot of code but I’m not sure if some parts of it are correct. I think the leader election part is the easiest one. The complex one is the part that concerns log replication. I’ve been re-reading the paper and watching <a href="http://thesecretlivesofdata.com/raft/">this</a> animation multiple times because there are some fine-grained details that I don’t understand yet. I also found <a href="https://thesquareplanet.com/blog/students-guide-to-raft/">this</a> blog post from a TA at MIT with advice for students trying to do the same thing. My strategy so far has been to hold the state of each node in an actor (looks like it’s been my favorite concurrency abstraction so far). The advantage of doing this is that it’s an abstraction that’s naturally distributable so my local tests will reflect, up to some point, what may happen in a distributed environment. Nevertheless I plan to do some kind of “real distributed tests” whatever that may mean. But for now I just want to iterate quickly.</p>
 <p>On Thursday there were some presentations. My favorites were:</p>

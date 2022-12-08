@@ -11,10 +11,10 @@ $(document).ready(function(){
 		e.preventDefault();
 		if ($("body").hasClass("dark")) {
 			$("body").removeClass("dark");
-			$(this).find("img").attr("src" ,"images/moon.png");
+			$(this).find("img").attr("src" ,"/images/moon.png");
 		} else {
 			$("body").addClass("dark");
-			$(this).find("img").attr("src" ,"images/sun.png");
+			$(this).find("img").attr("src" ,"/images/sun.png");
 		}
 	});
 

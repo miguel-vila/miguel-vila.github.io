@@ -92,7 +92,9 @@
     </div>
     <hr>
     <p>Here’s my second week report:</p>
-<p><img src="../images/rc-w2-1.jpg" style="float: right; padding: 0.5em; width: 25%"></p>
+<p class="image__article">
+<img src="../images/rc-w2-1.jpg" style="float: right; padding: 0.5em; width: 25%">
+</p>
 <p>What was supposed to be just a side project, <a href="https://github.com/miguel-vila/silly-actors/tree/38df74fa704f6f9cc36dda0e2407ecd336fe428e#silly-actors">the small and silly implementation of actors in C</a>, has consumed most of my time. Some of the things I’ve been doing with it:</p>
 <ul>
 <li><p>I replaced my naive thread-safe queue with a better one. Last week I tried to make it less blocking with respect to concurrent enqueue and dequeue operations. The idea was to, instead of having one global lock, to have one lock for the first node and another one for the last node. But there is a problem when the queue has one or less elements: both locks have to protect the same data. I couldn’t come up with a solution but this week I found <a href="http://www.cs.rochester.edu/~scott/papers/1996_PODC_queues.pdf">this</a> article. The idea is very simple: besides the two locks you also need an extra empty node which ensures that the first and the last element are separated. The article describes another queue which is non-blocking and that uses the <a href="https://en.wikipedia.org/wiki/Compare-and-swap">CAS instruction</a>. Maybe next week I will try to implement it.</p></li>
@@ -104,7 +106,9 @@
 <li>To use a <a href="https://doc.rust-lang.org/std/sync/struct.Mutex.html"><code>Mutex</code></a> to ensure only one thread modifies the data.</li>
 <li>To use an <a href="https://doc.rust-lang.org/std/sync/struct.Arc.html"><code>Arc</code></a> to ensure the lifetime of the data (Or at least that’s what I think the <code>Arc</code> is for in this case).</li>
 </ul>
-<p><img src="../images/rc-w2-2.jpg" style="float: left; padding: 0.5em; width: 30%"></p>
+<p class="image__article">
+<img src="../images/rc-w2-2.jpg" style="float: left; padding: 0.5em; width: 30%">
+</p>
 <p>Also with respect to Rust I’ve noted that an unexpected benefit of my C experiments is that now I may understand better the why of Rust’s ownership and borrowing system. The cool thing about Rust is that it’s a modern language that enforces safe memory usage. I’m very curious to see what you can do with it.</p>
 <p>And finally on what it’s supposed to be my main project I didn’t advance much. I re-read the leader election part of the raft paper and I think I understand it better now. It looks like learning two things (Raft and Rust) at the same time in order to build something doesn’t sound like a good idea. Instead I think I’ll use a language I know better: Scala. Right now I can even visualize how some of the code will look like in Scala, which is a something I can’t do with Rust at the moment.</p>
 <p>On other news:</p>
