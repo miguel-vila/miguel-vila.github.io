@@ -35,220 +35,266 @@
         </title>
         <link rel="stylesheet" type="text/css" href="./css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="./css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="./css/style.css" />
+        <link rel="stylesheet" type="text/css" href="./assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="./css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="./">Home</a>
-            <a href="./archive.html">Blog</a>
-            <a href="./resume_EN.pdf">Resume</a>
-            <a href="./feed.xml"><img src="./images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="./">Home</a></li>
+                <li><a href="./archive.html">Blog</a></li>
+                <li><a href="./resume_EN.pdf">Resume</a></li>
+                <li><a href="./feed.xml"><img src="./images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="./images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Blog</h2>
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Blog</h2>
+        </div>
+        <div class="archive__grid">
     
-    <h3>2022</h3>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Nov 08</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2022-11-08-shiller.html">Stopping when Robert Shiller tells you to</a></span>
+        <div class="elem__archive">
+            <span>2022</span>
+            
+                <div>
+                    <span class="post-meta">Nov 08</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2022-11-08-shiller.html">Stopping when Robert Shiller tells you to</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Jan 01</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2022-01-01-libros-2021.html">2021 en libros</a></span>
+                </div>
+            
         </div>
     
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Jan 01</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2022-01-01-libros-2021.html">2021 en libros</a></span>
+        <div class="elem__archive">
+            <span>2021</span>
+            
+                <div>
+                    <span class="post-meta">Mar 06</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2021-03-06-functional-streams.html">The unreasonable effectiveness of functional streams</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Jan 02</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2021-01-02-libros-2020.html">2020 en libros</a></span>
+                </div>
+            
         </div>
     
+        <div class="elem__archive">
+            <span>2020</span>
+            
+                <div>
+                    <span class="post-meta">Dec 07</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2020-12-07-aoc-rust-1.html">Advent Of Code 2020 en Rust. Día 1</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Nov 19</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2020-11-19-un-refactor.html">Un pequeño refactor</a></span>
+                </div>
+            
+        </div>
+    
+        <div class="elem__archive">
+            <span>2017</span>
+            
+                <div>
+                    <span class="post-meta">Aug 15</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2017-08-15-rx-e2e.html">Usando Reactive Extensions para ayudar tests e2e</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Apr 08</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2017-04-08-que-he-hecho-esta-semana.html">Algo de lo que hice esta semana (03/04/2017 - 08/04/2017)</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Mar 01</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2017-03-01-que-he-hecho-esta-semana.html">Algo de lo que hice estas semanas (06/02/2017 - 19/02/2017)</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Jan 29</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2017-01-29-que-he-hecho-esta-semana.html">Algo de lo que hice esta semana (22/01/2017 - 29/01/2017)</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Jan 23</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2017-01-23-que-he-hecho-esta-semana.html">Algo de lo que hice esta semana (15/01/2017 - 22/01/2017)</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Jan 12</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2017-01-12-gol-in-elm.html">Conway's Game Of Life in Elm</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Jan 08</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2017-01-08-que-hecho-esta-semana.html">Algo de lo que hice esta semana (01/01/2017 - 08/01/2017)</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Jan 03</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2017-01-03-dp-with-fp-redux.html">Solving Dynamic Programming problems using Functional Programming (Redux)</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Jan 02</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2017-01-02-dp-with-fp.html">Solving Dynamic Programming problems using Functional Programming</a></span>
+                </div>
+            
+        </div>
+    
+        <div class="elem__archive">
+            <span>2016</span>
+            
+                <div>
+                    <span class="post-meta">Dec 31</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-12-31-lecturas.html">Algo de lo que estoy leyendo y que me gustaría terminar en 2017</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Dec 29</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-12-29-algunas-cosa-para-el-2017.html">Algunas cosas que quiero hacer en el 2017</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Nov 23</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-11-23-parseando-con-funciones.html">Parseando con funciones</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Oct 09</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-10-09-towards-an-applicative-for-macro.html">Towards an applicative-for macro</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Sep 18</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-09-18-weeks-4-5-at-rc.html">Weeks 4 and 5 at RC</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Sep 03</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-09-03-week-3-at-rc.html">Week 3 at RC</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Aug 27</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-08-27-week-2-at-rc.html">Second week at RC</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Aug 22</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-08-22-first-week-at-rc.html">My first week at Recurse Center</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Aug 15</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-08-15-day-3.html">Día 3</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Aug 13</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-08-13-day-1.html">Día 1</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Aug 12</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-08-12-day-0.html">Día 0</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Aug 11</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-08-11-day-minus-1.html">Día -1</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Jun 05</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-06-05-desarmando-futuros-promesas.html">Desarmando las Promesas y los Futuros de la librería estándar de Scala</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Mar 29</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-03-29-construyendo-un-pequeno-lenguaje-2.html">Construyendo un pequeño lenguaje de programación (Parte 2)</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Mar 20</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-03-20-construyendo-un-pequeno-lenguaje-1.html">Construyendo un pequeño lenguaje de programación (Parte 1)</a></span>
+                </div>
+            
+                <div>
+                    <span class="post-meta">Mar 15</span>
+                    <span class="spacer__post">|</span>
+                    <span><a class="post-link" href="./posts/2016-03-15-construyendo-un-pequeno-lenguaje-0.html">Construyendo un pequeño lenguaje de programación (Parte 0)</a></span>
+                </div>
+            
+        </div>
+    
+</div>
 
-    <h3>2021</h3>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Mar 06</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2021-03-06-functional-streams.html">The unreasonable effectiveness of functional streams</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Jan 02</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2021-01-02-libros-2020.html">2020 en libros</a></span>
-        </div>
-    
-
-    <h3>2020</h3>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Dec 07</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2020-12-07-aoc-rust-1.html">Advent Of Code 2020 en Rust. Día 1</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Nov 19</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2020-11-19-un-refactor.html">Un pequeño refactor</a></span>
-        </div>
-    
-
-    <h3>2017</h3>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Aug 15</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2017-08-15-rx-e2e.html">Usando Reactive Extensions para ayudar tests e2e</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Apr 08</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2017-04-08-que-he-hecho-esta-semana.html">Algo de lo que hice esta semana (03/04/2017 - 08/04/2017)</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Mar 01</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2017-03-01-que-he-hecho-esta-semana.html">Algo de lo que hice estas semanas (06/02/2017 - 19/02/2017)</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Jan 29</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2017-01-29-que-he-hecho-esta-semana.html">Algo de lo que hice esta semana (22/01/2017 - 29/01/2017)</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Jan 23</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2017-01-23-que-he-hecho-esta-semana.html">Algo de lo que hice esta semana (15/01/2017 - 22/01/2017)</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Jan 12</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2017-01-12-gol-in-elm.html">Conway's Game Of Life in Elm</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Jan 08</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2017-01-08-que-hecho-esta-semana.html">Algo de lo que hice esta semana (01/01/2017 - 08/01/2017)</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Jan 03</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2017-01-03-dp-with-fp-redux.html">Solving Dynamic Programming problems using Functional Programming (Redux)</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Jan 02</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2017-01-02-dp-with-fp.html">Solving Dynamic Programming problems using Functional Programming</a></span>
-        </div>
-    
-
-    <h3>2016</h3>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Dec 31</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-12-31-lecturas.html">Algo de lo que estoy leyendo y que me gustaría terminar en 2017</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Dec 29</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-12-29-algunas-cosa-para-el-2017.html">Algunas cosas que quiero hacer en el 2017</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Nov 23</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-11-23-parseando-con-funciones.html">Parseando con funciones</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Oct 09</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-10-09-towards-an-applicative-for-macro.html">Towards an applicative-for macro</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Sep 18</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-09-18-weeks-4-5-at-rc.html">Weeks 4 and 5 at RC</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Sep 03</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-09-03-week-3-at-rc.html">Week 3 at RC</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Aug 27</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-08-27-week-2-at-rc.html">Second week at RC</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Aug 22</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-08-22-first-week-at-rc.html">My first week at Recurse Center</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Aug 15</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-08-15-day-3.html">Día 3</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Aug 13</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-08-13-day-1.html">Día 1</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Aug 12</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-08-12-day-0.html">Día 0</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Aug 11</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-08-11-day-minus-1.html">Día -1</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Jun 05</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-06-05-desarmando-futuros-promesas.html">Desarmando las Promesas y los Futuros de la librería estándar de Scala</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Mar 29</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-03-29-construyendo-un-pequeno-lenguaje-2.html">Construyendo un pequeño lenguaje de programación (Parte 2)</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Mar 20</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-03-20-construyendo-un-pequeno-lenguaje-1.html">Construyendo un pequeño lenguaje de programación (Parte 1)</a></span>
-        </div>
-    
-        <div style="margin:0.5em;">
-            <span class="post-meta" style="display:inline-block; width: 7.5%;">Mar 15</span>|
-            <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="./posts/2016-03-15-construyendo-un-pequeno-lenguaje-0.html">Construyendo un pequeño lenguaje de programación (Parte 0)</a></span>
-        </div>
-    
-
-
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

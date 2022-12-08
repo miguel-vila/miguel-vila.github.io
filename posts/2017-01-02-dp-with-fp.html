@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Solving Dynamic Programming problems using Functional Programming</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Solving Dynamic Programming problems using Functional Programming</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Jan 02 2017
@@ -84,7 +87,7 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Functional%20Programming.html">Functional Programming</a>, <a href="../tags/Dynamic%20Programming.html">Dynamic Programming</a>, <a href="../tags/Scala.html">Scala</a> 
+        Tags: <a title="All pages tagged 'Functional Programming'." href="../tags/Functional%20Programming.html">Functional Programming</a>, <a title="All pages tagged 'Dynamic Programming'." href="../tags/Dynamic%20Programming.html">Dynamic Programming</a>, <a title="All pages tagged 'Scala'." href="../tags/Scala.html">Scala</a> 
         
     </div>
     <hr>
@@ -107,53 +110,53 @@
 <p>Dynamic programming problems, when solved in a bottom-up fashion, usually rely in some mutable data structure which holds the solutions for smaller subproblems. For example let’s explore the <a href="https://en.wikipedia.org/wiki/Knapsack_problem#0.2F1_knapsack_problem">0/1 knapsack problem</a>. <a href="https://www.youtube.com/watch?v=8LusJS5-AGo">This</a> and <a href="https://www.youtube.com/watch?v=xOlhR_2QCXY">this</a> are good videos about it and describe a solution. Here’s my summary of the problem:</p>
 <p>Given <span class="math inline"><em>n</em></span> items indexed <span class="math inline">1, 2, ⋯, <em>n</em></span> with values <span class="math inline"><em>v</em><sub><em>i</em></sub></span> and weights <span class="math inline"><em>w</em><sub><em>i</em></sub></span> find a subset of them with maximum total value that doesn’t exceed the input weight <span class="math inline"><em>W</em></span>. Each item may be included just once.</p>
 <p>For example:</p>
-<p><br /><span class="math display">$$
+<p><span class="math display">$$
 \begin{array}{c|lcccr}
 i &amp; 1 &amp; 2 &amp; 3 &amp; 4 &amp; 5 \\
 \hline
 \text{Weight (kg)} &amp; 1 &amp; 2 &amp; 4 &amp; 2 &amp; 3 \\
 \text{Value (\$)}  &amp; 3 &amp; 3 &amp; 5 &amp; 3 &amp; 7
 \end{array}
-$$</span><br /></p>
+$$</span></p>
 <p>and maximum target weight <span class="math inline"><em>W</em> = 9</span>.</p>
 <p>You can select the items <span class="math inline">3</span>, <span class="math inline">4</span> and <span class="math inline">5</span> for a total weight of <span class="math inline">9</span> and a total value of <span class="math inline">15</span>. This is good but you could do even better by selecting items <span class="math inline">1</span>, <span class="math inline">2</span>, <span class="math inline">4</span> and <span class="math inline">5</span>. In this case we would get a total value of <span class="math inline">16</span> which is in fact the maximum you can get without exceeding the maximum weight of <span class="math inline">9</span>.</p>
 <p>To solve this problem in the general case we can first break it by considering subsets. Let’s start with a definition that allows us to express subsets of the problem:</p>
-<p><br /><span class="math display">$$
+<p><span class="math display">$$
 M(i,j) = \begin{array}{ll}
 \text{Maximum total value we can get when considering} &amp; \\
 \text{the first } i \text{ items with a maximum weight of }j &amp;
 \end{array}
-$$</span><br /></p>
-<p>For each item we can have two choices: either we include it and gain it’s value but we have reduced our available weight. Or, on the other hand, we ignore it and never use it. These two possibilities totally exclude each other so if we compute the maximum between them for every item (and for every possible maximum weight <span class="math inline">&lt; = <em>W</em></span>) then we can get the overall maximum. And these two possibilities correspond to two subproblem definitions.</p>
+$$</span></p>
+<p>For each item we can have two choices: either we include it and gain it’s value but we have reduced our available weight. Or, on the other hand, we ignore it and never use it. These two possibilities totally exclude each other so if we compute the maximum between them for every item (and for every possible maximum weight <span class="math inline"> &lt;  = <em>W</em></span>) then we can get the overall maximum. And these two possibilities correspond to two subproblem definitions.</p>
 <p>The recursive formula that express this is:</p>
-<p><br /><span class="math display">$$
+<p><span class="math display">$$
 M(i,j) = Max\left\{ \begin{array}{ll}
 M(i-1,j-w_i) + v_i &amp; \text{Include the i-th item (possible when } j \geq w_i \text{ )} \\ 
 M(i-1,j) &amp; \text{Ignore the i-th item} \end{array} \right\}
-$$</span><br /></p>
-<p>According to this formula we can see that the problem <span class="math inline">(<em>i</em>, <em>j</em>)</span> depends on two subproblems: <span class="math inline">(<em>i</em> − 1, <em>j</em> − <em>w</em><sub><em>i</em></sub>)</span> and <span class="math inline">(<em>i</em> − 1, <em>j</em>)</span></p>
+$$</span></p>
+<p>According to this formula we can see that the problem <span class="math inline">(<em>i</em>,<em>j</em>)</span> depends on two subproblems: <span class="math inline">(<em>i</em>−1,<em>j</em>−<em>w</em><sub><em>i</em></sub>)</span> and <span class="math inline">(<em>i</em>−1,<em>j</em>)</span></p>
 <p>Here’s a diagram that describes the subproblem dependencies:</p>
 <p><img src="../images/dp-fp-1.png" style="display: block; margin-left: auto; margin-right: auto; padding: 0.5em; width: 30%;"></p>
-<p>The blue square represents a subproblem we are trying to solve. It depends on two other subproblems (the ones pointed by the arrows). And the final answer is the red square at the lower-right corner (the value <span class="math inline"><em>M</em>(<em>n</em>, <em>W</em>)</span>). It represents the solution when we consider all the elements and with the problem’s input weight. We can also see the “base” cases here: when considering no item the maximum value we can produce is <span class="math inline">0</span> and the same happens when the maximum weight is <span class="math inline">0</span> (this assumes all <span class="math inline"><em>w</em><sub><em>i</em></sub></span> &gt; 0).</p>
+<p>The blue square represents a subproblem we are trying to solve. It depends on two other subproblems (the ones pointed by the arrows). And the final answer is the red square at the lower-right corner (the value <span class="math inline"><em>M</em>(<em>n</em>,<em>W</em>)</span>). It represents the solution when we consider all the elements and with the problem’s input weight. We can also see the “base” cases here: when considering no item the maximum value we can produce is <span class="math inline">0</span> and the same happens when the maximum weight is <span class="math inline">0</span> (this assumes all <span class="math inline"><em>w</em><sub><em>i</em></sub></span> &gt; 0).</p>
 <p>Drawing this kind of diagrams can be useful because it helps us to determine the shape of the iterations. In this case an element of a row depends on the values of the previous row. Thus we can build up solutions going down one row at a time.</p>
 <p>A traditional imperative solution can be:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">knapsack</span>(maxWeight: Int, value: Vector[Int], weight: Vector[Int]): Int = {
-    <span class="kw">val</span> n = value.<span class="fu">length</span>
-    <span class="kw">val</span> solutions: Array[Array[Int]] = Array.<span class="fu">fill</span>(n<span class="dv">+1</span>, maxWeight + <span class="dv">1</span>)( <span class="dv">0</span> )
-    (<span class="dv">1</span> to n) foreach { i =&gt;
-        (<span class="dv">1</span> to maxWeight) foreach { j =&gt;
-            <span class="fu">solutions</span>(i)(j) = <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
-                Math.<span class="fu">max</span>( 
-                    <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j) , 
-                    <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>) 
-                )
-            } <span class="kw">else</span> {
-                <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j)
-            }
-        }
-    } 
-    <span class="fu">solutions</span>(n)(maxWeight)
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">knapsack</span><span class="op">(</span>maxWeight<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> value<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">],</span> weight<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> n <span class="op">=</span> value<span class="op">.</span>length</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> solutions<span class="op">:</span> <span class="ex">Array</span><span class="op">[</span><span class="ex">Array</span><span class="op">[</span><span class="bu">Int</span><span class="op">]]</span> <span class="op">=</span> <span class="ex">Array</span><span class="op">.</span><span class="fu">fill</span><span class="op">(</span>n<span class="op">+</span><span class="dv">1</span><span class="op">,</span> maxWeight <span class="op">+</span> <span class="dv">1</span><span class="op">)(</span> <span class="dv">0</span> <span class="op">)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dv">1</span> to n<span class="op">)</span> foreach <span class="op">{</span> i <span class="op">=&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span><span class="dv">1</span> to maxWeight<span class="op">)</span> foreach <span class="op">{</span> j <span class="op">=&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">solutions</span><span class="op">(</span>i<span class="op">)(</span>j<span class="op">)</span> <span class="op">=</span> <span class="cf">if</span><span class="op">(</span> j <span class="op">-</span> <span class="fu">weight</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                <span class="ex">Math</span><span class="op">.</span><span class="fu">max</span><span class="op">(</span> </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">solutions</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)(</span>j<span class="op">)</span> <span class="op">,</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">solutions</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)(</span>j <span class="op">-</span> <span class="fu">weight</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">))</span> <span class="op">+</span> <span class="fu">value</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span> </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                <span class="op">)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                <span class="fu">solutions</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)(</span>j<span class="op">)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">solutions</span><span class="op">(</span>n<span class="op">)(</span>maxWeight<span class="op">)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>This iterates one row at a time and computes the solution given the recursive formula. The time complexity of this is <span class="math inline"><em>O</em>(<em>n</em><em>W</em>)</span> where <span class="math inline"><em>n</em></span> is the number of items to consider and <span class="math inline"><em>W</em></span> is the maximum weight. And the space complexity is also <span class="math inline"><em>O</em>(<em>n</em><em>W</em>)</span>.</p>
 <div class="note">
 <p class="aside-header">
@@ -165,25 +168,25 @@ $$</span><br /></p>
 </div>
 </div>
 <p>The previous solution can be improved given that we only need to remember the last row of solutions for each iteration:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">knapsack</span>(maxWeight: Int, value: Vector[Int], weight: Vector[Int]): Int = {
-    <span class="kw">val</span> n = value.<span class="fu">length</span>
-    <span class="kw">var</span> solutions: Array[Int] = Array.<span class="fu">fill</span>(maxWeight + <span class="dv">1</span>)( <span class="dv">0</span> )
-    (<span class="dv">1</span> to n) foreach { i =&gt;
-        <span class="kw">val</span> newSolutions = Array.<span class="fu">fill</span>(maxWeight + <span class="dv">1</span>)( <span class="dv">0</span> )
-        (<span class="dv">1</span> to maxWeight) foreach { j =&gt;
-            <span class="fu">newSolutions</span>(j) = <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
-                Math.<span class="fu">max</span>( 
-                    <span class="fu">solutions</span>(j) , 
-                    <span class="fu">solutions</span>(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>) 
-                )
-            } <span class="kw">else</span> {
-                <span class="fu">solutions</span>(j)
-            }
-        }
-        solutions = newSolutions
-    } 
-    <span class="fu">solutions</span>(maxWeight)
-}</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">knapsack</span><span class="op">(</span>maxWeight<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> value<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">],</span> weight<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> n <span class="op">=</span> value<span class="op">.</span>length</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> solutions<span class="op">:</span> <span class="ex">Array</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="ex">Array</span><span class="op">.</span><span class="fu">fill</span><span class="op">(</span>maxWeight <span class="op">+</span> <span class="dv">1</span><span class="op">)(</span> <span class="dv">0</span> <span class="op">)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dv">1</span> to n<span class="op">)</span> foreach <span class="op">{</span> i <span class="op">=&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">val</span> newSolutions <span class="op">=</span> <span class="ex">Array</span><span class="op">.</span><span class="fu">fill</span><span class="op">(</span>maxWeight <span class="op">+</span> <span class="dv">1</span><span class="op">)(</span> <span class="dv">0</span> <span class="op">)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span><span class="dv">1</span> to maxWeight<span class="op">)</span> foreach <span class="op">{</span> j <span class="op">=&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">newSolutions</span><span class="op">(</span>j<span class="op">)</span> <span class="op">=</span> <span class="cf">if</span><span class="op">(</span> j <span class="op">-</span> <span class="fu">weight</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                <span class="ex">Math</span><span class="op">.</span><span class="fu">max</span><span class="op">(</span> </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">solutions</span><span class="op">(</span>j<span class="op">)</span> <span class="op">,</span> </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">solutions</span><span class="op">(</span>j <span class="op">-</span> <span class="fu">weight</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">))</span> <span class="op">+</span> <span class="fu">value</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span> </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                <span class="op">)</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                <span class="fu">solutions</span><span class="op">(</span>j<span class="op">)</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        solutions <span class="op">=</span> newSolutions</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">solutions</span><span class="op">(</span>maxWeight<span class="op">)</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>The space complexity of this will be <span class="math inline"><em>O</em>(<em>W</em>)</span>.</p>
 <h2 id="how-to-do-the-same-thing-functionally">How to do the same thing functionally?</h2>
 <p>How could we do the same thing functionally? One of the main objectives in functional programming is avoiding side-effects. The most prominent side-effect that we have here is the mutation of a data structure and this can be avoided with immutable data structures.</p>
@@ -193,142 +196,142 @@ $$</span><br /></p>
 <h2 id="translating-every-mutation-to-a-state-modification">Translating every mutation to a state modification</h2>
 <p><strong>Warning:</strong> what comes next is not that enlightening nor useful. This section just answers the question “if I really wanted to use the <code>State</code> monad to do this how would I do it?”. The section that comes after this one has the really simple and direct version: it won’t rely in monads or anything like that. If you are really curious you can read this but it’s not really that useful.</p>
 <p>In functional programming one way to handle state is the <code>State</code> monad. Then we could mindlessly replace the modifications by creating <code>State</code> values that represent those modifications. Using the <code>State</code> monad implementation in <a href="https://github.com/typelevel/cats">Cats</a> and an immutable data structure like <code>Vector</code> we can reimplement the <span class="math inline"><em>O</em>(<em>n</em><em>W</em>)</span> space version like this:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> cats.<span class="fu">_</span>, cats.<span class="fu">instances</span>.<span class="fu">all</span>.<span class="fu">_</span>, cats.<span class="fu">syntax</span>.<span class="fu">traverse</span>.<span class="fu">_</span>, cats.<span class="fu">syntax</span>.<span class="fu">foldable</span>.<span class="fu">_</span>
-<span class="kw">import</span> cats.<span class="fu">data</span>.<span class="fu">State</span>
-
-<span class="kw">def</span> <span class="fu">setSolution</span>(i: Int, j: Int, newVal: Int)
-               (solutions: Vector[Vector[Int]]): Vector[Vector[Int]] = {
-    solutions.<span class="fu">updated</span>(i, <span class="fu">solutions</span>(i).<span class="fu">updated</span>(j, newVal))
-}
-
-<span class="kw">def</span> <span class="fu">knapsack</span>(maxWeight: Int, value: Vector[Int], weight: Vector[Int]): Int = {
-    <span class="kw">val</span> n = value.<span class="fu">length</span>
-    <span class="kw">val</span> initialState: Vector[Vector[Int]] = Vector.<span class="fu">fill</span>(n<span class="dv">+1</span>, maxWeight + <span class="dv">1</span>)( <span class="dv">0</span> )
-    <span class="kw">val</span> st: State[Vector[Vector[Int]], Unit] = ( <span class="dv">1</span> to n ).<span class="fu">toList</span>.<span class="fu">traverseU_</span> { i =&gt;
-        ( <span class="dv">1</span> to maxWeight ).<span class="fu">toList</span>.<span class="fu">traverseU_</span> { j =&gt;
-            <span class="kw">for</span> {
-                solutions &lt;- State.<span class="fu">get</span>[Vector[Vector[Int]]]
-                newVal = <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
-                    Math.<span class="fu">max</span>(
-                        <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j) , 
-                        <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>) 
-                    )
-                } <span class="kw">else</span> {
-                    <span class="fu">solutions</span>(i<span class="dv">-1</span>)(j)
-                }
-                _ &lt;- State.<span class="fu">modify</span>(<span class="fu">setSolution</span>(i,j,newVal))
-            } <span class="kw">yield</span> ()
-        }
-    }
-    <span class="kw">val</span> solution = st.<span class="fu">runS</span>(initialState).<span class="fu">value</span>
-    <span class="fu">solution</span>(n)(maxWeight)
-}</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> cats<span class="op">.</span>_<span class="op">,</span> cats<span class="op">.</span>instances<span class="op">.</span>all<span class="op">.</span>_<span class="op">,</span> cats<span class="op">.</span>syntax<span class="op">.</span>traverse<span class="op">.</span>_<span class="op">,</span> cats<span class="op">.</span>syntax<span class="op">.</span>foldable<span class="op">.</span>_</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> cats<span class="op">.</span>data<span class="op">.</span><span class="ex">State</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">setSolution</span><span class="op">(</span>i<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> j<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> newVal<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>               <span class="op">(</span>solutions<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]]):</span> <span class="ex">Vector</span><span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    solutions<span class="op">.</span><span class="fu">updated</span><span class="op">(</span>i<span class="op">,</span> <span class="fu">solutions</span><span class="op">(</span>i<span class="op">).</span><span class="fu">updated</span><span class="op">(</span>j<span class="op">,</span> newVal<span class="op">))</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">knapsack</span><span class="op">(</span>maxWeight<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> value<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">],</span> weight<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> n <span class="op">=</span> value<span class="op">.</span>length</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> initialState<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]]</span> <span class="op">=</span> <span class="ex">Vector</span><span class="op">.</span><span class="fu">fill</span><span class="op">(</span>n<span class="op">+</span><span class="dv">1</span><span class="op">,</span> maxWeight <span class="op">+</span> <span class="dv">1</span><span class="op">)(</span> <span class="dv">0</span> <span class="op">)</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> st<span class="op">:</span> <span class="ex">State</span><span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]],</span> <span class="bu">Unit</span><span class="op">]</span> <span class="op">=</span> <span class="op">(</span> <span class="dv">1</span> to n <span class="op">).</span>toList<span class="op">.</span>traverseU_ <span class="op">{</span> i <span class="op">=&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span> <span class="dv">1</span> to maxWeight <span class="op">).</span>toList<span class="op">.</span>traverseU_ <span class="op">{</span> j <span class="op">=&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                solutions <span class="op">&lt;-</span> <span class="ex">State</span><span class="op">.</span>get<span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]]]</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                newVal <span class="op">=</span> <span class="cf">if</span><span class="op">(</span> j <span class="op">-</span> <span class="fu">weight</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                    <span class="ex">Math</span><span class="op">.</span><span class="fu">max</span><span class="op">(</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">solutions</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)(</span>j<span class="op">)</span> <span class="op">,</span> </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">solutions</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)(</span>j <span class="op">-</span> <span class="fu">weight</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">))</span> <span class="op">+</span> <span class="fu">value</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span> </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                    <span class="op">)</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">solutions</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)(</span>j<span class="op">)</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>                _ <span class="op">&lt;-</span> <span class="ex">State</span><span class="op">.</span><span class="fu">modify</span><span class="op">(</span><span class="fu">setSolution</span><span class="op">(</span>i<span class="op">,</span>j<span class="op">,</span>newVal<span class="op">))</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">yield</span> <span class="op">()</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> solution <span class="op">=</span> st<span class="op">.</span><span class="fu">runS</span><span class="op">(</span>initialState<span class="op">).</span>value</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">solution</span><span class="op">(</span>n<span class="op">)(</span>maxWeight<span class="op">)</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Not too interesting. This even looks too much like the original code. In a similar way we can do the same for the <span class="math inline"><em>O</em>(<em>W</em>)</span> space version:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">knapsack</span>(maxWeight: Int, value: Vector[Int], weight: Vector[Int]): Int = {
-    <span class="kw">val</span> n = value.<span class="fu">length</span>
-    <span class="kw">val</span> initialState: Vector[Int] = Vector.<span class="fu">fill</span>(maxWeight + <span class="dv">1</span>)( <span class="dv">0</span> )
-    <span class="kw">val</span> st: State[Vector[Int], Unit] = ( <span class="dv">1</span> to n ).<span class="fu">toList</span>.<span class="fu">traverseU_</span> { i =&gt;
-        <span class="kw">for</span> {
-            solutions &lt;- State.<span class="fu">get</span>[Vector[Int]]
-            newSolutions = <span class="dv">0</span> +: ( <span class="dv">1</span> to maxWeight ).<span class="fu">map</span> { j: Int =&gt;
-                <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
-                    Math.<span class="fu">max</span>(
-                        <span class="fu">solutions</span>(j) , 
-                        <span class="fu">solutions</span>(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>) 
-                    )
-                } <span class="kw">else</span> {
-                    <span class="fu">solutions</span>(j)
-                }
-            }.<span class="fu">toVector</span>
-            _ &lt;- State.<span class="fu">set</span>(newSolutions)
-        } <span class="kw">yield</span> ()
-    }
-    <span class="kw">val</span> solution = st.<span class="fu">runS</span>(initialState).<span class="fu">value</span>
-    <span class="fu">solution</span>(maxWeight)
-}</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">knapsack</span><span class="op">(</span>maxWeight<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> value<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">],</span> weight<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> n <span class="op">=</span> value<span class="op">.</span>length</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> initialState<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="ex">Vector</span><span class="op">.</span><span class="fu">fill</span><span class="op">(</span>maxWeight <span class="op">+</span> <span class="dv">1</span><span class="op">)(</span> <span class="dv">0</span> <span class="op">)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> st<span class="op">:</span> <span class="ex">State</span><span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">],</span> <span class="bu">Unit</span><span class="op">]</span> <span class="op">=</span> <span class="op">(</span> <span class="dv">1</span> to n <span class="op">).</span>toList<span class="op">.</span>traverseU_ <span class="op">{</span> i <span class="op">=&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>            solutions <span class="op">&lt;-</span> <span class="ex">State</span><span class="op">.</span>get<span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]]</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>            newSolutions <span class="op">=</span> <span class="dv">0</span> <span class="op">+:</span> <span class="op">(</span> <span class="dv">1</span> to maxWeight <span class="op">).</span>map <span class="op">{</span> j<span class="op">:</span> <span class="bu">Int</span> <span class="op">=&gt;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span><span class="op">(</span> j <span class="op">-</span> <span class="fu">weight</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                    <span class="ex">Math</span><span class="op">.</span><span class="fu">max</span><span class="op">(</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">solutions</span><span class="op">(</span>j<span class="op">)</span> <span class="op">,</span> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">solutions</span><span class="op">(</span>j <span class="op">-</span> <span class="fu">weight</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">))</span> <span class="op">+</span> <span class="fu">value</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                    <span class="op">)</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">solutions</span><span class="op">(</span>j<span class="op">)</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">}.</span>toVector</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            _ <span class="op">&lt;-</span> <span class="ex">State</span><span class="op">.</span><span class="fu">set</span><span class="op">(</span>newSolutions<span class="op">)</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">yield</span> <span class="op">()</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> solution <span class="op">=</span> st<span class="op">.</span><span class="fu">runS</span><span class="op">(</span>initialState<span class="op">).</span>value</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">solution</span><span class="op">(</span>maxWeight<span class="op">)</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Have we learned anything from this? Nah! And this is boring precisely because the state monad can be used to implement the very same imperative logic.</p>
 <p>So, is there a simpler, more elegant and functional way to do this?</p>
 <h2 id="just-use-fold">Just use fold!</h2>
 <p>In the imperative version at each iteration we are computing a new row based on the last one. And we are interested in the last row because it holds the final answer. The first row is full of zeros, that’s our “base case”. And a perfect function for building incremental state from an initial state is <code>fold</code>! <code>fold</code> has two parameters: the initial state and a function that computes a new state based on the previous one and on the current element of the structure we are folding over. This fits us perfectly because to compute each new row we must have two ingredients: the previous row and which row number is that we are processing. We could start by folding over a list of the row numbers starting with a row full of zeros:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> firstRow = Vector.<span class="fu">fill</span>(maxWeight + <span class="dv">1</span>)( <span class="dv">0</span> )
-<span class="kw">val</span> lastRow = (<span class="dv">1</span> to n).<span class="fu">foldLeft</span>(firstRow) { (upperRow, i) =&gt;
-    ??? <span class="co">// How to compute each new row?</span>
-}
-<span class="kw">val</span> answer = lastRow.<span class="fu">last</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> firstRow <span class="op">=</span> <span class="ex">Vector</span><span class="op">.</span><span class="fu">fill</span><span class="op">(</span>maxWeight <span class="op">+</span> <span class="dv">1</span><span class="op">)(</span> <span class="dv">0</span> <span class="op">)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> lastRow <span class="op">=</span> <span class="op">(</span><span class="dv">1</span> to n<span class="op">).</span><span class="fu">foldLeft</span><span class="op">(</span>firstRow<span class="op">)</span> <span class="op">{</span> <span class="op">(</span>upperRow<span class="op">,</span> i<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">???</span> <span class="co">// How to compute each new row?</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> answer <span class="op">=</span> lastRow<span class="op">.</span>last</span></code></pre></div>
 <p>To compute the new row we must do the same that we were doing before. Well, kind of: instead of modifying the input we are going to return a new row. To do this we can compute each value based on the column number, the row number and the values of the previous row:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> firstRow = Vector.<span class="fu">fill</span>(maxWeight + <span class="dv">1</span>)( <span class="dv">0</span> )
-<span class="kw">val</span> lastRow = (<span class="dv">1</span> to n).<span class="fu">foldLeft</span>(firstRow) { (upperRow, i) =&gt;
-    <span class="dv">0</span> +: (<span class="dv">1</span> to maxWeight).<span class="fu">map</span> { j =&gt; 
-        <span class="kw">if</span>( j - <span class="fu">weight</span>(i<span class="dv">-1</span>) &gt;= <span class="dv">0</span> ) {
-            Math.<span class="fu">max</span>( 
-                <span class="fu">upperRow</span>(j) ,
-                <span class="fu">upperRow</span>(j - <span class="fu">weight</span>(i<span class="dv">-1</span>)) + <span class="fu">value</span>(i<span class="dv">-1</span>)
-            )
-        } <span class="kw">else</span> {
-            <span class="fu">upperRow</span>(j)
-        }
-    }.<span class="fu">toVector</span>
-}
-<span class="kw">val</span> answer = lastRow.<span class="fu">last</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> firstRow <span class="op">=</span> <span class="ex">Vector</span><span class="op">.</span><span class="fu">fill</span><span class="op">(</span>maxWeight <span class="op">+</span> <span class="dv">1</span><span class="op">)(</span> <span class="dv">0</span> <span class="op">)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> lastRow <span class="op">=</span> <span class="op">(</span><span class="dv">1</span> to n<span class="op">).</span><span class="fu">foldLeft</span><span class="op">(</span>firstRow<span class="op">)</span> <span class="op">{</span> <span class="op">(</span>upperRow<span class="op">,</span> i<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">+:</span> <span class="op">(</span><span class="dv">1</span> to maxWeight<span class="op">).</span>map <span class="op">{</span> j <span class="op">=&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span> j <span class="op">-</span> <span class="fu">weight</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>            <span class="ex">Math</span><span class="op">.</span><span class="fu">max</span><span class="op">(</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                <span class="fu">upperRow</span><span class="op">(</span>j<span class="op">)</span> <span class="op">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                <span class="fu">upperRow</span><span class="op">(</span>j <span class="op">-</span> <span class="fu">weight</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">))</span> <span class="op">+</span> <span class="fu">value</span><span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">)</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>            <span class="fu">upperRow</span><span class="op">(</span>j<span class="op">)</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}.</span>toVector</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> answer <span class="op">=</span> lastRow<span class="op">.</span>last</span></code></pre></div>
 <p>And that’s pretty much it! There’s no mutation and we accomplish the same thing with very similar code! This even has <span class="math inline"><em>O</em>(<em>W</em>)</span> space complexity.</p>
 <h2 id="when-the-dependencies-have-another-shape">When the dependencies have another shape</h2>
 <p>Let’s see how could we do the same when the dependencies have another shape. For instance in <a href="https://projecteuler.net/problem=81">this</a> project Euler problem the solutions depend on each other differently. Again let’s start with a problem definition that allows us to break the problem into subproblems:</p>
-<p><br /><span class="math display">$$
+<p><span class="math display">$$
 M(i,j) = \begin{array}{ll}
 \text{Minimal path sum starting at } (0,0) \text{ and ending at } (i,j) \\
 \text{by only going down or going right}
 \end{array}
-$$</span><br /></p>
-<p>Let’s consider some position <span class="math inline">(<em>i</em>, <em>j</em>)</span>. To get to that position we only have two possibilities: we either get to that position by coming from the upper row and going down from there or we come from the previous column and go right from there. These two possibilities are mutually exclusive thus we can compute the minimum between them to compute the optimal solution for <span class="math inline">(<em>i</em>, <em>j</em>)</span>:</p>
-<p><br /><span class="math display">$$
+$$</span></p>
+<p>Let’s consider some position <span class="math inline">(<em>i</em>,<em>j</em>)</span>. To get to that position we only have two possibilities: we either get to that position by coming from the upper row and going down from there or we come from the previous column and go right from there. These two possibilities are mutually exclusive thus we can compute the minimum between them to compute the optimal solution for <span class="math inline">(<em>i</em>,<em>j</em>)</span>:</p>
+<p><span class="math display">$$
 M(i,j) = v(i,j) + Min\left\{
 \begin{array}{ll}
 M(i-1,j) &amp; \text{Coming from the upper row and going down} \\
 M(i,j-1) &amp; \text{Coming from the previous column and going right}
 \end{array}
 \right\}
-$$</span><br /></p>
-<p>Here <span class="math inline"><em>v</em>(<em>i</em>, <em>j</em>)</span> is the value stored at row <span class="math inline"><em>i</em></span> and column <span class="math inline"><em>j</em></span>.</p>
+$$</span></p>
+<p>Here <span class="math inline"><em>v</em>(<em>i</em>,<em>j</em>)</span> is the value stored at row <span class="math inline"><em>i</em></span> and column <span class="math inline"><em>j</em></span>.</p>
 <p>And, once again, let’s draw a diagram showing the dependencies:</p>
 <p><img src="../images/dp-fp-2.png" style="display: block; margin-left: auto; margin-right: auto; padding: 0.5em; width: 30%;"></p>
-<p>There is an important difference with respect to the base cases here. The minimal path for each value in the first row is simply the path that starts at <span class="math inline">(0, 0)</span> and goes right from there (this is the formula <span class="math inline"><em>R</em>(<em>i</em>, <em>j</em>)</span>, which is the accumulative <em>row</em> sum). Similarly, the minimal path for each value in the first column is the part that starts at <span class="math inline">(0, 0)</span> and goes down from there (this is the formula <span class="math inline"><em>C</em>(<em>i</em>, <em>j</em>)</span>, which is the accumulative <em>column</em> sum).</p>
-<p>Now, unlike the <em>0/1 knapsack problem</em>, the solution for <span class="math inline">(<em>i</em>, <em>j</em>)</span> not only depends on a value at the previous row it also depends on the previous value in the same row.</p>
+<p>There is an important difference with respect to the base cases here. The minimal path for each value in the first row is simply the path that starts at <span class="math inline">(0,0)</span> and goes right from there (this is the formula <span class="math inline"><em>R</em>(<em>i</em>,<em>j</em>)</span>, which is the accumulative <em>row</em> sum). Similarly, the minimal path for each value in the first column is the part that starts at <span class="math inline">(0,0)</span> and goes down from there (this is the formula <span class="math inline"><em>C</em>(<em>i</em>,<em>j</em>)</span>, which is the accumulative <em>column</em> sum).</p>
+<p>Now, unlike the <em>0/1 knapsack problem</em>, the solution for <span class="math inline">(<em>i</em>,<em>j</em>)</span> not only depends on a value at the previous row it also depends on the previous value in the same row.</p>
 <p>Let’s start with the base cases: how to compute the accumulative sum of an array of numbers? <code>fold</code> can be used to combine all the values using a reducer function. But the intermediate results of that function aren’t kept, which is what we want: we don’t want to have the total sum. We want to get the accumulative sum. <code>scan</code> does this. It has the same parameters as <code>fold</code> but instead of returning just one value it’s going to return a vector of all the intermediate values:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">accumulativeSum</span>(nums: Vector[Int]): Vector[Int] =
-    nums.<span class="fu">scanLeft</span>(<span class="dv">0</span>)(_ + _).<span class="fu">drop</span>(<span class="dv">1</span>)</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">accumulativeSum</span><span class="op">(</span>nums<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]):</span> <span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    nums<span class="op">.</span><span class="fu">scanLeft</span><span class="op">(</span><span class="dv">0</span><span class="op">)(</span>_ <span class="op">+</span> _<span class="op">).</span><span class="fu">drop</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>drop(1)</code> is so we don’t include the entry with <span class="math inline">0</span> at the beginning.</p>
 <p>So the first row and the first column can be computed like this:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">minPath</span>(values: Vector[Vector[Int]]): Int = {
-    <span class="kw">val</span> m = values.<span class="fu">length</span>
-    <span class="kw">val</span> n = <span class="fu">values</span>(<span class="dv">0</span>).<span class="fu">length</span>
-    <span class="kw">val</span> firstRow = <span class="fu">accumulativeSum</span>(<span class="fu">values</span>(<span class="dv">0</span>))
-    <span class="kw">val</span> firstColumn = <span class="fu">accumulativeSum</span>( (<span class="dv">0</span> to m<span class="dv">-1</span>).<span class="fu">map</span>(<span class="fu">values</span>(_)(<span class="dv">0</span>)) )
-    ???
-}</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">minPath</span><span class="op">(</span>values<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]]):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> m <span class="op">=</span> values<span class="op">.</span>length</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> n <span class="op">=</span> <span class="fu">values</span><span class="op">(</span><span class="dv">0</span><span class="op">).</span>length</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> firstRow <span class="op">=</span> <span class="fu">accumulativeSum</span><span class="op">(</span><span class="fu">values</span><span class="op">(</span><span class="dv">0</span><span class="op">))</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> firstColumn <span class="op">=</span> <span class="fu">accumulativeSum</span><span class="op">(</span> <span class="op">(</span><span class="dv">0</span> to m<span class="op">-</span><span class="dv">1</span><span class="op">).</span><span class="fu">map</span><span class="op">(</span><span class="fu">values</span><span class="op">(</span>_<span class="op">)(</span><span class="dv">0</span><span class="op">))</span> <span class="op">)</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">???</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Let’s use the same strategy as before. We’ll compute every new row from the bottom up, starting with the first row as the initial state:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">minPath</span>(values: Vector[Vector[Int]]): Int = {
-    <span class="kw">val</span> m = values.<span class="fu">length</span>
-    <span class="kw">val</span> n = <span class="fu">values</span>(<span class="dv">0</span>).<span class="fu">length</span>
-    <span class="kw">val</span> firstRow = <span class="fu">accumulativeSum</span>(<span class="fu">values</span>(<span class="dv">0</span>))
-    <span class="kw">val</span> firstColumn = <span class="fu">accumulativeSum</span>( (<span class="dv">0</span> to m<span class="dv">-1</span>).<span class="fu">map</span>(<span class="fu">values</span>(_)(<span class="dv">0</span>)) )
-    (<span class="dv">1</span> to m<span class="dv">-1</span>).<span class="fu">foldLeft</span>(firstRow) { (upperRow, i) =&gt;
-        ??? <span class="co">// How to compute the new row?</span>
-    }.<span class="fu">last</span>
-}</code></pre></div>
-<p>Now to compute say <span class="math inline"><em>M</em>(<em>i</em>, 1)</span> we’ll need to use two things: <span class="math inline"><em>M</em>(<em>i</em> − 1, 1)</span> which is in the upper row and <span class="math inline"><em>M</em>(<em>i</em>, 0)</span> which is a value in the very first column, at the left of <span class="math inline"><em>M</em>(<em>i</em>, 1)</span>. Then to compute <span class="math inline"><em>M</em>(<em>i</em>, 2)</span> we will need to use <span class="math inline"><em>M</em>(<em>i</em> − 1, 2)</span> and <span class="math inline"><em>M</em>(<em>i</em>, 1)</span> which is the value that we previously computed. The function <code>fold</code> can help us with using the last value to compute the next. But we also need to return all the list of intermediate values, not just the last one, so <code>scan</code> is the one we want. Putting it all together:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">minPath</span>(values: Vector[Vector[Int]]): Int = {
-    <span class="kw">val</span> m = values.<span class="fu">length</span>
-    <span class="kw">val</span> n = <span class="fu">values</span>(<span class="dv">0</span>).<span class="fu">length</span>
-    <span class="kw">val</span> firstRow = <span class="fu">accumulativeSum</span>(<span class="fu">values</span>(<span class="dv">0</span>))
-    <span class="kw">val</span> firstColumn = <span class="fu">accumulativeSum</span>( (<span class="dv">0</span> to m<span class="dv">-1</span>).<span class="fu">map</span>(<span class="fu">values</span>(_)(<span class="dv">0</span>)) )
-    (<span class="dv">1</span> to m<span class="dv">-1</span>).<span class="fu">foldLeft</span>(firstRow) { (upperRow, i) =&gt;
-        <span class="kw">val</span> leftmostSolution = <span class="fu">firstColumn</span>(i)
-        (<span class="dv">1</span> to n<span class="dv">-1</span>).<span class="fu">scanLeft</span>(leftmostSolution) { (leftSolution,j) =&gt;
-            <span class="kw">val</span> upperSolution = <span class="fu">upperRow</span>(j)
-            Math.<span class="fu">min</span>(leftSolution, upperSolution) + <span class="fu">values</span>(i)(j)
-        }.<span class="fu">toVector</span>
-    }.<span class="fu">last</span>
-}</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">minPath</span><span class="op">(</span>values<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]]):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> m <span class="op">=</span> values<span class="op">.</span>length</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> n <span class="op">=</span> <span class="fu">values</span><span class="op">(</span><span class="dv">0</span><span class="op">).</span>length</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> firstRow <span class="op">=</span> <span class="fu">accumulativeSum</span><span class="op">(</span><span class="fu">values</span><span class="op">(</span><span class="dv">0</span><span class="op">))</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> firstColumn <span class="op">=</span> <span class="fu">accumulativeSum</span><span class="op">(</span> <span class="op">(</span><span class="dv">0</span> to m<span class="op">-</span><span class="dv">1</span><span class="op">).</span><span class="fu">map</span><span class="op">(</span><span class="fu">values</span><span class="op">(</span>_<span class="op">)(</span><span class="dv">0</span><span class="op">))</span> <span class="op">)</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dv">1</span> to m<span class="op">-</span><span class="dv">1</span><span class="op">).</span><span class="fu">foldLeft</span><span class="op">(</span>firstRow<span class="op">)</span> <span class="op">{</span> <span class="op">(</span>upperRow<span class="op">,</span> i<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">???</span> <span class="co">// How to compute the new row?</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}.</span>last</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Now to compute say <span class="math inline"><em>M</em>(<em>i</em>,1)</span> we’ll need to use two things: <span class="math inline"><em>M</em>(<em>i</em>−1,1)</span> which is in the upper row and <span class="math inline"><em>M</em>(<em>i</em>,0)</span> which is a value in the very first column, at the left of <span class="math inline"><em>M</em>(<em>i</em>,1)</span>. Then to compute <span class="math inline"><em>M</em>(<em>i</em>,2)</span> we will need to use <span class="math inline"><em>M</em>(<em>i</em>−1,2)</span> and <span class="math inline"><em>M</em>(<em>i</em>,1)</span> which is the value that we previously computed. The function <code>fold</code> can help us with using the last value to compute the next. But we also need to return all the list of intermediate values, not just the last one, so <code>scan</code> is the one we want. Putting it all together:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">minPath</span><span class="op">(</span>values<span class="op">:</span> <span class="ex">Vector</span><span class="op">[</span><span class="ex">Vector</span><span class="op">[</span><span class="bu">Int</span><span class="op">]]):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> m <span class="op">=</span> values<span class="op">.</span>length</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> n <span class="op">=</span> <span class="fu">values</span><span class="op">(</span><span class="dv">0</span><span class="op">).</span>length</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> firstRow <span class="op">=</span> <span class="fu">accumulativeSum</span><span class="op">(</span><span class="fu">values</span><span class="op">(</span><span class="dv">0</span><span class="op">))</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> firstColumn <span class="op">=</span> <span class="fu">accumulativeSum</span><span class="op">(</span> <span class="op">(</span><span class="dv">0</span> to m<span class="op">-</span><span class="dv">1</span><span class="op">).</span><span class="fu">map</span><span class="op">(</span><span class="fu">values</span><span class="op">(</span>_<span class="op">)(</span><span class="dv">0</span><span class="op">))</span> <span class="op">)</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="dv">1</span> to m<span class="op">-</span><span class="dv">1</span><span class="op">).</span><span class="fu">foldLeft</span><span class="op">(</span>firstRow<span class="op">)</span> <span class="op">{</span> <span class="op">(</span>upperRow<span class="op">,</span> i<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">val</span> leftmostSolution <span class="op">=</span> <span class="fu">firstColumn</span><span class="op">(</span>i<span class="op">)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span><span class="dv">1</span> to n<span class="op">-</span><span class="dv">1</span><span class="op">).</span><span class="fu">scanLeft</span><span class="op">(</span>leftmostSolution<span class="op">)</span> <span class="op">{</span> <span class="op">(</span>leftSolution<span class="op">,</span>j<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>            <span class="kw">val</span> upperSolution <span class="op">=</span> <span class="fu">upperRow</span><span class="op">(</span>j<span class="op">)</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>            <span class="ex">Math</span><span class="op">.</span><span class="fu">min</span><span class="op">(</span>leftSolution<span class="op">,</span> upperSolution<span class="op">)</span> <span class="op">+</span> <span class="fu">values</span><span class="op">(</span>i<span class="op">)(</span>j<span class="op">)</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">}.</span>toVector</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}.</span>last</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>That’s it! No mutation whatsoever!</p>
 <h2 id="conclusions">Conclusions</h2>
 <p>Even for a class of algorithms that looks inherently imperative there are ways to avoid mutation and to end up with the very same algorithm using immutable data structures and higher-order functions like <code>fold</code> or <code>scan</code>. You could just translate the mutations into <code>State</code> monad values but that’s just too complex and unnecessary. There are simpler ways to functionally express the same thing.</p>
@@ -364,7 +367,7 @@ $$</span><br /></p>
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Algo de lo que hice esta semana (01/01/2017 - 08/01/2017)</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Algo de lo que hice esta semana (01/01/2017 - 08/01/2017)</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Jan 08 2017
@@ -84,11 +87,11 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Vida.html">Vida</a> 
+        Tags: <a title="All pages tagged 'Vida'." href="../tags/Vida.html">Vida</a> 
         
     </div>
     <hr>
-    <p>Esta semana he continuado leyendo <a href="https://en.wikipedia.org/wiki/The_Double_(Saramago_novel)"><em>El hombre duplicado</em></a> de Saramago. El estilo de Saramago es, no estoy seguro de como describirlo, tal vez ¿auto referente?. Por ejemplo el narrador en ocasiones interrumple su propia narración para analizar detalles de cómo está narrando la cosa. Además seguí leyendo <a href="https://en.wikipedia.org/wiki/G%C3%B6del,_Escher,_Bach"><em>GEB</em></a>. El capítulo que me leí es sobre lógica proposicional. Tiene el enfoque de ver la lógica proposicional como un sistema de manipulación “tipográfica”. Es decir son reglas para convertir ciertas cadenas de texto en otras, independientemente del significado que nosotros, los seres humanos, les atribuyamos a esas cadenas. Por ejemplo está la regla de contraposición: si uno observa la cadena <code>&quot;p -&gt; q&quot;</code> uno la puede reemplazar por la cadena <code>&quot;¬q -&gt; ¬p&quot;</code>. Como seres humanos a la primera cadena le podemos atribuir un significado de si <code>p</code> sucede entonces <code>q</code> sucede y la regla tiene sentido por que está afirmando que, dado lo anterior, si <code>q</code> <em>no</em> sucede entonces <em>p</em> no sucedió. Esa noción de ver las cosas mecánicamente como reemplazos y aplicación de reglas rigidas nunca me ha gustado por que, a pesar de que es una forma segura de “avanzar” (y esa fué precisamente la motivación para algunos matemáticos) también tiene la desventaja de que no permite razonamientos de más alto nivel que le aclaran a uno más las cosas. El capítulo también habla sobre las “metateorías” que uno elabora cuando está hablando de otra “teoría”, como formas de dar un paso atrás y ver qué es lo que se puede hacer con la “teoría”.</p>
+    <p>Esta semana he continuado leyendo <a href="https://en.wikipedia.org/wiki/The_Double_(Saramago_novel)"><em>El hombre duplicado</em></a> de Saramago. El estilo de Saramago es, no estoy seguro de como describirlo, tal vez ¿auto referente?. Por ejemplo el narrador en ocasiones interrumple su propia narración para analizar detalles de cómo está narrando la cosa. Además seguí leyendo <a href="https://en.wikipedia.org/wiki/G%C3%B6del,_Escher,_Bach"><em>GEB</em></a>. El capítulo que me leí es sobre lógica proposicional. Tiene el enfoque de ver la lógica proposicional como un sistema de manipulación “tipográfica”. Es decir son reglas para convertir ciertas cadenas de texto en otras, independientemente del significado que nosotros, los seres humanos, les atribuyamos a esas cadenas. Por ejemplo está la regla de contraposición: si uno observa la cadena <code>"p -&gt; q"</code> uno la puede reemplazar por la cadena <code>"¬q -&gt; ¬p"</code>. Como seres humanos a la primera cadena le podemos atribuir un significado de si <code>p</code> sucede entonces <code>q</code> sucede y la regla tiene sentido por que está afirmando que, dado lo anterior, si <code>q</code> <em>no</em> sucede entonces <em>p</em> no sucedió. Esa noción de ver las cosas mecánicamente como reemplazos y aplicación de reglas rigidas nunca me ha gustado por que, a pesar de que es una forma segura de “avanzar” (y esa fué precisamente la motivación para algunos matemáticos) también tiene la desventaja de que no permite razonamientos de más alto nivel que le aclaran a uno más las cosas. El capítulo también habla sobre las “metateorías” que uno elabora cuando está hablando de otra “teoría”, como formas de dar un paso atrás y ver qué es lo que se puede hacer con la “teoría”.</p>
 <p>El sábado <a href="https://www.strava.com/activities/824379304">salí</a> en cicla hasta Guatavita. Fueron como 80 kms y me dí cuenta que bajé mucho el nivel en estos últimos meses. Ahora soy el más lento de mi grupo de amigos. Estuvo chévere y sufrida. Al final las piernas me dolieron bastante. Ya en Guatavita decidimos devolvernos en una flota por que ya estábamos muy cansados y el camino de vuelta parecía no trivial. Si no estoy equivocado nos hubiera tocado una subida desde La Calera hasta el alto de Patios. Desde ahí sería una bajada de ménos de 15 minutos hasta Bogotá pero hubieran sido 40 kms desde dónde estábamos.</p>
 <p>Me ví el documental <a href="https://www.youtube.com/watch?v=-fny99f8amM"><em>HyperNormalisation</em></a> de Adam Curtis. De Curtis ya me había visto otro que se llama <a href="https://www.youtube.com/watch?v=OW-5cyE0ec8"><em>All Watched Over By Machines Of Loving Grace</em></a> que me pareció de las cosas más alucinantes que he visto. <em>HyperNormalisation</em> habla sobre eventos más o ménos recientes que reflejan el espíritu de la época que estamos viviendo: la elección de Trump, un poco del Brexit, el conflicto en Siria y así. Algo de lo que habla es que toda esta honda de <em>auto-expresión</em>, promovida por artistas a lo largo de los 70s, es una de las responsables de las burbujas de información que estamos observando ahora mismo. No estoy seguro de que eso sea verdad pero lo que sí he notado es que cosas como Twitter o Facebook en efecto facilitan que las personas expresen sus opiniones pero las consecuencias de esto son, en ocasiones, nulas. Las opiniones que expresamos solo le llegan a personas que probablemente piensen lo mismo o algo similar, y muy pocas sirven para convencer a los del “bando” contrario. Expresarnos, en ocasiones de forma vehemente, solo sirve para reafirmar las posiciones de personas similares a nosotros.</p>
 <p>Todo esto me recuerda la maquina de indignación que es Twitter, del <a href="https://en.wikipedia.org/wiki/Slacktivism"><em>slacktivism</em></a>, de como medios electrónicos han abierto las puertas para expresarnos y al mismo tiempo no hacer nada.</p>
@@ -123,7 +126,7 @@
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

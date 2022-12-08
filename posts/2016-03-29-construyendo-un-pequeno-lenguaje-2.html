@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Construyendo un pequeño lenguaje de programación (Parte 2)</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Construyendo un pequeño lenguaje de programación (Parte 2)</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Mar 29 2016
@@ -84,7 +87,7 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Scala.html">Scala</a>, <a href="../tags/Interpreter.html">Interpreter</a>, <a href="../tags/Functional%20Programming.html">Functional Programming</a>, <a href="../tags/Programming%20languages.html">Programming languages</a>, <a href="../tags/State%20Monad.html">State Monad</a>, <a href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a> 
+        Tags: <a title="All pages tagged 'Scala'." href="../tags/Scala.html">Scala</a>, <a title="All pages tagged 'Interpreter'." href="../tags/Interpreter.html">Interpreter</a>, <a title="All pages tagged 'Functional Programming'." href="../tags/Functional%20Programming.html">Functional Programming</a>, <a title="All pages tagged 'Programming languages'." href="../tags/Programming%20languages.html">Programming languages</a>, <a title="All pages tagged 'State Monad'." href="../tags/State%20Monad.html">State Monad</a>, <a title="All pages tagged 'Construyendo un pequeño lenguaje'." href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a> 
         
     </div>
     <hr>
@@ -100,9 +103,9 @@
 <h2 id="una-monada-escondida-en-evaluate">Una monada escondida en <code>evaluate</code></h2>
 <p>El tipo de la función <code>evaluate</code> que definimos en el anterior <em>post</em> es: <code>Environment =&gt; (Environment,V)</code>. Tal vez algunos hayan visto esto e identificado que esto es precisamente lo que hace la <strong>monada de estado</strong>. La monada de estado facilita manipular funciones que modifican un estado y devuelven valores, que es justo lo que estamos haciendo con el entorno.</p>
 <p>Cómo muchas otras, la monada de estado está implementada como un <em>“wrapper”</em> sobre una función:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> State[S,A](run: S =&gt; (S,A)) {
-  ...
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span>A<span class="op">](</span>run<span class="op">:</span> S <span class="op">=&gt;</span> <span class="op">(</span>S<span class="op">,</span>A<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>En este caso estamos abstrayendo funciones que representan modificaciones de estado y que devuelven un valor, es decir cosas del tipo <code>S =&gt; (S,A)</code> donde <code>S</code> es el tipo que representa el estado y <code>A</code> es un valor de retorno de una modificación. El beneficio de abstraer algo como esto es que vamos a ganar mucho código cuya única funcionalidad es pasar de un lado a otro un estado y esto nos va a permitir concentrarnos en la lógica específica de nuestro problema.</p>
 <p>Como todas las monadas debemos implementar dos funciones: una especie de constructor (usualmente llamado <code>unit</code>, en nuestro caso lo llamarémos <code>state</code>) y una especie de “secuenciador” (usualmente llamado <code>bind</code> o en el caso de Scala llamado <code>flatMap</code>)</p>
 <p>Empecemos por <code>flatMap</code>. El significado de esta función en el caso de la monada de estado es mas o menos el siguiente:</p>
@@ -116,107 +119,107 @@
 </ul>
 <p>construir una función de tipo <code>S =&gt; (S,B)</code>.</p>
 <p>Veamos como podemos implementar esto línea a línea:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> State[S,A](run: S =&gt; (S,A)) {
-    
-    <span class="kw">def</span> flatMap[B](f: A =&gt; State[S,B]): State[S,B] = {
-        <span class="kw">val</span> newRun: S =&gt; (S,B) = { s =&gt;  <span class="co">// (1)</span>
-            <span class="kw">val</span> (s1,a) = <span class="fu">run</span>(s)          <span class="co">// (2)</span>
-            <span class="kw">val</span> bState = <span class="fu">f</span>(a)            <span class="co">// (3)</span>
-            bState.<span class="fu">run</span>(s1)               <span class="co">// (4)</span>
-        }
-        State( newRun )                  <span class="co">// (5)</span>
-    }
-
-}</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span>A<span class="op">](</span>run<span class="op">:</span> S <span class="op">=&gt;</span> <span class="op">(</span>S<span class="op">,</span>A<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> flatMap<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span>B<span class="op">]):</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span>B<span class="op">]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">val</span> newRun<span class="op">:</span> S <span class="op">=&gt;</span> <span class="op">(</span>S<span class="op">,</span>B<span class="op">)</span> <span class="op">=</span> <span class="op">{</span> s <span class="op">=&gt;</span>  <span class="co">// (1)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            <span class="kw">val</span> <span class="op">(</span>s1<span class="op">,</span>a<span class="op">)</span> <span class="op">=</span> <span class="fu">run</span><span class="op">(</span>s<span class="op">)</span>          <span class="co">// (2)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>            <span class="kw">val</span> bState <span class="op">=</span> <span class="fu">f</span><span class="op">(</span>a<span class="op">)</span>            <span class="co">// (3)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>            bState<span class="op">.</span><span class="fu">run</span><span class="op">(</span>s1<span class="op">)</span>               <span class="co">// (4)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="ex">State</span><span class="op">(</span> newRun <span class="op">)</span>                  <span class="co">// (5)</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>En la línea <code>(1)</code> declaramos que vamos a construir una función de tipo <code>S =&gt; (S,B)</code>. En el cuerpo de la función en la línea <code>(2)</code> ejecutamos la primera modificación de estado (<code>run</code>) pasándole el estado inicial y con esto obtenemos un nuevo estado y un valor de tipo <code>A</code>. Ya teniendo este valor de tipo <code>A</code> podemos ejecutar la función <code>f</code> (en la línea <code>(3)</code>) que a su vez nos devuelve otra función de tipo <code>S =&gt; (S,B)</code>. Y a esta función le pasamos el estado modificado (en la línea <code>(4)</code>) y con esto obtenemos un <code>(S,B)</code> que era lo que queríamos que hiciera la función. Finalmente en la línea <code>(5)</code> envolvemos la función dentro de un <code>State</code>.</p>
 <p>Esa fue la difícil.</p>
 <p>La fácil es la otra función que deben implementar las monadas. Se trata de una función que dado un valor lo envuelva en un contexto mínimo que produzca ese valor dentro de la monada. Para esto describimos una función <code>state</code> que lee el estado y no lo modifica, solo lo devuelve junto al valor que le pasamos:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">object</span> State {
-    
-    <span class="kw">def</span> state[S,A](a: =&gt; A): State[S,A] = State( s =&gt; (s,a) )
-
-}</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> <span class="ex">State</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> state<span class="op">[</span>S<span class="op">,</span>A<span class="op">](</span>a<span class="op">:</span> <span class="op">=&gt;</span> A<span class="op">):</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span>A<span class="op">]</span> <span class="op">=</span> <span class="ex">State</span><span class="op">(</span> s <span class="op">=&gt;</span> <span class="op">(</span>s<span class="op">,</span>a<span class="op">)</span> <span class="op">)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>También podemos implementar <code>map</code> que simplemente transforma el valor de retorno de la modificación:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> State[S,A](run: S =&gt; (S,A)) {
-    
-    <span class="kw">def</span> map[B](f: A =&gt; B): State[S,B] = ???
-
-}</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span>A<span class="op">](</span>run<span class="op">:</span> S <span class="op">=&gt;</span> <span class="op">(</span>S<span class="op">,</span>A<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> map<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> B<span class="op">):</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span>B<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Pueden implementar esta función como ejercicio. Hay dos formas de hacerlo: una es como todas las monadas pueden hacerlo y consiste en combinar <code>flatMap</code> y <code>state</code> de cierta forma. Otra forma es un poco más explícita y no reutliza ninguna de las funciones.</p>
 <p>El caso es que una vez definidas las funciones <code>flatMap</code> y <code>map</code> podemos escribir <em>for-comprehensions</em> que manipulen cosas de tipo <code>State</code>.</p>
 <h2 id="una-formulación-alterna">Una formulación alterna</h2>
 <p>Ahora podemos reformular qué significa evaluar una expresión. Como vimos <code>evaluate</code> era de tipo <code>Environment =&gt; (Environment, V)</code>. Vamos a introducir un alias que describa esto en función de <code>State</code>:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">type</span> Evaluator[ V &lt;: Value ] = State[ Environment, V ]</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> Evaluator<span class="op">[</span> V <span class="op">&lt;:</span> <span class="bu">Value</span> <span class="op">]</span> <span class="op">=</span> <span class="ex">State</span><span class="op">[</span> <span class="ex">Environment</span><span class="op">,</span> V <span class="op">]</span></span></code></pre></div>
 <p>Y ahora en vez de que las expresiones deban definir una función <code>evaluate</code> deberían tener una propiedad de tipo <code>Evaluator</code>:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Expression[ V &lt;: Value ] {
-  <span class="kw">def</span> evaluator: Evaluator[ V ]
-}</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="ex">Expression</span><span class="op">[</span> V <span class="op">&lt;:</span> <span class="bu">Value</span> <span class="op">]</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> evaluator<span class="op">:</span> Evaluator<span class="op">[</span> V <span class="op">]</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h2 id="que-ganamos-con-esto">¿Que ganamos con esto?</h2>
 <p>Como con muchas monadas nos liberamos de un pedazo de “carpintería”: en este caso es el de pasar el estado modificado de función en función.</p>
 <p>Por ejemplo al redefinir las comparaciones llegamos a esto:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Comparison <span class="kw">extends</span> Exp[BooleanValue] {
-  <span class="kw">def</span> left:  Exp[NumberValue]
-  <span class="kw">def</span> right: Exp[NumberValue]
-
-  <span class="kw">def</span> <span class="fu">comparedWith</span>(
-    compare: (NumberValue, NumberValue) =&gt; BooleanValue
-  ): Evaluator[BooleanValue] = {
-    <span class="kw">for</span> {
-      leftValue  &lt;- left.<span class="fu">evaluator</span>
-      rightValue &lt;- right.<span class="fu">evaluator</span>
-    } <span class="kw">yield</span> <span class="fu">compare</span>(leftValue, rightValue)
-  }
-
-}
-
-<span class="kw">case</span> <span class="kw">class</span> <span class="fu">LessThan</span>(left: Exp[Number], right: Exp[Number]) <span class="kw">extends</span> Comparison {
-  <span class="kw">val</span> evaluator = <span class="fu">comparedWith</span>(_ &lt; _)
-}
-
-<span class="co">// ... las otras comparaciones son similares</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> Comparison <span class="kw">extends</span> Exp<span class="op">[</span>BooleanValue<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> left<span class="op">:</span>  Exp<span class="op">[</span>NumberValue<span class="op">]</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> right<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">]</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">comparedWith</span><span class="op">(</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    compare<span class="op">:</span> <span class="op">(</span>NumberValue<span class="op">,</span> NumberValue<span class="op">)</span> <span class="op">=&gt;</span> BooleanValue</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">):</span> Evaluator<span class="op">[</span>BooleanValue<span class="op">]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      leftValue  <span class="op">&lt;-</span> left<span class="op">.</span>evaluator</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      rightValue <span class="op">&lt;-</span> right<span class="op">.</span>evaluator</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">yield</span> <span class="fu">compare</span><span class="op">(</span>leftValue<span class="op">,</span> rightValue<span class="op">)</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">LessThan</span><span class="op">(</span>left<span class="op">:</span> Exp<span class="op">[</span><span class="ex">Number</span><span class="op">],</span> right<span class="op">:</span> Exp<span class="op">[</span><span class="ex">Number</span><span class="op">])</span> <span class="kw">extends</span> Comparison <span class="op">{</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> evaluator <span class="op">=</span> <span class="fu">comparedWith</span><span class="op">(</span>_ <span class="op">&lt;</span> _<span class="op">)</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">// ... las otras comparaciones son similares</span></span></code></pre></div>
 <p>Dentro del <em>for-comprehension</em> se está realizando la pasada de los entornos modificados, pero en nuestro código solo se muestra la lógica de que el evaluador de una comparación es la composición y combinación de los evaluadores de cada lado.</p>
 <p>De forma similar también simplificamos los condicionales:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">If</span>(
-  condition:    Exp[BooleanValue],
-  consequence:  Exp[Void],
-  alternative:  Exp[Void]
-) <span class="kw">extends</span> Exp[Void] {
-
-  <span class="kw">val</span> evaluator: Evaluator[Void] =
-    <span class="kw">for</span> {
-      evaluatedCondition &lt;- condition.<span class="fu">evaluator</span>
-      _                  &lt;- <span class="kw">if</span>(evaluatedCondition.<span class="fu">value</span>) 
-                                consequence.<span class="fu">evaluator</span> 
-                            <span class="kw">else</span> 
-                                alternative.<span class="fu">evaluator</span>
-    } <span class="kw">yield</span> Void
-
-}</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">If</span><span class="op">(</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  condition<span class="op">:</span>    Exp<span class="op">[</span>BooleanValue<span class="op">],</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  consequence<span class="op">:</span>  Exp<span class="op">[</span><span class="ex">Void</span><span class="op">],</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  alternative<span class="op">:</span>  Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="op">)</span> <span class="kw">extends</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]</span> <span class="op">{</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> evaluator<span class="op">:</span> Evaluator<span class="op">[</span><span class="ex">Void</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      evaluatedCondition <span class="op">&lt;-</span> condition<span class="op">.</span>evaluator</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      _                  <span class="op">&lt;-</span> <span class="cf">if</span><span class="op">(</span>evaluatedCondition<span class="op">.</span>value<span class="op">)</span> </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                                consequence<span class="op">.</span>evaluator </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                            <span class="cf">else</span> </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>                                alternative<span class="op">.</span>evaluator</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">yield</span> <span class="ex">Void</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Y la forma de evaluar un <code>Sequence</code> se puede reescribir usando el <em>typeclass</em> <a href="https://wiki.haskell.org/Foldable_and_Traversable#Traversable"><code>Traverse</code></a> (<code>Traverse</code> y <code>State</code> se encuentran en librerías de patrones funcionales como <a href="https://github.com/scalaz/scalaz/">Scalaz</a> o <a href="https://github.com/typelevel/cats/">Cats</a>):</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> Sequence(exps: Exp[Void]*) <span class="kw">extends</span> Exp[Void] {
-
-  <span class="kw">val</span> evaluator: Evaluator[Void] =
-    <span class="kw">for</span> {
-      _ &lt;- Traverse[List].<span class="fu">traverseS_</span>( exps.<span class="fu">toList</span> ) ( _.<span class="fu">evaluator</span> )
-    } <span class="kw">yield</span> Void
-
-}</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="ex">Sequence</span><span class="op">(</span>exps<span class="op">:</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]*)</span> <span class="kw">extends</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]</span> <span class="op">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> evaluator<span class="op">:</span> Evaluator<span class="op">[</span><span class="ex">Void</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      _ <span class="op">&lt;-</span> Traverse<span class="op">[</span><span class="ex">List</span><span class="op">].</span><span class="fu">traverseS_</span><span class="op">(</span> exps<span class="op">.</span>toList <span class="op">)</span> <span class="op">(</span> _<span class="op">.</span>evaluator <span class="op">)</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">yield</span> <span class="ex">Void</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>El <em>typeclass</em> <code>Traverse</code> sirve para recorrer una estructura (en este caso <code>List</code>) realizando algún efecto (en este caso <code>State</code>). La función <code>traverseS_</code> es una especialización cuando el efecto es <code>State</code>. Pueden imaginarse que lo que hace esta función es algo como lo siguiente:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> traverseS_[S,A,B](list: List[A])(f: A =&gt; State[S,B]): State[S,Unit] = {
-  
-  <span class="fu">f</span>(<span class="fu">list</span>(<span class="dv">0</span>)).<span class="fu">flatMap</span> { _ =&gt;
-    <span class="fu">f</span>(<span class="fu">list</span>(<span class="dv">1</span>)).<span class="fu">flatMap</span> { _ =&gt;
-      <span class="fu">f</span>(<span class="fu">list</span>(<span class="dv">2</span>)).<span class="fu">flatMap</span> { _ =&gt;
-        ...
-          <span class="fu">f</span>(<span class="fu">list</span>(n)).<span class="fu">map</span> { _ =&gt;
-            ()
-          }
-        ...
-      }
-    }
-  }
-
-}</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> traverseS_<span class="op">[</span>S<span class="op">,</span>A<span class="op">,</span>B<span class="op">](</span>list<span class="op">:</span> <span class="ex">List</span><span class="op">[</span>A<span class="op">])(</span>f<span class="op">:</span> A <span class="op">=&gt;</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span>B<span class="op">]):</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span><span class="bu">Unit</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">f</span><span class="op">(</span><span class="fu">list</span><span class="op">(</span><span class="dv">0</span><span class="op">)).</span>flatMap <span class="op">{</span> _ <span class="op">=&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f</span><span class="op">(</span><span class="fu">list</span><span class="op">(</span><span class="dv">1</span><span class="op">)).</span>flatMap <span class="op">{</span> _ <span class="op">=&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">f</span><span class="op">(</span><span class="fu">list</span><span class="op">(</span><span class="dv">2</span><span class="op">)).</span>flatMap <span class="op">{</span> _ <span class="op">=&gt;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">...</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>          <span class="fu">f</span><span class="op">(</span><span class="fu">list</span><span class="op">(</span>n<span class="op">)).</span>map <span class="op">{</span> _ <span class="op">=&gt;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">()</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>          <span class="op">}</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">...</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>En realidad esta función <a href="http://www.staff.city.ac.uk/~ross/papers/Applicative.pdf">se puede implementar sin <code>flatMap</code></a>, pero la idea acá es ilustrar que lo que hace es secuenciar los efectos. En el caso de <code>State</code> esto significa ir pasando el entorno actualizado de función en función hasta formar una gran función que sea la secuencia de todas.</p>
 <p>Este es uno de los tantos ejemplos de la utilidad de patrones funcionales que a primera vista resultan abstractos: ganamos pedazos de código muy generales, que no son específicos a nuestro dominio, y con esto logramos atacar el problema que nos corresponde.</p>
 <!--div class="note">
@@ -239,38 +242,38 @@ Traverse[List].traverse_(list)(g)
 </div>
 </div-->
 <p>Retomando podemos ver que en contraste implementar el evaluador de un literal es más simple:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> Literal[ V &lt;: Value ] <span class="kw">extends</span> Exp[V] {
-  <span class="kw">def</span> value: V
-  <span class="kw">val</span> evaluator: Evaluator[V] = State.<span class="fu">state</span>(value)
-}</code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Literal<span class="op">[</span> V <span class="op">&lt;:</span> <span class="bu">Value</span> <span class="op">]</span> <span class="kw">extends</span> Exp<span class="op">[</span>V<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> value<span class="op">:</span> V</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> evaluator<span class="op">:</span> Evaluator<span class="op">[</span>V<span class="op">]</span> <span class="op">=</span> <span class="ex">State</span><span class="op">.</span><span class="fu">state</span><span class="op">(</span>value<span class="op">)</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Para implementar otros evaluadores es útil definir algunas funciones utilitarias:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">object</span> State {
-  
-  <span class="co">/**</span>
-<span class="co">    * Construye un `State` a partir de una función que solamente modifica el estado</span>
-<span class="co">   */</span>
-  <span class="kw">def</span> modify[S](mod: S =&gt; S): State[S,Unit] = State( s =&gt; ( <span class="fu">mod</span>(s), () ) )
-
-  <span class="co">/**</span>
-<span class="co">    * Construye un `State` que lee un atributo del estado</span>
-<span class="co">   */</span>
-  <span class="kw">def</span> gets[S,A](get: S =&gt; A): State[S,A] = State( s =&gt; ( s, <span class="fu">get</span>(s) ) )
-
-}</code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> <span class="ex">State</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">/**</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">*</span> Construye un <span class="co">`</span>State<span class="co">`</span> a partir de una funci<span class="co">ó</span>n que solamente modifica el estado</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>   <span class="co">*/</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> modify<span class="op">[</span>S<span class="op">](</span>mod<span class="op">:</span> S <span class="op">=&gt;</span> S<span class="op">):</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span><span class="bu">Unit</span><span class="op">]</span> <span class="op">=</span> <span class="ex">State</span><span class="op">(</span> s <span class="op">=&gt;</span> <span class="op">(</span> <span class="fu">mod</span><span class="op">(</span>s<span class="op">),</span> <span class="op">()</span> <span class="op">)</span> <span class="op">)</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">/**</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">*</span> Construye un <span class="co">`</span>State<span class="co">`</span> que lee un atributo del estado</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>   <span class="co">*/</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> gets<span class="op">[</span>S<span class="op">,</span>A<span class="op">](</span>get<span class="op">:</span> S <span class="op">=&gt;</span> A<span class="op">):</span> <span class="ex">State</span><span class="op">[</span>S<span class="op">,</span>A<span class="op">]</span> <span class="op">=</span> <span class="ex">State</span><span class="op">(</span> s <span class="op">=&gt;</span> <span class="op">(</span> s<span class="op">,</span> <span class="fu">get</span><span class="op">(</span>s<span class="op">)</span> <span class="op">)</span> <span class="op">)</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Con esto podemos definir otros evaluadores, por ejemplo:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Assign</span>(name: String, expression: Exp[ _ &lt;: Value ]) <span class="kw">extends</span> Exp[Void] {
-  <span class="kw">val</span> evaluator: Evaluator[Void] =
-    <span class="kw">for</span> {
-      value &lt;- expression.<span class="fu">evaluator</span>
-      _     &lt;- State.<span class="fu">modify</span> { s: Environment =&gt; s + (name -&gt; value) }
-    } <span class="kw">yield</span> Void
-}
-
-<span class="kw">trait</span> Variable[ V &lt;: Value ] <span class="kw">extends</span> Exp[V] {
-  <span class="kw">def</span> name: String
-  <span class="kw">val</span> evaluator: Evaluator[V] = 
-    State.<span class="fu">gets</span>[Environment, V] { env =&gt; <span class="fu">env</span>(name).<span class="fu">asInstanceOf</span>[V] }
-}</code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Assign</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> expression<span class="op">:</span> Exp<span class="op">[</span> _ <span class="op">&lt;:</span> <span class="bu">Value</span> <span class="op">])</span> <span class="kw">extends</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]</span> <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> evaluator<span class="op">:</span> Evaluator<span class="op">[</span><span class="ex">Void</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>      value <span class="op">&lt;-</span> expression<span class="op">.</span>evaluator</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>      _     <span class="op">&lt;-</span> <span class="ex">State</span><span class="op">.</span>modify <span class="op">{</span> s<span class="op">:</span> <span class="ex">Environment</span> <span class="op">=&gt;</span> s <span class="op">+</span> <span class="op">(</span>name <span class="op">-&gt;</span> value<span class="op">)</span> <span class="op">}</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">yield</span> <span class="ex">Void</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Variable<span class="op">[</span> V <span class="op">&lt;:</span> <span class="bu">Value</span> <span class="op">]</span> <span class="kw">extends</span> Exp<span class="op">[</span>V<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> name<span class="op">:</span> <span class="ex">String</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> evaluator<span class="op">:</span> Evaluator<span class="op">[</span>V<span class="op">]</span> <span class="op">=</span> </span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="ex">State</span><span class="op">.</span>gets<span class="op">[</span><span class="ex">Environment</span><span class="op">,</span> V<span class="op">]</span> <span class="op">{</span> env <span class="op">=&gt;</span> <span class="fu">env</span><span class="op">(</span>name<span class="op">).</span>asInstanceOf<span class="op">[</span>V<span class="op">]</span> <span class="op">}</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Pueden ver los evaluadores de las otras expresiones <a href="https://github.com/miguel-vila/understanding-computation/blob/master/src/main/scala/understanding_computation/chapter2/ast/Expression.scala">acá</a>, aunque tal vez el código no esté tan organizado.</p>
 <h2 id="concluyendo">Concluyendo</h2>
 <p>Por supuesto es discutible si todo esto es mas legible que lo que teníamos antes. Creo que en ocasiones al discutir estas cosas confundimos legibilidad con familiaridad. Para una persona que no esté familiarizada con estos patrones este código puede resultar abstracto, pero eso no quiere decir que no sea legible. Muchos patrones funcionales no son tan complicados, son formalizaciones de cosas que veníamos haciendo en otros lenguajes. Y una vez nos familiarizamos con estos patrones los encontramos legibles y hasta naturales.</p>
@@ -296,7 +299,7 @@ Traverse[List].traverse_(list)(g)
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

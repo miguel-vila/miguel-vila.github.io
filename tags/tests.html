@@ -35,55 +35,63 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Posts tagged with "tests"</h2>
-    
-	<div style="margin:0.5em;">
-	  	<span class="post-meta" style="display:inline-block; width: 15%;">Aug 15 2017</span>|
-		   <span style="display:inline-block; padding-right: 0.1em;"><a class="post-link" href="../posts/2017-08-15-rx-e2e.html">Usando Reactive Extensions para ayudar tests e2e</a></span>
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Posts tagged with "tests"</h2>
+        </div>
+        <div class="archive__grid">
+	<div class="elem__archive">
+	
+		<div>
+		<span class="post-meta">Aug 15 2017</span>
+		<span class="spacer__post">|</span>
+		<span><a class="post-link" href="../posts/2017-08-15-rx-e2e.html">Usando Reactive Extensions para ayudar tests e2e</a></span>
 	</div>
+	
+</div>
+</div>
 
-
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Advent Of Code 2020 en Rust. Día 1</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Advent Of Code 2020 en Rust. Día 1</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Dec 07 2020
@@ -84,98 +87,98 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Rust.html">Rust</a>, <a href="../tags/Advent%20of%20code.html">Advent of code</a> 
+        Tags: <a title="All pages tagged 'Rust'." href="../tags/Rust.html">Rust</a>, <a title="All pages tagged 'Advent of code'." href="../tags/Advent%20of%20code.html">Advent of code</a> 
         
     </div>
     <hr>
     <p>Estoy intentando resolver problemas del <a href="https://adventofcode.com/2020">Advent of Code</a> de este año usando <a href="https://www.rust-lang.org/">Rust</a> y así aprender el lenguaje. La verdad creo que hace 4 años había intentado aprenderlo pero la verdad no recuerdo mucho. Recuerdo no haber entendido por completo el sistema de <em>borrowing</em> y otro montón de cosas. Pero esta vez quiero usar los ejercicios de Advent of Code como excusa para aprender.</p>
 <p>El problema del primer día consistía en, dada una lista de números, encontrar un par de ellos que sumados den <code>2020</code> y multiplicarlos. La segunda parte era hacer lo mismo pero encontrando 3 de ellos. Mi solución fue:</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::collections::HashSet;
-<span class="kw">mod</span> file_reading;
-
-<span class="kw">fn</span> find_pair(nums: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, target_sum: <span class="dt">i32</span>) -&gt; <span class="dt">Option</span>&lt;(<span class="dt">i32</span>, <span class="dt">i32</span>)&gt; {
-    <span class="kw">let</span> <span class="kw">mut</span> diffs: HashSet&lt;<span class="dt">i32</span>&gt; = HashSet::new();
-    <span class="kw">for</span> n <span class="kw">in</span> nums {
-        diffs.insert(*n);
-        <span class="kw">let</span> diff: <span class="dt">i32</span> = target_sum - n;
-        <span class="kw">if</span> diffs.contains(&amp;diff) {
-            <span class="kw">return</span> <span class="cn">Some</span>((diff, *n));
-        };
-    }
-    <span class="cn">None</span>
-}
-
-<span class="kw">fn</span> find_three(<span class="kw">mut</span> nums: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, target_sum: <span class="dt">i32</span>) -&gt; <span class="dt">Option</span>&lt;(<span class="dt">i32</span>, <span class="dt">i32</span>, <span class="dt">i32</span>)&gt; {
-    nums.sort();
-    <span class="kw">for</span> start <span class="kw">in</span> <span class="dv">0.</span>.(nums.len() - <span class="dv">2</span>) {
-        <span class="kw">let</span> <span class="kw">mut</span> mid = start + <span class="dv">1</span>;
-        <span class="kw">let</span> <span class="kw">mut</span> end = nums.len() - <span class="dv">1</span>;
-        <span class="kw">while</span> mid &lt; end {
-            <span class="kw">let</span> total = nums[start] + nums[mid] + nums[end];
-            <span class="kw">if</span> total == target_sum {
-                <span class="kw">return</span> <span class="cn">Some</span>((nums[start], nums[mid], nums[end]));
-            } <span class="kw">else</span> <span class="kw">if</span> total &gt; target_sum {
-                end -= <span class="dv">1</span>
-            } <span class="kw">else</span> {
-                mid += <span class="dv">1</span>
-            }
-        }
-    }
-    <span class="cn">None</span>
-}
-
-<span class="kw">fn</span> main() {
-    <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Ok</span>(numbers) = file_reading::read_numbers(<span class="st">&quot;./input1.txt&quot;</span>) {
-        <span class="kw">let</span> target_sum = <span class="dv">2020</span>;
-        <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>((p1, p2)) = find_pair(&amp;numbers, target_sum) {
-            <span class="kw">let</span> product = p1 * p2;
-            <span class="pp">println!</span>(<span class="st">&quot;Part 1: {}&quot;</span>, product);
-        }
-        <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>((p1, p2, p3)) = find_three(numbers, target_sum) {
-            <span class="kw">let</span> product = p1 * p2 * p3;
-            <span class="pp">println!</span>(<span class="st">&quot;Part 2: {}&quot;</span>, product);
-        }
-    }
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">std::collections::</span>HashSet<span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">mod</span> file_reading<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> find_pair(nums<span class="op">:</span> <span class="op">&amp;</span><span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;,</span> target_sum<span class="op">:</span> <span class="dt">i32</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span>(<span class="dt">i32</span><span class="op">,</span> <span class="dt">i32</span>)<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> diffs<span class="op">:</span> HashSet<span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="pp">HashSet::</span>new()<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> n <span class="kw">in</span> nums <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        diffs<span class="op">.</span>insert(<span class="op">*</span>n)<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> diff<span class="op">:</span> <span class="dt">i32</span> <span class="op">=</span> target_sum <span class="op">-</span> n<span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> diffs<span class="op">.</span>contains(<span class="op">&amp;</span>diff) <span class="op">{</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="cn">Some</span>((diff<span class="op">,</span> <span class="op">*</span>n))<span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cn">None</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> find_three(<span class="kw">mut</span> nums<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;,</span> target_sum<span class="op">:</span> <span class="dt">i32</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span>(<span class="dt">i32</span><span class="op">,</span> <span class="dt">i32</span><span class="op">,</span> <span class="dt">i32</span>)<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    nums<span class="op">.</span>sort()<span class="op">;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> start <span class="kw">in</span> <span class="dv">0</span><span class="op">..</span>(nums<span class="op">.</span>len() <span class="op">-</span> <span class="dv">2</span>) <span class="op">{</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> <span class="kw">mut</span> mid <span class="op">=</span> start <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> <span class="kw">mut</span> end <span class="op">=</span> nums<span class="op">.</span>len() <span class="op">-</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> mid <span class="op">&lt;</span> end <span class="op">{</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>            <span class="kw">let</span> total <span class="op">=</span> nums[start] <span class="op">+</span> nums[mid] <span class="op">+</span> nums[end]<span class="op">;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> total <span class="op">==</span> target_sum <span class="op">{</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="cn">Some</span>((nums[start]<span class="op">,</span> nums[mid]<span class="op">,</span> nums[end]))<span class="op">;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> total <span class="op">&gt;</span> target_sum <span class="op">{</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>                end <span class="op">-=</span> <span class="dv">1</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>                mid <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="cn">None</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Ok</span>(numbers) <span class="op">=</span> <span class="pp">file_reading::</span>read_numbers(<span class="st">&quot;./input1.txt&quot;</span>) <span class="op">{</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> target_sum <span class="op">=</span> <span class="dv">2020</span><span class="op">;</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Some</span>((p1<span class="op">,</span> p2)) <span class="op">=</span> find_pair(<span class="op">&amp;</span>numbers<span class="op">,</span> target_sum) <span class="op">{</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>            <span class="kw">let</span> product <span class="op">=</span> p1 <span class="op">*</span> p2<span class="op">;</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>            <span class="pp">println!</span>(<span class="st">&quot;Part 1: {}&quot;</span><span class="op">,</span> product)<span class="op">;</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Some</span>((p1<span class="op">,</span> p2<span class="op">,</span> p3)) <span class="op">=</span> find_three(numbers<span class="op">,</span> target_sum) <span class="op">{</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>            <span class="kw">let</span> product <span class="op">=</span> p1 <span class="op">*</span> p2 <span class="op">*</span> p3<span class="op">;</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>            <span class="pp">println!</span>(<span class="st">&quot;Part 2: {}&quot;</span><span class="op">,</span> product)<span class="op">;</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>La solución de la primera parte funciona con un <code>Hashset</code> que almacena los números vistos y permite preguntar rápido si ya vimos el otro número que sumado al actual permite sumar 2020. La segunda parte funciona de otra forma. Primero ordena los números y después hace una busqueda anidada, pero un poco inteligente.</p>
 <p>Pero mi objetivo no es hablar tanto de los algoritmos sino de Rust. En su mayoría tuve problemas poniendo los tipos y entendiendo los errores de compilación.</p>
 <p>Por ejemplo, para la primera parte:</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> find_pair(nums: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, target_sum: <span class="dt">i32</span>) -&gt; <span class="dt">Option</span>&lt;(<span class="dt">i32</span>, <span class="dt">i32</span>)&gt;</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> find_pair(nums<span class="op">:</span> <span class="op">&amp;</span><span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;,</span> target_sum<span class="op">:</span> <span class="dt">i32</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span>(<span class="dt">i32</span><span class="op">,</span> <span class="dt">i32</span>)<span class="op">&gt;</span></span></code></pre></div>
 <ul>
 <li><code>nums: &amp;Vec&lt;i32&gt;</code>: El primer argumento, es una referencia prestada e inmutable. Para propositos de la función podría ser simplemente una variable inmutable pero tuve que hacerla una referencia para que la siguiente llamada de la segunda parte, que va a compartir el mismo vector pero lo va a mutar. Pero para lo que necesita hacer la función esto no es un problema y se puede convertir en una referencia prestada. Tal vez ese sea el tipo más general que el</li>
 <li><code>target_sum: i32</code>: Este es la suma objetivo y no necesita ser cambiado a lo largo del programa. Ahora que lo pienso podría haver sido una variable con un <a href="https://doc.rust-lang.org/rust-by-example/scope/lifetime/static_lifetime.html"><em>lifetime</em> estático</a> pero tal vez eso es demasiado.</li>
 <li><code>Option&lt;(i32, i32)&gt;</code>: El resultado es una posible pareja de números. Si los parámetros de entrada hicieran imposible encontrar una pareja entonces retornariamos <code>None</code>.</li>
 </ul>
 <p>La segunda parte:</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> find_three(<span class="kw">mut</span> nums: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, target_sum: <span class="dt">i32</span>) -&gt; <span class="dt">Option</span>&lt;(<span class="dt">i32</span>, <span class="dt">i32</span>, <span class="dt">i32</span>)&gt;</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> find_three(<span class="kw">mut</span> nums<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;,</span> target_sum<span class="op">:</span> <span class="dt">i32</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span>(<span class="dt">i32</span><span class="op">,</span> <span class="dt">i32</span><span class="op">,</span> <span class="dt">i32</span>)<span class="op">&gt;</span></span></code></pre></div>
 <p>Dado que necesito ordenar los números hice la variable mutable. Los otros tipos tienen una justificación similar a la primera parte.</p>
 <p>Por último creo que vale la pena hablar del módulo que escribí para leer <em>input</em> de archivos:</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::fs::File;
-<span class="kw">use</span> std::io::{<span class="kw">self</span>, BufRead};
-<span class="kw">use</span> std::num::ParseIntError;
-<span class="kw">use</span> std::path::Path;
-
-<span class="kw">pub</span> <span class="kw">fn</span> read_lines&lt;P: AsRef&lt;Path&gt;&gt;(filename: P) -&gt; io::<span class="dt">Result</span>&lt;io::Lines&lt;io::BufReader&lt;File&gt;&gt;&gt; {
-    <span class="kw">let</span> file = File::open(filename)?;
-    <span class="cn">Ok</span>(io::BufReader::new(file).lines())
-}
-
-<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> ReadingError {
-    IOError(io::Error),
-    ParsingError(ParseIntError),
-}
-
-<span class="kw">pub</span> <span class="kw">fn</span> read_numbers&lt;P: AsRef&lt;Path&gt;&gt;(filename: P) -&gt; <span class="dt">Result</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, ReadingError&gt; {
-    <span class="kw">let</span> <span class="kw">mut</span> vec = <span class="dt">Vec</span>::new();
-    <span class="kw">let</span> lines = read_lines(filename).map_err(ReadingError::IOError)?;
-    <span class="kw">for</span> line_it <span class="kw">in</span> lines {
-        <span class="kw">let</span> line = line_it.map_err(ReadingError::IOError)?;
-        <span class="kw">let</span> n: <span class="dt">i32</span> = line.parse().map_err(ReadingError::ParsingError)?;
-        vec.push(n);
-    }
-    <span class="cn">Ok</span>(vec)
-}</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">std::fs::</span>File<span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">std::io::</span><span class="op">{</span><span class="kw">self</span><span class="op">,</span> <span class="bu">BufRead</span><span class="op">};</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">std::num::</span>ParseIntError<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">std::path::</span><span class="dt">Path</span><span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> read_lines<span class="op">&lt;</span>P<span class="op">:</span> <span class="bu">AsRef</span><span class="op">&lt;</span><span class="dt">Path</span><span class="op">&gt;&gt;</span>(filename<span class="op">:</span> P) <span class="op">-&gt;</span> <span class="pp">io::</span><span class="dt">Result</span><span class="op">&lt;</span><span class="pp">io::</span>Lines<span class="op">&lt;</span><span class="pp">io::</span>BufReader<span class="op">&lt;</span>File<span class="op">&gt;&gt;&gt;</span> <span class="op">{</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> file <span class="op">=</span> <span class="pp">File::</span>open(filename)<span class="op">?;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cn">Ok</span>(<span class="pp">io::BufReader::</span>new(file)<span class="op">.</span>lines())</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">enum</span> ReadingError <span class="op">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    IOError(<span class="pp">io::</span><span class="bu">Error</span>)<span class="op">,</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    ParsingError(ParseIntError)<span class="op">,</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> read_numbers<span class="op">&lt;</span>P<span class="op">:</span> <span class="bu">AsRef</span><span class="op">&lt;</span><span class="dt">Path</span><span class="op">&gt;&gt;</span>(filename<span class="op">:</span> P) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;,</span> ReadingError<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> vec <span class="op">=</span> <span class="dt">Vec</span><span class="pp">::</span>new()<span class="op">;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> lines <span class="op">=</span> read_lines(filename)<span class="op">.</span>map_err(<span class="pp">ReadingError::</span>IOError)<span class="op">?;</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> line_it <span class="kw">in</span> lines <span class="op">{</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> line <span class="op">=</span> line_it<span class="op">.</span>map_err(<span class="pp">ReadingError::</span>IOError)<span class="op">?;</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> n<span class="op">:</span> <span class="dt">i32</span> <span class="op">=</span> line<span class="op">.</span>parse()<span class="op">.</span>map_err(<span class="pp">ReadingError::</span>ParsingError)<span class="op">?;</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        vec<span class="op">.</span>push(n)<span class="op">;</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="cn">Ok</span>(vec)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Siendo honesto la primera función fue copiada de Stackoverflow y no entiendo la firma por completo. Sé que está haciendo uso de un <em>generic</em> y una restrición de <em>trait</em> pero los tipos que no entiendo son:</p>
 <ul>
 <li><code>AsRef</code></li>
@@ -207,7 +210,7 @@
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

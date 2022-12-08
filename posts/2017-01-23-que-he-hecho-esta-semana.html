@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Algo de lo que hice esta semana (15/01/2017 - 22/01/2017)</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Algo de lo que hice esta semana (15/01/2017 - 22/01/2017)</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Jan 23 2017
@@ -84,7 +87,7 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Vida.html">Vida</a> 
+        Tags: <a title="All pages tagged 'Vida'." href="../tags/Vida.html">Vida</a> 
         
     </div>
     <hr>
@@ -98,7 +101,7 @@
 <p>Con respecto al curso de redes neuronales de Coursera que estaba haciendo lo abandoné (Oh sorpresa). Creo que mi plan para la tercera semana era ponerme al día el Domingo pero ese día por la mañana salí a montar en cicla y por la tarde fuí a un asado del que volví como a media noche, sin los anímos de pegarme una clavada. Me falta retomar esa poquita disciplina que una vez tuve para los cursitos esos en línea. Recuerdo que hace 4 años, cuando todavía estaba en la universidad logré hacer el curso de <em>Machine Learning</em> y el de algoritmos en Coursera. En esa ocasión aprendí bastante de ellos y fuí bastante juicioso. Todavía tengo los apuntes y cuando los veo por encima me sorprendo de lo ñoño que fuí.</p>
 <p>El sábado presenté el IELTS, uno de los requerimientos para la visa de trabajo. No fue tan complicado. Por lo que alcancé a sentir es un poco más informal que el TOEFL: algunas preguntas NO son de opción multiple y la parte hablada es con un angloparlante nativo. Necesito tener un puntaje encima de 4 (sobre 9) en todas las secciones, lo que creo que no es tán difícil.</p>
 <p>El domingo salí en cicla con mis amigos y llegamos hasta Guasca. Logré subir patios en el segundo plato, lo que sentí como una hazaña. Aunque no recuerdo si es la primera vez que logro hacer esto. Tal vez ya lo había logrado antes pero se me olvidó. El caso es que aunque con el segundo plato a uno le toca hacer más fuerza uno se ve obligado a mover las piernas con mayor lentitud y así es más fácil mantener un mismo ritmo durante todo el trayecto. El alto de Patios era apenas la primera etapa de nuestro recorrido, desde ahí fue una bajada. Pasamos al lado de La Calera y para llegar a Guasca nos tocó otra subida, tal vez no tan exigente y larga como la de Patios pero en ese punto ya estabamos bastante cansados. Para devolvernos a Bogotá decidimos coger la vía que pasa cerca de Sopó, en vez de hacer el recorrido contrario por que a ninguno de nosotros tenía las fuerzas para repetir la subida a Patios. En total fueron como 7 horas en movimiento.</p>
-<div align="center">
+<div data-align="center">
 <iframe height="405" width="590" frameborder="0" allowtransparency="true" scrolling="no" src="https://www.strava.com/activities/841168623/embed/63f41d67cd30d09b2f5ea52062756630ccfee259">
 </iframe>
 </div>
@@ -124,7 +127,7 @@
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

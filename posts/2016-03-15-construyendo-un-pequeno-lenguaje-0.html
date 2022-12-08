@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Construyendo un pequeño lenguaje de programación (Parte 0)</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Construyendo un pequeño lenguaje de programación (Parte 0)</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Mar 15 2016
@@ -84,7 +87,7 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Scala.html">Scala</a>, <a href="../tags/Interpreter.html">Interpreter</a>, <a href="../tags/Functional%20Programming.html">Functional Programming</a>, <a href="../tags/ADT.html">ADT</a>, <a href="../tags/GADT.html">GADT</a>, <a href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a> 
+        Tags: <a title="All pages tagged 'Scala'." href="../tags/Scala.html">Scala</a>, <a title="All pages tagged 'Interpreter'." href="../tags/Interpreter.html">Interpreter</a>, <a title="All pages tagged 'Functional Programming'." href="../tags/Functional%20Programming.html">Functional Programming</a>, <a title="All pages tagged 'ADT'." href="../tags/ADT.html">ADT</a>, <a title="All pages tagged 'GADT'." href="../tags/GADT.html">GADT</a>, <a title="All pages tagged 'Construyendo un pequeño lenguaje'." href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a> 
         
     </div>
     <hr>
@@ -96,27 +99,27 @@
 <h2 id="un-lenguaje-simple">Un lenguaje simple</h2>
 <p>La idea de esta serie de artículos es demostrar eso usando Scala. Y debido a que vamos a usar Scala algunas cosas serán más complicadas. En particular debido a que Scala tiene tipado estático tenemos la tarea de convencer al <em>typechecker</em> de que lo que estamos haciendo tiene sentido.</p>
 <p>Vamos a crear un lenguaje muy simple. No tendrá funciones, no tendrá declaraciones de tipos y solo habrá dos tipos de datos: números y expresiones booleanas. Tendrá <code>if</code>s y <code>while</code>s y tendrá una sintáxis similar a la de lenguajes tipo C. Por ejemplo para computar los primeros 10 números de fibonacci escribiríamos algo como:</p>
-<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">a = <span class="dv">0</span>;
-b = <span class="dv">1</span>;
-i = <span class="dv">1</span>;
-<span class="kw">while</span> ( i &lt; <span class="dv">11</span> ) {
-    c = a;
-    a = b;
-    b = b + c;
-    i = i + <span class="dv">1</span>;
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span> i <span class="op">&lt;</span> <span class="dv">11</span> <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> a<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> b<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> b <span class="op">+</span> c<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Entonces empecemos:</p>
 <h2 id="los-tipos-de-datos-del-lenguaje">Los tipos de datos del lenguaje</h2>
 <p>Vamos a tener solo dos tipos de datos: números y booleanos. Pero ciertos tipos de expresiones, por ejemplo las asignaciones, no tienen un tipo de retorno. Entonces otro tipo dentro de nuestra jerarquía será <code>Void</code>.</p>
 <p>Empezamos con un tipo abstracto que represente la base que comparten todos los tipos de nuestro lenguaje:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Value</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="bu">Value</span></span></code></pre></div>
 <p>Los booleanos serán “wrappers” de los booleanos de Scala:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">BooleanValue</span>(value: scala.<span class="fu">Boolean</span>) <span class="kw">extends</span> Value</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">BooleanValue</span><span class="op">(</span>value<span class="op">:</span> scala<span class="op">.</span><span class="ex">Boolean</span><span class="op">)</span> <span class="kw">extends</span> <span class="bu">Value</span></span></code></pre></div>
 <p>Y de forma similar los números:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">NumberValue</span>(value: Float) <span class="kw">extends</span> Value</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">NumberValue</span><span class="op">(</span>value<span class="op">:</span> <span class="ex">Float</span><span class="op">)</span> <span class="kw">extends</span> <span class="bu">Value</span></span></code></pre></div>
 <p>Por último “<code>Void</code>” será un tipo (un <code>trait</code>) y un valor (un <code>object</code>). Podríamos hacerlo solo un valor pero de esta forma nos evita anotar algunas cosas como “<code>Void.type</code>” lo que es un poco raro:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> Void <span class="kw">extends</span> Value
-<span class="kw">object</span> Void <span class="kw">extends</span> Void</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> <span class="ex">Void</span> <span class="kw">extends</span> <span class="bu">Value</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> <span class="ex">Void</span> <span class="kw">extends</span> <span class="ex">Void</span></span></code></pre></div>
 <p>Este patrón, común en programación funcional, se denomina <strong>Algebraic Data Type</strong> (ADT). La idea es que un mismo tipo, <code>Value</code>, se puede instanciar de formas distintas: como <code>BooleanValue</code>, como <code>NumberValue</code> o como <code>Void</code>. En Scala ésta conjunción de posibilidades se codifica usando un tipo base que es abstracto y un subtipo por cada variante. En otros lenguajes como Haskell esto se hace declarando un solo tipo con multiples constructores. Pueden leer más sobre ADTs en <a href="http://tech.esper.com/2014/07/30/algebraic-data-types/">este</a> enlace y sobre como se construyen en Scala <a href="https://gleichmann.wordpress.com/2011/01/30/functional-scala-algebraic-datatypes-enumerated-types/">acá</a>.</p>
 <p>En este caso el ADT es muy simple pero hay usos más complejos:</p>
 <ul>
@@ -137,96 +140,96 @@ i = <span class="dv">1</span>;
 <li>Hay <strong>secuencias de instrucciones</strong> como secuencias de asignaciones, o de <code>if</code>s o <code>while</code>s.</li>
 </ul>
 <p>Una expresión será representada por un tipo abstracto llamado <code>Exp</code> que estará parametrizado según el tipo de la expresión:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Exp[ V &lt;: Value ]</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> Exp<span class="op">[</span> V <span class="op">&lt;:</span> <span class="bu">Value</span> <span class="op">]</span></span></code></pre></div>
 <p>Aquí estamos usando un <a href="http://www.scala-lang.org/old/node/136">límite de tipo</a> (el extraño <code>&lt;:</code>) para decir que el parámetro de tipo <code>V</code> debe ser un subtipo de <code>Value</code>, es decir o <code>NumberValue</code> o <code>BooleanValue</code> o <code>Void</code>. El parámetro sirve para decir cuál es el tipo de la expresión: las expresiones numéricas seran de tipo <code>Exp[NumberValue]</code>, las booleanas de tipo <code>Exp[BooleanValue]</code> y las que no tienen tipo <code>Exp[Void]</code>.</p>
 <p>Veamos como podríamos implementar cada una de las anteriores expresiones:</p>
 <p>Los <strong>literales</strong> son expresiones de las que podemos obtener su valor inmediatamente, entonces tiene sentido definir un miembro abstracto que devuelva el valor:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> Literal[ V &lt;: Value ] <span class="kw">extends</span> Exp[V] {
-  <span class="kw">def</span> value: V
-}</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Literal<span class="op">[</span> V <span class="op">&lt;:</span> <span class="bu">Value</span> <span class="op">]</span> <span class="kw">extends</span> Exp<span class="op">[</span>V<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> value<span class="op">:</span> V</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Los <strong>literales booleanos</strong> serán una extensión del anterior <code>trait</code> con el campo <code>value</code> de tipo <code>BooleanValue</code>:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> Boolean(value: BooleanValue) <span class="kw">extends</span> Literal[BooleanValue]</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="ex">Boolean</span><span class="op">(</span>value<span class="op">:</span> BooleanValue<span class="op">)</span> <span class="kw">extends</span> Literal<span class="op">[</span>BooleanValue<span class="op">]</span></span></code></pre></div>
 <p>Cuando hablamos de una <strong>comparación</strong> estamos relacionando dos expresiones numéricas (algo del tipo <code>Exp[NumberValue]</code>), una a la izquierda y otra a la derecha de la comparación. Primero describirémos un tipo base que nos resultará útil para evitarnos cierta repetición en el futuro:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Comparison <span class="kw">extends</span> Exp[BooleanValue] {
-  <span class="kw">def</span> left : Exp[NumberValue]
-  <span class="kw">def</span> right: Exp[NumberValue]
-}</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> Comparison <span class="kw">extends</span> Exp<span class="op">[</span>BooleanValue<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> left <span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">]</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> right<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">]</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Y los distintos tipos de comparaciones van a ser una extensión de la anterior:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">LessThan</span>(left: Exp[NumberValue], right: Exp[NumberValue]) <span class="kw">extends</span> Comparison 
-
-<span class="kw">case</span> <span class="kw">class</span> <span class="fu">Equal</span>(left: Exp[NumberValue], right: Exp[NumberValue]) <span class="kw">extends</span> Comparison
-
-<span class="kw">case</span> <span class="kw">class</span> <span class="fu">GreaterThan</span>(left: Exp[NumberValue], right: Exp[NumberValue]) <span class="kw">extends</span> Comparison</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">LessThan</span><span class="op">(</span>left<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">],</span> right<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">])</span> <span class="kw">extends</span> Comparison </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Equal</span><span class="op">(</span>left<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">],</span> right<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">])</span> <span class="kw">extends</span> Comparison</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">GreaterThan</span><span class="op">(</span>left<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">],</span> right<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">])</span> <span class="kw">extends</span> Comparison</span></code></pre></div>
 <p>De forma similar a los booleanos tenemos los <strong>literales numéricos</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> Number(value: NumberValue) <span class="kw">extends</span> Literal[NumberValue]
-
-<span class="kw">object</span> Number {
-
-  <span class="co">/**</span>
-<span class="co">    * Constructor</span>
-<span class="co">    */</span>
-  <span class="kw">def</span> <span class="fu">apply</span>(<span class="dt">float</span>: Float): Number = <span class="kw">new</span> Number(<span class="fu">NumberValue</span>(<span class="dt">float</span>))
-
-}</code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="ex">Number</span><span class="op">(</span>value<span class="op">:</span> NumberValue<span class="op">)</span> <span class="kw">extends</span> Literal<span class="op">[</span>NumberValue<span class="op">]</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> <span class="ex">Number</span> <span class="op">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">/**</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">*</span> Constructor</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">*/</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">apply</span><span class="op">(</span><span class="dt">float</span><span class="op">:</span> <span class="ex">Float</span><span class="op">):</span> <span class="ex">Number</span> <span class="op">=</span> <span class="kw">new</span> <span class="ex">Number</span><span class="op">(</span><span class="fu">NumberValue</span><span class="op">(</span><span class="dt">float</span><span class="op">))</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>También tendrémos un tipo base para las <strong>operaciones binarias</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> BinaryOp <span class="kw">extends</span> Exp[NumberValue] {
-  <span class="kw">def</span> left : Exp[NumberValue]
-  <span class="kw">def</span> right: Exp[NumberValue]
-}</code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> BinaryOp <span class="kw">extends</span> Exp<span class="op">[</span>NumberValue<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> left <span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">]</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> right<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">]</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Y una extensión para cada tipo de operación binaria:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Add</span>(left: Exp[NumberValue], right: Exp[NumberValue]) <span class="kw">extends</span> BinaryOp
-
-<span class="kw">case</span> <span class="kw">class</span> <span class="fu">Multiply</span>(left: Exp[NumberValue], right: Exp[NumberValue]) <span class="kw">extends</span> BinaryOp</code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Add</span><span class="op">(</span>left<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">],</span> right<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">])</span> <span class="kw">extends</span> BinaryOp</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Multiply</span><span class="op">(</span>left<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">],</span> right<span class="op">:</span> Exp<span class="op">[</span>NumberValue<span class="op">])</span> <span class="kw">extends</span> BinaryOp</span></code></pre></div>
 <p>También las <strong>variables</strong> son expresiones. La forma de referirnos a una variable es por medio de su nombre, entonces tiene sentido definir un campo nombre de tipo <code>String</code>. Empezamos con un tipo base:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> Var[ V &lt;: Value ] <span class="kw">extends</span> Exp[ V ] {
-  <span class="kw">def</span> name: String
-}</code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Var<span class="op">[</span> V <span class="op">&lt;:</span> <span class="bu">Value</span> <span class="op">]</span> <span class="kw">extends</span> Exp<span class="op">[</span> V <span class="op">]</span> <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> name<span class="op">:</span> <span class="ex">String</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Y las distintas extensiones que podemos tener:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">NumberVar</span>(name: String) <span class="kw">extends</span> Var[NumberValue]
-<span class="kw">case</span> <span class="kw">class</span> <span class="fu">BooleanVar</span>(name: String) <span class="kw">extends</span> Var[BooleanValue]</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">NumberVar</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="kw">extends</span> Var<span class="op">[</span>NumberValue<span class="op">]</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">BooleanVar</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="kw">extends</span> Var<span class="op">[</span>BooleanValue<span class="op">]</span></span></code></pre></div>
 <p>Ahora vamos a ver las expresiones que no tienen valor y que denominarémos instrucciones.</p>
 <p>Una <strong>asignación</strong> consiste de un nombre y de una expresión:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Assign</span>(name: String, expression: Exp[ _ &lt;: Value ]) <span class="kw">extends</span> Exp[Void]</code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Assign</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> expression<span class="op">:</span> Exp<span class="op">[</span> _ <span class="op">&lt;:</span> <span class="bu">Value</span> <span class="op">])</span> <span class="kw">extends</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]</span></span></code></pre></div>
 <p>El tipo existencial de la expresión (el <em>underscore</em> detrás del <code>_ &lt;: Value</code>) nos sirve para decir que no nos interesa el tipo específico de la expresión. Lo que nos interesa decir es que una asignación consiste de un nombre y de una expresión de <em>algún</em> tipo, pero no nos importa cuál.</p>
 <p>En nuestro lenguaje los <strong>condicionales</strong> también serán expresiones sin valor de retorno (a diferencia de lenguajes donde los <code>if</code>s son expresiones con valor como el mismo Scala) y consistirán de una expresión booleana (el condicional) y dos instrucciones (la instrucción cuando el condicional sea verdadero y la instrucción cuando no lo sea):</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">If</span>(
-  condition:   Exp[BooleanValue],
-  consequence: Exp[Void],
-  alternative: Exp[Void]
-) <span class="kw">extends</span> Exp[Void]</code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">If</span><span class="op">(</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  condition<span class="op">:</span>   Exp<span class="op">[</span>BooleanValue<span class="op">],</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  consequence<span class="op">:</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">],</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  alternative<span class="op">:</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="op">)</span> <span class="kw">extends</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]</span></span></code></pre></div>
 <p>Los <code>while</code>s serán similares:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">While</span>(
-  condition: Exp[BooleanValue],
-  body:      Exp[Void]
-) <span class="kw">extends</span> Exp[Void]</code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">While</span><span class="op">(</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  condition<span class="op">:</span> Exp<span class="op">[</span>BooleanValue<span class="op">],</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  body<span class="op">:</span>      Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="op">)</span> <span class="kw">extends</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]</span></span></code></pre></div>
 <p>Por último la <strong>concatenación de instrucciones</strong> también es una instrucción:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> Sequence(exps: Exp[Void]*) <span class="kw">extends</span> Exp[Void] </code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="ex">Sequence</span><span class="op">(</span>exps<span class="op">:</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]*)</span> <span class="kw">extends</span> Exp<span class="op">[</span><span class="ex">Void</span><span class="op">]</span> </span></code></pre></div>
 <p>En este caso utilizamos un <a href="http://alvinalexander.com/scala/how-to-define-methods-variable-arguments-varargs-fields">argumento variable</a> solamente para poder escribir expresiones sin tener que construir listas.</p>
 <p>Esta jerarquía que hemos usado para describir expresiones en nuestro leguaje sigue un patrón similar a los ADTs pero con un parámetro de tipo. Este patrón se denomina <strong><a href="https://vimeo.com/12208838">Generalised Algebraic Data Type</a></strong> (GADT).</p>
 <p>Ya armados con una jerarquía de tipos el siguiente código…</p>
-<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">a = <span class="dv">0</span>;
-b = <span class="dv">1</span>;
-i = <span class="dv">1</span>;
-<span class="kw">while</span> ( i &lt; <span class="dv">11</span> ) {
-    c = a;
-    a = b;
-    b = b + c;
-    i = i + <span class="dv">1</span>;
-}</code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span> i <span class="op">&lt;</span> <span class="dv">11</span> <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    c <span class="op">=</span> a<span class="op">;</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> b<span class="op">;</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> b <span class="op">+</span> c<span class="op">;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>…se traduce en:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">Sequence(
-  <span class="fu">Assign</span>(<span class="st">&quot;a&quot;</span>, Number(<span class="dv">0</span>)),
-  <span class="fu">Assign</span>(<span class="st">&quot;b&quot;</span>, Number(<span class="dv">1</span>)),
-  <span class="fu">Assign</span>(<span class="st">&quot;i&quot;</span>, Number(<span class="dv">1</span>)),
-  <span class="fu">While</span>(<span class="fu">LessThan</span>( <span class="fu">NumberVar</span>(<span class="st">&quot;i&quot;</span>), Number(<span class="dv">11</span>) ),
-        Sequence(
-            <span class="fu">Assign</span>( <span class="st">&quot;c&quot;</span>, <span class="fu">NumberVar</span>(<span class="st">&quot;a&quot;</span>) ),
-            <span class="fu">Assign</span>( <span class="st">&quot;a&quot;</span>, <span class="fu">NumberVar</span>(<span class="st">&quot;b&quot;</span>) ),
-            <span class="fu">Assign</span>( <span class="st">&quot;b&quot;</span>, <span class="fu">Add</span>( <span class="fu">NumberVar</span>(<span class="st">&quot;b&quot;</span>), <span class="fu">NumberVar</span>(<span class="st">&quot;c&quot;</span>) ) ),
-            <span class="fu">Assign</span>( <span class="st">&quot;i&quot;</span>, <span class="fu">Add</span>( <span class="fu">NumberVar</span>(<span class="st">&quot;i&quot;</span>), Number(<span class="dv">1</span>) ) )
-        )
-  )
-)</code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Sequence</span><span class="op">(</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Assign</span><span class="op">(</span><span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="ex">Number</span><span class="op">(</span><span class="dv">0</span><span class="op">)),</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Assign</span><span class="op">(</span><span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="ex">Number</span><span class="op">(</span><span class="dv">1</span><span class="op">)),</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Assign</span><span class="op">(</span><span class="st">&quot;i&quot;</span><span class="op">,</span> <span class="ex">Number</span><span class="op">(</span><span class="dv">1</span><span class="op">)),</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">While</span><span class="op">(</span><span class="fu">LessThan</span><span class="op">(</span> <span class="fu">NumberVar</span><span class="op">(</span><span class="st">&quot;i&quot;</span><span class="op">),</span> <span class="ex">Number</span><span class="op">(</span><span class="dv">11</span><span class="op">)</span> <span class="op">),</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        <span class="ex">Sequence</span><span class="op">(</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">Assign</span><span class="op">(</span> <span class="st">&quot;c&quot;</span><span class="op">,</span> <span class="fu">NumberVar</span><span class="op">(</span><span class="st">&quot;a&quot;</span><span class="op">)</span> <span class="op">),</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">Assign</span><span class="op">(</span> <span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="fu">NumberVar</span><span class="op">(</span><span class="st">&quot;b&quot;</span><span class="op">)</span> <span class="op">),</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">Assign</span><span class="op">(</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="fu">Add</span><span class="op">(</span> <span class="fu">NumberVar</span><span class="op">(</span><span class="st">&quot;b&quot;</span><span class="op">),</span> <span class="fu">NumberVar</span><span class="op">(</span><span class="st">&quot;c&quot;</span><span class="op">)</span> <span class="op">)</span> <span class="op">),</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>            <span class="fu">Assign</span><span class="op">(</span> <span class="st">&quot;i&quot;</span><span class="op">,</span> <span class="fu">Add</span><span class="op">(</span> <span class="fu">NumberVar</span><span class="op">(</span><span class="st">&quot;i&quot;</span><span class="op">),</span> <span class="ex">Number</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">)</span> <span class="op">)</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">)</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">)</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span></code></pre></div>
 <h2 id="concluyendo">Concluyendo</h2>
 <p>Hasta ahora solo hemos definido un montón de tipos que nos permiten construir expresiones que representan programas en nuestro lenguaje. Como se podrán imaginar el siguiente paso es construir el evaluador, que será el tema del próximo <em>post</em>. Tal vez incluso se podrán imaginar como es que se hace esta transformación.</p>
 </div>
@@ -250,7 +253,7 @@ i = <span class="dv">1</span>;
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

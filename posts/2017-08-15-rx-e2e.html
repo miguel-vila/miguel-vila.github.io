@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Usando Reactive Extensions para ayudar tests e2e</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Usando Reactive Extensions para ayudar tests e2e</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Aug 15 2017
@@ -84,138 +87,169 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/tests.html">tests</a>, <a href="../tags/reactive%20extensions.html">reactive extensions</a> 
+        Tags: <a title="All pages tagged 'tests'." href="../tags/tests.html">tests</a>, <a title="All pages tagged 'reactive extensions'." href="../tags/reactive%20extensions.html">reactive extensions</a> 
         
     </div>
     <hr>
     <p>Este es un corto post mostrando algo que hice en mi trabajo y que me pareció interesante.</p>
-<p>En mi trabajo estamos desarrollando pruebas <em>end to end</em> (<em>e2e</em>) de multiples servicios. Entre los varios <em>features</em> que queríamos probar estaba la opción de resetear la contraseña. Este <em>feature</em>, muy común en varios sitios web, sigue un patrón similar:</p>
-<ol style="list-style-type: decimal">
-<li><p>El usuario olvida su contraseña. Se dirige a un formulario específico para esta situación e introduce la dirección de correo electrónico con la que se había registrado.</p></li>
+<p>En mi trabajo estamos desarrollando pruebas <em>end to end</em> (<em>e2e</em>) de multiples servicios.
+Entre los varios <em>features</em> que queríamos probar estaba la opción de resetear la contraseña.
+Este <em>feature</em>, muy común en varios sitios web, sigue un patrón similar:</p>
+<ol type="1">
+<li><p>El usuario olvida su contraseña. Se dirige a un formulario específico para esta situación
+e introduce la dirección de correo electrónico con la que se había registrado.</p></li>
 <li><p>Un correo es enviado al usuario conteniendo un enlace especial para resetear la contraseña.</p></li>
 <li><p>El usuario se loguea a su cuenta de correo y da click en el enlace contenido en el correo.</p></li>
 <li><p>El enlace lo dirige a un formulario dónde va a poder introducir una nueva contraseña.</p></li>
 <li><p>Una vez hecho esto la contraseña del usuario ha sido actualizada.</p></li>
 </ol>
 <p>Nada fuera de lo ordinario.</p>
-<p>La idea es hacer un <em>test</em> de todo el flujo, específicamente de los servicios del <em>back-end</em> que soportan esto. Estos son dos:</p>
+<p>La idea es hacer un <em>test</em> de todo el flujo, específicamente de los servicios del <em>back-end</em>
+que soportan esto. Estos son dos:</p>
 <ul>
-<li><strong>Iniciar reseteo de contraseña:</strong> Inicia el reseteo de contraseña dada una dirección de correo electrónico. Tiene como efecto secundario el envío de un correo con un enlace que contiene un <em>token</em> especial.</li>
-<li><strong>Modificar la contraseña con <em>token</em> especial:</strong> Actualiza la contraseña de una cuenta dados: la nueva contraseña, la dirección de correo electrónico y un token especial (enviado en el correo).</li>
+<li><strong>Iniciar reseteo de contraseña:</strong> Inicia el reseteo de contraseña dada una dirección de
+correo electrónico. Tiene como efecto secundario el envío de un correo con un enlace que
+contiene un <em>token</em> especial.</li>
+<li><strong>Modificar la contraseña con <em>token</em> especial:</strong> Actualiza la contraseña de una cuenta
+dados: la nueva contraseña, la dirección de correo electrónico y un token especial (enviado
+en el correo).</li>
 </ul>
-<p>Pero para <em>testear</em> el flujo completo deberíamos usar el primer servicio para iniciar el “reseteo”, después de alguna forma “abrir” la bandeja de entrada del correo del usuario, extraer el <em>token</em> y usarlo para consumir el segundo servicio. Así que la parte no obvia es ¿cómo podemos lograr ese “abrir la bandeja de entrada”?</p>
-<p>Voy a mostrar como lo hicimos y como encontramos que <a href="http://reactivex.io/"><em>reactive extensions</em></a> nos podría servir para lograrlo.</p>
-<p>Primero cabe decir que para enviar correos usamos <a href="https://aws.amazon.com/ses/"><em>SES</em></a> de Amazon. Nuestro código usa el <a href="https://aws.amazon.com/sdk-for-java/"><em>SDK</em></a> que realmente solo hace una solicitud HTTP a un servidor de Amazon. Además los <em>tests e2e</em> se ejecutan en un proceso distinto al servicio que queríamos <em>testear</em>.</p>
-<p>Decidimos hacer lo siguiente: los <em>tests</em> levantan un servidor embebido que simula ser <em>SES</em>, a este lo llamarémos <em>FakeSES</em>. Digamos que este servicio se levantó en el puerto <code>9999</code>. Entonces levantamos el servicio que querémos probar haciéndole pensar que <em>SES</em> se encuentra en <code>&lt;ip del _host_ que corre los tests&gt;:9999</code>.</p>
+<p>Pero para <em>testear</em> el flujo completo deberíamos usar el primer servicio para iniciar el
+“reseteo”, después de alguna forma “abrir” la bandeja de entrada del correo del usuario,
+extraer el <em>token</em> y usarlo para consumir el segundo servicio. Así que la parte no obvia
+es ¿cómo podemos lograr ese “abrir la bandeja de entrada”?</p>
+<p>Voy a mostrar como lo hicimos y como encontramos que <a href="http://reactivex.io/"><em>reactive extensions</em></a> nos podría
+servir para lograrlo.</p>
+<p>Primero cabe decir que para enviar correos usamos <a href="https://aws.amazon.com/ses/"><em>SES</em></a>
+de Amazon. Nuestro código usa el <a href="https://aws.amazon.com/sdk-for-java/"><em>SDK</em></a> que
+realmente solo hace una solicitud HTTP a un servidor de Amazon. Además los <em>tests e2e</em>
+se ejecutan en un proceso distinto al servicio que queríamos <em>testear</em>.</p>
+<p>Decidimos hacer lo siguiente: los <em>tests</em> levantan un servidor embebido que simula ser
+<em>SES</em>, a este lo llamarémos <em>FakeSES</em>. Digamos que este servicio se levantó en el puerto
+<code>9999</code>. Entonces levantamos el servicio que querémos probar haciéndole pensar que <em>SES</em>
+se encuentra en <code>&lt;ip del _host_ que corre los tests&gt;:9999</code>.</p>
 <p>Nada fuera del otro mundo hasta ahora.</p>
-<p>Ahora, gracias a que los tests levantan <em>FakeSES</em> deberían poder inspeccionar las solicitudes de envíos de correos que le llegan. El problema sin embargo es que los tests se ejecutan por un lado mientras que <em>FakeSES</em> se debe ejecutar al mismo tiempo mientras atiende solicitudes. ¿Cómo conectar ambas cosas?</p>
-<p>Aquí es dónde entra <em>reactive extensions</em>. Lo que deseamos hacer es ofrecerle a los <em>tests</em> una <em>vista</em> de las solicitudes de envío que le llegan a <em>FakeSES</em>. ¡Un <code>Observable</code> encajaría muy bien acá! Digamos que este es nuestro código del servidor falso:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">SendEmailRequest</span>(subject: String, body: String, destination: String)
-
-<span class="kw">class</span> FakeSES {
-
-    <span class="kw">private</span> <span class="kw">def</span> <span class="fu">requestToSendEmailRequest</span>(request: HTTPRequest): SendEmailRequest =
-        ??? <span class="co">// no es relevante</span>
-
-    <span class="kw">private</span> <span class="kw">val</span> successResponse: HTTPResponse =
-        ??? <span class="co">// no es relevante</span>
-
-    <span class="kw">private</span> <span class="kw">def</span> <span class="fu">handleRequest</span>(request: HTTPRequest, response: HTTPResponse): Response = {
-        successResponse
-    }
-
-    <span class="co">// *************************</span>
-    <span class="co">// Alguna lógica que levanta </span>
-    <span class="co">// el servidor embebido y</span>
-    <span class="co">// simula ser SES usando la</span>
-    <span class="co">// función `handleRequest`</span>
-    <span class="co">// *************************</span>
-
-}</code></pre></div>
-<p>Entonces idealmente queremos que además tenga una propiedad que nos permita leer las solicitudes de envíos de correos, sin importar en qué momento llegaron o llegarán:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">class</span> FakeSES {
-
-    <span class="co">// ... lo mismo que antes</span>
-
-    <span class="kw">val</span> sendEmailRequests: Observable[SendEmailRequest] = ???
-    
-}</code></pre></div>
+<p>Ahora, gracias a que los tests levantan <em>FakeSES</em> deberían poder inspeccionar las
+solicitudes de envíos de correos que le llegan. El problema sin embargo es que los tests
+se ejecutan por un lado mientras que <em>FakeSES</em> se debe ejecutar al mismo tiempo mientras
+atiende solicitudes. ¿Cómo conectar ambas cosas?</p>
+<p>Aquí es dónde entra <em>reactive extensions</em>. Lo que deseamos hacer es ofrecerle a los
+<em>tests</em> una <em>vista</em> de las solicitudes de envío que le llegan a <em>FakeSES</em>. ¡Un <code>Observable</code>
+encajaría muy bien acá! Digamos que este es nuestro código del servidor falso:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">SendEmailRequest</span><span class="op">(</span>subject<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> body<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> destination<span class="op">:</span> <span class="ex">String</span><span class="op">)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FakeSES <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">def</span> <span class="fu">requestToSendEmailRequest</span><span class="op">(</span>request<span class="op">:</span> HTTPRequest<span class="op">):</span> SendEmailRequest <span class="op">=</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">???</span> <span class="co">// no es relevante</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">val</span> successResponse<span class="op">:</span> HTTPResponse <span class="op">=</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">???</span> <span class="co">// no es relevante</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">def</span> <span class="fu">handleRequest</span><span class="op">(</span>request<span class="op">:</span> HTTPRequest<span class="op">,</span> response<span class="op">:</span> HTTPResponse<span class="op">):</span> <span class="ex">Response</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        successResponse</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// *************************</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Alguna lógica que levanta </span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// el servidor embebido y</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// simula ser SES usando la</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// función `handleRequest`</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// *************************</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Entonces idealmente queremos que además tenga una propiedad que nos permita leer
+las solicitudes de envíos de correos, sin importar en qué momento llegaron o llegarán:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FakeSES <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... lo mismo que antes</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> sendEmailRequests<span class="op">:</span> <span class="ex">Observable</span><span class="op">[</span>SendEmailRequest<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>La pregunta es ¿como inicializar esta variable?</p>
 <p>Podemos hacer lo siguiente:</p>
 <ul>
 <li>Inicializamos una variable de tipo <code>BehaviorSubject[SendEmailRequest]</code>.</li>
 <li>Cada vez que llega una solicitud “escribimos” esta variable.</li>
-<li>Exponemos solamente el lado de “lectura”: es decir los que usen instancias de esta clase van a poder ver el <code>Observable</code> pero no el <code>BehaviorSubject</code>.</li>
+<li>Exponemos solamente el lado de “lectura”: es decir los que usen instancias
+de esta clase van a poder ver el <code>Observable</code> pero no el <code>BehaviorSubject</code>.</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">class</span> FakeSES {
-
-    <span class="co">// ... lo mismo que antes</span>
-    
-    <span class="kw">private</span> <span class="kw">val</span> sendEmailRequestsSubject = BehaviorSubject[SendEmailRequest]
-
-    <span class="kw">private</span> <span class="kw">def</span> <span class="fu">handleRequest</span>(request: HTTPRequest, response: HTTPResponse): Response = {
-        sendEmailRequestsSubject.<span class="fu">onNext</span>(<span class="fu">requestToSendEmailRequest</span>(request))
-        successResponse
-    }
-
-
-    <span class="kw">val</span> sendEmailRequests: Observable[SendEmailRequest] = sendEmailRequestsSubject
-    
-}</code></pre></div>
-<p>Dado que <code>BehaviorSubject</code> es una subclase de <code>Observable</code> podemos hacer este último paso (si han visto los futuros y promesas sabrán que por ahí hay <a href="https://github.com/scala/scala/blob/804a4cc1ff9fa159c576be7c685dbb81220c11da/src/library/scala/concurrent/impl/Promise.scala#L21">una idea similar</a>)-</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FakeSES <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... lo mismo que antes</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">val</span> sendEmailRequestsSubject <span class="op">=</span> BehaviorSubject<span class="op">[</span>SendEmailRequest<span class="op">]</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">def</span> <span class="fu">handleRequest</span><span class="op">(</span>request<span class="op">:</span> HTTPRequest<span class="op">,</span> response<span class="op">:</span> HTTPResponse<span class="op">):</span> <span class="ex">Response</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        sendEmailRequestsSubject<span class="op">.</span><span class="fu">onNext</span><span class="op">(</span><span class="fu">requestToSendEmailRequest</span><span class="op">(</span>request<span class="op">))</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        successResponse</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> sendEmailRequests<span class="op">:</span> <span class="ex">Observable</span><span class="op">[</span>SendEmailRequest<span class="op">]</span> <span class="op">=</span> sendEmailRequestsSubject</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Dado que <code>BehaviorSubject</code> es una subclase de <code>Observable</code> podemos hacer este último paso
+(si han visto los futuros y promesas sabrán que por ahí hay <a href="https://github.com/scala/scala/blob/804a4cc1ff9fa159c576be7c685dbb81220c11da/src/library/scala/concurrent/impl/Promise.scala#L21">una idea similar</a>)-</p>
 <p>Ahora veamos como se escribiría un test:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> org.<span class="fu">scalatest</span>.<span class="fu">concurrent</span>.<span class="fu">ScalaFutures</span>
-<span class="kw">import</span> org.<span class="fu">scalatest</span>.<span class="fu">_</span>
-<span class="kw">import</span> scala.<span class="fu">concurrent</span>.<span class="fu">duration</span>.<span class="fu">_</span>
-<span class="kw">import</span> scala.<span class="fu">concurrent</span>.<span class="fu">Await</span>
-<span class="kw">import</span> scala.<span class="fu">concurrent</span>.<span class="fu">ExecutionContext</span>.<span class="fu">Implicits</span>.<span class="fu">global</span>
-<span class="kw">import</span> scala.<span class="fu">concurrent</span>.<span class="fu">Future</span>
-
-<span class="kw">class</span> ResetPasswordTest 
-    <span class="kw">extends</span> WordSpec 
-    <span class="kw">with</span> MustMatchers 
-    <span class="kw">with</span> WordSpec
-    <span class="kw">with</span> BeforeAndAfterAll {
-
-    <span class="kw">val</span> fakeSES = <span class="kw">new</span> <span class="fu">FakeSES</span>()
-    
-    <span class="kw">def</span> <span class="fu">beforeAll</span>() = fakeSES.<span class="fu">start</span>()
-    
-    <span class="kw">def</span> <span class="fu">afterAll</span>() = fakeSES.<span class="fu">stop</span>()
-    
-    <span class="kw">val</span> email = <span class="st">&quot;some@email.com&quot;</span>
-    <span class="kw">val</span> oldPassword = <span class="st">&quot;asdfdgfad&quot;</span>
-    <span class="kw">val</span> newPassword = <span class="st">&quot;pas5w0rd&quot;</span>
-    
-    <span class="kw">def</span> <span class="fu">firstResetPasswordEmail</span>(): Future[SendEmailRequest] =
-        fakeSES.<span class="fu">sendEmailRequests</span>
-            .<span class="fu">filter</span>(_.<span class="fu">destination</span> == email)
-            .<span class="fu">filter</span>(_.<span class="fu">subject</span> == <span class="st">&quot;Forgot your password?&quot;</span>)
-            .<span class="fu">first</span>
-            .<span class="fu">toBlocking</span>
-            .<span class="fu">toFuture</span>
-            
-    <span class="co">// un cliente del servicio que queremos testear</span>
-    <span class="kw">val</span> service = ???
-    
-    <span class="kw">def</span> <span class="fu">extractResetToken</span>(email: SendEmailRequest): String =
-        ??? <span class="co">// no es relevante</span>
-    
-    <span class="st">&quot;The client&quot;</span> should {
-        <span class="st">&quot;execute the request password flow&quot;</span> in {
-            service.<span class="fu">createUser</span>(email, oldPassword)
-            service.<span class="fu">startPasswordReset</span>(email)
-            <span class="kw">val</span> resetEmail = Await.<span class="fu">result</span>(<span class="fu">firstResetPasswordEmail</span>(), <span class="fl">1.</span>second)
-            <span class="kw">val</span> resetToken = <span class="fu">extractResetToken</span>(resetEmail)
-            service.<span class="fu">resetPassword</span>(email, resetToken, newPassword).<span class="fu">statusCode</span> mustBe <span class="dv">200</span>
-            service.<span class="fu">login</span>(email, newPassword).<span class="fu">statusCode</span> mustBe <span class="dv">200</span>
-            service.<span class="fu">login</span>(email, oldPassword).<span class="fu">statusCode</span> mustBe <span class="dv">403</span>
-        }
-    }
-
-}</code></pre></div>
-<p>Aquí la función <code>firstResetPasswordEmail</code> nos permite filtrar el primer correo que nos interesa. Cabe notar que este código funciona sin importar si llegan otros correos (como por ejemplo un correo de bienvenida apenas el usuario se registra), sin importar en qué orden lleguen, etc… . Esto gracias a la naturaleza declarativa de <em>reactive extensions</em>.</p>
-<p>Y eso fue todo. Todavía no he encontrado un uso en “producción” de <em>reactive extensions</em> pero para esto me pareció útil.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> org<span class="op">.</span>scalatest<span class="op">.</span>concurrent<span class="op">.</span>ScalaFutures</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> org<span class="op">.</span>scalatest<span class="op">.</span>_</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span>duration<span class="op">.</span>_</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span>Await</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span>ExecutionContext<span class="op">.</span>Implicits<span class="op">.</span>global</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span><span class="ex">Future</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ResetPasswordTest </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">extends</span> WordSpec </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">with</span> MustMatchers </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">with</span> WordSpec</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">with</span> BeforeAndAfterAll <span class="op">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> fakeSES <span class="op">=</span> <span class="kw">new</span> <span class="fu">FakeSES</span><span class="op">()</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">beforeAll</span><span class="op">()</span> <span class="op">=</span> fakeSES<span class="op">.</span><span class="fu">start</span><span class="op">()</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">afterAll</span><span class="op">()</span> <span class="op">=</span> fakeSES<span class="op">.</span><span class="fu">stop</span><span class="op">()</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> email <span class="op">=</span> <span class="st">&quot;some@email.com&quot;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> oldPassword <span class="op">=</span> <span class="st">&quot;asdfdgfad&quot;</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> newPassword <span class="op">=</span> <span class="st">&quot;pas5w0rd&quot;</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">firstResetPasswordEmail</span><span class="op">():</span> <span class="ex">Future</span><span class="op">[</span>SendEmailRequest<span class="op">]</span> <span class="op">=</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        fakeSES<span class="op">.</span>sendEmailRequests</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>_<span class="op">.</span>destination <span class="op">==</span> email<span class="op">)</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>_<span class="op">.</span>subject <span class="op">==</span> <span class="st">&quot;Forgot your password?&quot;</span><span class="op">)</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>first</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>toBlocking</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>toFuture</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="co">// un cliente del servicio que queremos testear</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> service <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">extractResetToken</span><span class="op">(</span>email<span class="op">:</span> SendEmailRequest<span class="op">):</span> <span class="ex">String</span> <span class="op">=</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        <span class="op">???</span> <span class="co">// no es relevante</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;The client&quot;</span> should <span class="op">{</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;execute the request password flow&quot;</span> in <span class="op">{</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>            service<span class="op">.</span><span class="fu">createUser</span><span class="op">(</span>email<span class="op">,</span> oldPassword<span class="op">)</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>            service<span class="op">.</span><span class="fu">startPasswordReset</span><span class="op">(</span>email<span class="op">)</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>            <span class="kw">val</span> resetEmail <span class="op">=</span> Await<span class="op">.</span><span class="fu">result</span><span class="op">(</span><span class="fu">firstResetPasswordEmail</span><span class="op">(),</span> <span class="fl">1.</span>second<span class="op">)</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>            <span class="kw">val</span> resetToken <span class="op">=</span> <span class="fu">extractResetToken</span><span class="op">(</span>resetEmail<span class="op">)</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>            service<span class="op">.</span><span class="fu">resetPassword</span><span class="op">(</span>email<span class="op">,</span> resetToken<span class="op">,</span> newPassword<span class="op">).</span>statusCode mustBe <span class="dv">200</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>            service<span class="op">.</span><span class="fu">login</span><span class="op">(</span>email<span class="op">,</span> newPassword<span class="op">).</span>statusCode mustBe <span class="dv">200</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>            service<span class="op">.</span><span class="fu">login</span><span class="op">(</span>email<span class="op">,</span> oldPassword<span class="op">).</span>statusCode mustBe <span class="dv">403</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Aquí la función <code>firstResetPasswordEmail</code> nos permite filtrar el primer correo
+que nos interesa. Cabe notar que este código funciona sin importar si llegan
+otros correos (como por ejemplo un correo de bienvenida apenas el usuario se
+registra), sin importar en qué orden lleguen, etc… . Esto gracias a la naturaleza
+declarativa de <em>reactive extensions</em>.</p>
+<p>Y eso fue todo. Todavía no he encontrado un uso en “producción” de <em>reactive extensions</em>
+pero para esto me pareció útil.</p>
 </div>
 
 <hr>
@@ -237,7 +271,7 @@
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

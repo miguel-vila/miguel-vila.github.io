@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Algunas cosas que quiero hacer en el 2017</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Algunas cosas que quiero hacer en el 2017</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Dec 29 2016
@@ -84,13 +87,13 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/A%C3%B1o%20nuevo.html">Año nuevo</a>, <a href="../tags/Vida.html">Vida</a> 
+        Tags: <a title="All pages tagged 'Año nuevo'." href="../tags/A%C3%B1o%20nuevo.html">Año nuevo</a>, <a title="All pages tagged 'Vida'." href="../tags/Vida.html">Vida</a> 
         
     </div>
     <hr>
     <p>Algunas cosas que quiero lograr en el 2017:</p>
 <ul>
-<li><strong>Leer más ficción:</strong> En 2015 alcancé a leer varios libros de ficción (e.g. <em>“Los detectives salvajes”</em>, <em>“On the road”</em> y <em>“Festín de cuervos”</em>). En cambio este año casí no leí. El único que recuerdo es <em>“La maravillosa vida breve de Oscar Wao”</em>, que me gustó. Empecé <em>“2666”</em> de Bolaño pero he avanzado poco. Quisiera leer más novelas y no quedarme como el ingeniero que no consume más que cosas técnicas.</li>
+<li><strong>Leer más ficción:</strong> En 2015 alcancé a leer varios libros de ficción (e.g. <em>“Los detectives salvajes”</em>, <em>“On the road”</em> y <em>“Festín de cuervos”</em>). En cambio este año casí no leí. El único que recuerdo es <em>“La maravillosa vida breve de Oscar Wao”</em>, que me gustó. Empecé <em>“2666”</em> de Bolaño pero he avanzado poco. Quisiera leer más novelas y no quedarme como el ingeniero que no consume más que cosas técnicas.</li>
 <li><strong>Llegar a la mitad de <em>“Gödel Escher Bach”</em>:</strong> Creo que lo empecé hace 5 o 6 años y en esa ocasión llegué a la mitad. El libro es medio pesado pero tiene sus partes divertidas. Me gustaría terminarlo por fin y leer después “I’m a strange loop” del mismo autor.</li>
 <li><strong>En un lado técnico de las cosas:</strong> quiero dejar a un lado cosas de programación funcional. Creo que ahora mismo me encuentro en un nivel principiante-intermedio y creo que eso me va a servir lo suficiente para tener ciertas discusiones y para aprender más rápidamente cosas mas avanzadas. Sin embargo creo que si sigo por ese camino no voy a aprender otras cosas que pueden resultar más útiles e igual de interesantes. En particular quiero aprender más cosas sobre bajo nivel y sobre sistemas operativos, que son areas en las que siempre me he sentido débil.</li>
 <li><strong>Montar en cicla más y desarrollar más resistencia:</strong> creo que en el último par de años he cogido mas nivel con la cicla. Por ejemplo alcanzo a subir patios consistentemente en menos de 40 minutos, aunque en los ultimos dejé tener la misma constancia por mi asistencia a RC. Quisiera seguir montando en cicla y extenderlo, ojalá hacer recorridos de alrededor de 100 kilómetros fácilmente.</li>
@@ -124,7 +127,7 @@
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

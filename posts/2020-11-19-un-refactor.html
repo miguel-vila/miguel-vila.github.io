@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Un pequeño refactor</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Un pequeño refactor</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Nov 19 2020
@@ -84,29 +87,32 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Scala.html">Scala</a>, <a href="../tags/ZIO.html">ZIO</a>, <a href="../tags/Open%20source.html">Open source</a> 
+        Tags: <a title="All pages tagged 'Scala'." href="../tags/Scala.html">Scala</a>, <a title="All pages tagged 'ZIO'." href="../tags/ZIO.html">ZIO</a>, <a title="All pages tagged 'Open source'." href="../tags/Open%20source.html">Open source</a> 
         
     </div>
     <hr>
-    <p>Hace poco hice un Pull Request a una librería de métricas en Scala, con el objetivo de mejorar el API expuesto a usuarios. Resumiendo la cosa <a href="https://github.com/zio/zio-metrics"><code>zio-metrics</code></a> es una pequeña librería para publicar métricas con ZIO. La estamos usando para reportar una métrica a la medida pero al usarla, en su momento, me dí cuenta que tenía unos detalles de diseño que no me gustaban.</p>
+    <p>Hace poco hice un Pull Request a una librería de métricas en Scala, con el objetivo de mejorar el API expuesto a usuarios.
+Resumiendo la cosa <a href="https://github.com/zio/zio-metrics"><code>zio-metrics</code></a> es una pequeña librería para publicar métricas
+con ZIO. La estamos usando para reportar una métrica a la medida pero al usarla, en su momento, me dí cuenta que
+tenía unos detalles de diseño que no me gustaban.</p>
 <p>La librería funciona con una cola de métricas. Esta cola de métricas es muestreada de forma asíncrona para reportarlas:</p>
 <ul>
 <li>Hay un proceso que de forma continua lee esa cola y usa un cliente UDP para reportarlas.</li>
 <li>Cuando uno quiere reportar una métrica uno invoca una función que empuja un valor a esa cola.</li>
 </ul>
 <p>Un ejemplo, tomado de los docs viejos, de como se usaba antes:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> program = {
-    <span class="kw">val</span> messages = List(<span class="fl">1.0</span>, <span class="fl">2.2</span>, <span class="fl">3.4</span>, <span class="fl">4.6</span>, <span class="fl">5.1</span>, <span class="fl">6.0</span>, <span class="fl">7.9</span>)
-    <span class="kw">val</span> client   = <span class="fu">Client</span>()
-    client.<span class="fu">queue</span> &gt;&gt;= (queue =&gt; {
-      <span class="kw">implicit</span> <span class="kw">val</span> q = queue
-      <span class="kw">for</span> {
-        z &lt;- client.<span class="fu">listen</span>          <span class="co">// uses implicit 'q'</span>
-        opt &lt;- RIO.<span class="fu">foreach</span>(messages)(d =&gt; <span class="fu">Task</span>(<span class="fu">Counter</span>(<span class="st">&quot;clientbar&quot;</span>, d, <span class="fl">1.0</span>, Seq.<span class="fu">empty</span>[Tag])))
-        _   &lt;- RIO.<span class="fu">collectAll</span>(opt.<span class="fu">map</span>(m =&gt; client.<span class="fu">send</span>(q)(m)))
-      } <span class="kw">yield</span> z
-    })
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> program <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> messages <span class="op">=</span> <span class="ex">List</span><span class="op">(</span><span class="fl">1.0</span><span class="op">,</span> <span class="fl">2.2</span><span class="op">,</span> <span class="fl">3.4</span><span class="op">,</span> <span class="fl">4.6</span><span class="op">,</span> <span class="fl">5.1</span><span class="op">,</span> <span class="fl">6.0</span><span class="op">,</span> <span class="fl">7.9</span><span class="op">)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> client   <span class="op">=</span> <span class="fu">Client</span><span class="op">()</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    client<span class="op">.</span>queue <span class="op">&gt;&gt;=</span> <span class="op">(</span>queue <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">implicit</span> <span class="kw">val</span> q <span class="op">=</span> queue</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        z <span class="op">&lt;-</span> client<span class="op">.</span>listen          <span class="co">// uses implicit 'q'</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        opt <span class="op">&lt;-</span> RIO<span class="op">.</span><span class="fu">foreach</span><span class="op">(</span>messages<span class="op">)(</span>d <span class="op">=&gt;</span> <span class="fu">Task</span><span class="op">(</span><span class="fu">Counter</span><span class="op">(</span><span class="st">&quot;clientbar&quot;</span><span class="op">,</span> d<span class="op">,</span> <span class="fl">1.0</span><span class="op">,</span> <span class="bu">Seq</span><span class="op">.</span>empty<span class="op">[</span>Tag<span class="op">])))</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        _   <span class="op">&lt;-</span> RIO<span class="op">.</span><span class="fu">collectAll</span><span class="op">(</span>opt<span class="op">.</span><span class="fu">map</span><span class="op">(</span>m <span class="op">=&gt;</span> client<span class="op">.</span><span class="fu">send</span><span class="op">(</span>q<span class="op">)(</span>m<span class="op">)))</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span> <span class="cf">yield</span> z</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">})</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Hay varios detalles:</p>
 <ul>
 <li>Los usuarios de la librería <em>tienen</em> que llamar <code>.listen</code> para inicializar el proceso que va a extraer valores de la cola.</li>
@@ -116,37 +122,38 @@
 <ul>
 <li>Un usuario puede olvidar llamar <code>.listen</code> perfectamente. Nada en la librería evitaría que esto pasase.</li>
 <li>Un usuario puede enviar una métrica con una referencia a una cola <em>distinta</em> a la que fué usada al llamar a <code>.listen</code>. Una vez más, nada en la librería evitaría que esto sucediera.</li>
-<li>Por último, tal vez no sea evidente en el ejemplo anterior, pero en programas más complicados, dónde los pasos de inicialización están muy alejados de los usos, puede resultar incómodo usar este API. Habría que propagar la referencia a la cola desde dónde se inicializó.</li>
+<li>Por último, tal vez no sea evidente en el ejemplo anterior, pero en programas más complicados, dónde los pasos de inicialización están muy alejados
+de los usos, puede resultar incómodo usar este API. Habría que propagar la referencia a la cola desde dónde se inicializó.</li>
 </ul>
 <p>En pocas palabras la cola es un detalle de implementación que el API está exponiendo.</p>
 <p>Debido a eso, me tomé el “atrevimiento” de abrir un <a href="https://github.com/zio/zio-metrics/issues/52"><em>issue</em></a>. Lo discutí con el autor de la librería y después abrí un <a href="https://github.com/zio/zio-metrics/pull/53">Pull request</a> para intentar arreglarlo.</p>
 <p>El resultado final implica que ahora ningún cliente tiene que pasar ninguna referencia a ninguna cola. El código anterior se transformó en:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> program = {
-    <span class="kw">val</span> messages = List(<span class="fl">1.0</span>, <span class="fl">2.2</span>, <span class="fl">3.4</span>, <span class="fl">4.6</span>, <span class="fl">5.1</span>, <span class="fl">6.0</span>, <span class="fl">7.9</span>)
-    <span class="kw">val</span> createClient = <span class="fu">Client</span>()
-    createClient.<span class="fu">use</span> { client =&gt;
-      <span class="kw">for</span> {
-        opt &lt;- RIO.<span class="fu">foreach</span>(messages)(d =&gt; <span class="fu">Task</span>(<span class="fu">Counter</span>(<span class="st">&quot;clientbar&quot;</span>, d, <span class="fl">1.0</span>, Seq.<span class="fu">empty</span>[Tag])))
-        _   &lt;- RIO.<span class="fu">collectAll</span>(opt.<span class="fu">map</span>(m =&gt; client.<span class="fu">sendM</span>(<span class="kw">true</span>)(m)))
-      } <span class="kw">yield</span> ()
-    }
-}</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> program <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> messages <span class="op">=</span> <span class="ex">List</span><span class="op">(</span><span class="fl">1.0</span><span class="op">,</span> <span class="fl">2.2</span><span class="op">,</span> <span class="fl">3.4</span><span class="op">,</span> <span class="fl">4.6</span><span class="op">,</span> <span class="fl">5.1</span><span class="op">,</span> <span class="fl">6.0</span><span class="op">,</span> <span class="fl">7.9</span><span class="op">)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> createClient <span class="op">=</span> <span class="fu">Client</span><span class="op">()</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    createClient<span class="op">.</span>use <span class="op">{</span> client <span class="op">=&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        opt <span class="op">&lt;-</span> RIO<span class="op">.</span><span class="fu">foreach</span><span class="op">(</span>messages<span class="op">)(</span>d <span class="op">=&gt;</span> <span class="fu">Task</span><span class="op">(</span><span class="fu">Counter</span><span class="op">(</span><span class="st">&quot;clientbar&quot;</span><span class="op">,</span> d<span class="op">,</span> <span class="fl">1.0</span><span class="op">,</span> <span class="bu">Seq</span><span class="op">.</span>empty<span class="op">[</span>Tag<span class="op">])))</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        _   <span class="op">&lt;-</span> RIO<span class="op">.</span><span class="fu">collectAll</span><span class="op">(</span>opt<span class="op">.</span><span class="fu">map</span><span class="op">(</span>m <span class="op">=&gt;</span> client<span class="op">.</span><span class="fu">sendM</span><span class="op">(</span><span class="kw">true</span><span class="op">)(</span>m<span class="op">)))</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span> <span class="cf">yield</span> <span class="op">()</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>La diferencia principal es que ahora los constructores de los clientes retornan un <a href="https://zio.dev/docs/datatypes/datatypes_managed"><code>ZManaged</code></a> que encapsula la creación de la cola, y la inicialización del proceso que escucha la cola:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">def</span> <span class="fu">apply</span>(
-    bufferSize: Long,
-    timeout: Long,
-    queueCapacity: Int,
-    host: Option[String],
-    port: Option[Int]
-  ): ZManaged[ClientEnv, Throwable, Client] =
-    ZManaged.<span class="fu">make</span> {
-      <span class="kw">for</span> {
-        queue  &lt;- ZQueue.<span class="fu">bounded</span>[Metric](queueCapacity)
-        client = <span class="kw">new</span> <span class="fu">Client</span>(bufferSize, timeout, host, port)(queue)
-        fiber  &lt;- client.<span class="fu">listen</span>
-      } <span class="kw">yield</span> (client, fiber)
-    } { <span class="kw">case</span> (client, fiber) =&gt; client.<span class="fu">queue</span>.<span class="fu">shutdown</span> *&gt; fiber.<span class="fu">join</span>.<span class="fu">orDie</span> }
-      .<span class="fu">map</span>(_.<span class="fu">_1</span>)</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">apply</span><span class="op">(</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    bufferSize<span class="op">:</span> <span class="ex">Long</span><span class="op">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    timeout<span class="op">:</span> <span class="ex">Long</span><span class="op">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    queueCapacity<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    host<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span><span class="ex">String</span><span class="op">],</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    port<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">):</span> ZManaged<span class="op">[</span>ClientEnv<span class="op">,</span> <span class="ex">Throwable</span><span class="op">,</span> Client<span class="op">]</span> <span class="op">=</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    ZManaged<span class="op">.</span>make <span class="op">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        queue  <span class="op">&lt;-</span> ZQueue<span class="op">.</span>bounded<span class="op">[</span>Metric<span class="op">](</span>queueCapacity<span class="op">)</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        client <span class="op">=</span> <span class="kw">new</span> <span class="fu">Client</span><span class="op">(</span>bufferSize<span class="op">,</span> timeout<span class="op">,</span> host<span class="op">,</span> port<span class="op">)(</span>queue<span class="op">)</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        fiber  <span class="op">&lt;-</span> client<span class="op">.</span>listen</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span> <span class="cf">yield</span> <span class="op">(</span>client<span class="op">,</span> fiber<span class="op">)</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="op">{</span> <span class="cf">case</span> <span class="op">(</span>client<span class="op">,</span> fiber<span class="op">)</span> <span class="op">=&gt;</span> client<span class="op">.</span>queue<span class="op">.</span>shutdown <span class="op">*&gt;</span> fiber<span class="op">.</span>join<span class="op">.</span>orDie <span class="op">}</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">map</span><span class="op">(</span>_<span class="op">.</span>_1<span class="op">)</span></span></code></pre></div>
 <p>A partir de ahí las instancias de <code>Client</code> contarán con una referencia fija y privada a una cola. Además serán libres de empujar mensajes a ella cuando requieran reportar una métrica, sin tener que obligar a los invocadores a que provean la cola correcta.</p>
 <p>Eso era todo, la lección principal es que uno no se tiene que aguantar APIs incómodos y que siempre hay forma de mejorarlos.</p>
 <p>Gracias a <a href="https://github.com/toxicafunk">toxicafunk</a> por permitirme contribuir esto y asistirme en el PR.</p>
@@ -171,7 +178,7 @@
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

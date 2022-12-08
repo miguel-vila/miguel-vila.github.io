@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>2021 en libros</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>2021 en libros</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Jan 01 2022
@@ -84,7 +87,7 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Vida.html">Vida</a>, <a href="../tags/Lecturas.html">Lecturas</a> 
+        Tags: <a title="All pages tagged 'Vida'." href="../tags/Vida.html">Vida</a>, <a title="All pages tagged 'Lecturas'." href="../tags/Lecturas.html">Lecturas</a> 
         
     </div>
     <hr>
@@ -92,20 +95,36 @@
 <h2 id="ficción">Ficción</h2>
 <h3 id="ursula-k.-le-guin">Ursula K. Le Guin</h3>
 <p><img src="../images/libros-2021.png" class="article-photo" style="float: right; width: 35%"></p>
-<p>El descubrimiento más chévere de este año fue Ursula K. Le Guin, una escritora de fantasía y ciencia ficción. Mi libro favorito de ficción de este año fue <a href="https://www.goodreads.com/book/show/26837308-the-dispossessed">“The Dispossessed”</a>, escrito por ella. Es de ciencia ficción y trata de un científico que hace parte de una sociedad anárquica casi que utópica. El científico hace un descubrimiento y decide compartirlo fuera de su mundo, y ahí es donde empiezan los conflictos. Creo que el libro es una excusa para hablar sobre qué significa la libertad, qué significa conformarse a una sociedad y otras cosas. También hace guiños a sobre qué significa la prosperidad en una sociedad. Podría escribir mucho sobre este libro, sobre lo mucho que me gusta en su mayoría pero prefiero que la gente lo descubra por su cuenta. Algunos pasajes que me gustaron:</p>
+<p>El descubrimiento más chévere de este año fue Ursula K. Le Guin, una escritora de fantasía y ciencia ficción.
+Mi libro favorito de ficción de este año fue <a href="https://www.goodreads.com/book/show/26837308-the-dispossessed">“The Dispossessed”</a>, escrito por ella. Es de ciencia ficción y trata de un científico
+que hace parte de una sociedad anárquica casi que utópica. El científico hace un descubrimiento y decide compartirlo
+fuera de su mundo, y ahí es donde empiezan los conflictos. Creo que el libro es una excusa para hablar sobre
+qué significa la libertad, qué significa conformarse a una sociedad y otras cosas. También hace guiños a sobre qué
+significa la prosperidad en una sociedad. Podría escribir mucho sobre este libro, sobre lo mucho que me gusta en su
+mayoría pero prefiero que la gente lo descubra por su cuenta. Algunos pasajes que me gustaron:</p>
 <blockquote>
 <p>He had assumed that if you removed a human being’s natural incentive to work—his initiative, his spontaneous creative energy—and replaced it with external motivation and coercion, he would become a lazy and careless worker. But no careless workers kept those lovely farmlands, or made the superb cars and comfortable trains. The lure and compulsion of profit was evidently a much more effective replacement of the natural initiative than he had been led to believe.</p>
 </blockquote>
 <blockquote>
 <p>Have we not eaten while another starved? Will you punish us for that? Will you reward us for the virtue of starving while others ate? No man earns punishment, no man earns reward. Free your mind of the idea of deserving, the idea of earning, and you will begin to be able to think.</p>
 </blockquote>
-<p>El segundo libro que me leí de ella es <a href="https://www.goodreads.com/book/show/25328607-a-wizard-of-earthsea">“A Wizard of Earthsea”</a>, el primero de una saga de fantasía sobre un mago. Es el tipo de libro que me hubiera gustado leer de pequeño. Está bastante bien escrito. Le Guin construye un mundo con una consistencia interna y con una variedad geográfica. También tiene muchas referencias “Jungianas”: el antagonista es precisamente una “sombra”, entre otras cosas. Probablemente lea más libros de esta saga.</p>
-<p>También leí <a href="https://www.goodreads.com/book/show/43373479-the-left-hand-of-darkness">“The Left Hand of Darkness”</a>, otro de ciencia ficción que imagina un mundo en el que las personas no tienen un sexo definido. Es uno de esos experimentos mentales donde se habla de los roles sexuales y como eso resultaría en otra sociedad. Este no es tan bueno como los otros, siento que hubo varias cosas que podría haber explorado con más profundidad.</p>
-<p>El último de Le Guin que leí es <a href="https://www.goodreads.com/book/show/53513520-the-lathe-of-heaven">“The Lathe of Heaven”</a>, que es es de ciencia ficción. Resumiendo la premisa principal, trata de George Orr, un hombre cuyos sueños afectan la realidad. Esto se convierte en una carga para él, ya que su realidad está cambiando constantemente. Buscando a alguien que lo cure, encuentra un terapeuta, que dándose cuenta de sus poderes intenta afectar los sueños de Orr para mejorar la sociedad.</p>
+<p>El segundo libro que me leí de ella es <a href="https://www.goodreads.com/book/show/25328607-a-wizard-of-earthsea">“A Wizard of Earthsea”</a>, el primero de una saga de fantasía sobre un mago. Es el tipo
+de libro que me hubiera gustado leer de pequeño. Está bastante bien escrito. Le Guin construye un mundo con una consistencia
+interna y con una variedad geográfica. También tiene muchas referencias “Jungianas”: el antagonista es precisamente una
+“sombra”, entre otras cosas. Probablemente lea más libros de esta saga.</p>
+<p>También leí <a href="https://www.goodreads.com/book/show/43373479-the-left-hand-of-darkness">“The Left Hand of Darkness”</a>, otro de ciencia ficción que imagina un mundo en el que las personas no tienen un sexo
+definido. Es uno de esos experimentos mentales donde se habla de los roles sexuales y como eso resultaría en otra sociedad. Este no es tan bueno como los otros, siento que hubo varias cosas que podría haber explorado con más profundidad.</p>
+<p>El último de Le Guin que leí es <a href="https://www.goodreads.com/book/show/53513520-the-lathe-of-heaven">“The Lathe of Heaven”</a>, que es es de ciencia ficción. Resumiendo la premisa principal, trata de
+George Orr, un hombre cuyos sueños afectan la realidad. Esto se convierte en una carga para él, ya que su realidad está
+cambiando constantemente. Buscando a alguien que lo cure, encuentra un terapeuta, que dándose cuenta de sus poderes intenta
+afectar los sueños de Orr para mejorar la sociedad.</p>
 <h3 id="otros-de-ficción">Otros de ficción</h3>
 <p>Los otros de ficción que leí fueron de autoras colombianas. <a href="https://www.goodreads.com/book/show/53554102-el-tiempo-de-las-amazonas">“El tiempo de las amazonas”</a>, novela póstuma de Marvel Moreno, es sobre un grupo de colombianas en Paris conviviendo con sus parejas y explorando sus deseos. El estilo narrativo es un poco complicado, un poco similar a escuchar chismes. Es un obra a medias (publicada postumamente) pero creo que vale la pena leerla. Se me hizo como la versión femenina de <a href="https://www.goodreads.com/book/show/146509.El_s_ndrome_de_Ulises?from_search=true&amp;from_srp=true&amp;qid=WzoNsBKPp9&amp;rank=1">“El síndrome de Ulises”</a> en el sentido que también habla sobre colombianos en Paris y sobre sus vidas románticas.</p>
 <h2 id="no-ficción">No ficción</h2>
-<p>El mejor libro de no ficción que leí este año fue <a href="https://www.goodreads.com/book/show/42041926-the-scout-mindset">“The Scout Mindset”</a> de Julia Galef. Si tuviera que resumirlo en una frase es sobre la idea de que “uno debe mirar las cosas por lo que son, y no por lo que uno desearía que fuera”. En general trata sobre lógica, sobre buscar “la verdad” sin importar a donde nos lleve, sobre tomar decisiones sin sesgos, sobre como nuestra identidad se relaciona con nuestras creencias, entre otras cosas. Algunos apartes:</p>
+<p>El mejor libro de no ficción que leí este año fue <a href="https://www.goodreads.com/book/show/42041926-the-scout-mindset">“The Scout Mindset”</a> de Julia Galef. Si tuviera que resumirlo en una frase es sobre la idea de que “uno debe mirar
+las cosas por lo que son, y no por lo que uno desearía que fuera”. En general trata sobre lógica, sobre buscar “la verdad”
+sin importar a donde nos lleve, sobre tomar decisiones sin sesgos, sobre como nuestra identidad se relaciona con nuestras
+creencias, entre otras cosas. Algunos apartes:</p>
 <blockquote>
 <p>If instead you see the world in shades of gray, and you think of “changing your mind” as an incremental shift, then the experience of encountering evidence against one of your beliefs is very different.</p>
 </blockquote>
@@ -119,7 +138,9 @@
 <p>(…) it’s a sign of confidence, intellectually, to not need to be certain about everything</p>
 </blockquote>
 <p>Recomiendo <a href="https://www.youtube.com/user/measureofdoubt/videos">el canal de YouTube</a> de la autora.</p>
-<p>Otro de no ficción que me gustó fue <a href="https://www.goodreads.com/book/show/42106244-the-behavioral-investor">“The behavioral investor”</a>, sobre sicología e inversiones. Se me hace que mucho de lo que habla es aplicable no solo a inversiones sino a toma de decisiones. En cualquier caso, lo recomiendo para personas que están aprendiendo a invertir y quieren mejorar la forma en que toman decisiones. Algunos apartes:</p>
+<p>Otro de no ficción que me gustó fue <a href="https://www.goodreads.com/book/show/42106244-the-behavioral-investor">“The behavioral investor”</a>, sobre sicología e inversiones. Se me hace que mucho de lo que habla es aplicable no solo a
+inversiones sino a toma de decisiones. En cualquier caso, lo recomiendo para personas que están aprendiendo a invertir y
+quieren mejorar la forma en que toman decisiones. Algunos apartes:</p>
 <blockquote>
 <p>Rapid, decisive action may save a squirrel from an owl, but it certainly doesn’t help investors. In fact, a large body of research suggests that investors profit most when they do the least.</p>
 </blockquote>
@@ -131,9 +152,14 @@
 </blockquote>
 <p>Otros libros que creo que merecen una breve mención:</p>
 <ul>
-<li><a href="https://www.goodreads.com/book/show/56708844-layered-money">“Layered Money”</a> de Nik Bhatia: es sobre una forma de ver los distintos tipos de “dinero”, concluyendo con Bitcoin. A pesar de que no creo en Bitcoin como la panacea un libro como este es útil para entender esas personas que ponen su fé en Bitcoin.</li>
-<li><a href="https://www.goodreads.com/book/show/10126453-economics-in-one-lesson">“Economics in One Lesson”</a> de Henry Hazlitt: Es una introducción básica a economía, con un tono un poco libertario. Se me hace que está un poco desactualizado y algunas cosas hay que sopesarlas. Una vez más, sin ser un defensor del libre comercio, este libro sirve para entenderlos.</li>
-<li><a href="https://www.goodreads.com/book/show/18813923-democracy-at-work">“Democracy at Work: A Cure for Capitalism”</a>: Es en parte un recuento de los efectos negativos del capitalismo y al mismo tiempo una explicación sobre “Worker Self-Directed Enterprises” (WSDE). Estas son compañías dirigidas democráticamente por sus trabajadores y donde estos eligen qué hacer con las ganancias.</li>
+<li><a href="https://www.goodreads.com/book/show/56708844-layered-money">“Layered Money”</a> de Nik Bhatia: es sobre una forma de ver los
+distintos tipos de “dinero”, concluyendo con Bitcoin. A pesar de que no creo en Bitcoin como la panacea un libro como este es
+útil para entender esas personas que ponen su fé en Bitcoin.</li>
+<li><a href="https://www.goodreads.com/book/show/10126453-economics-in-one-lesson">“Economics in One Lesson”</a> de Henry Hazlitt: Es una
+introducción básica a economía, con un tono un poco libertario. Se me hace que está un poco desactualizado y algunas cosas
+hay que sopesarlas. Una vez más, sin ser un defensor del libre comercio, este libro sirve para entenderlos.</li>
+<li><a href="https://www.goodreads.com/book/show/18813923-democracy-at-work">“Democracy at Work: A Cure for Capitalism”</a>: Es en parte un
+recuento de los efectos negativos del capitalismo y al mismo tiempo una explicación sobre “Worker Self-Directed Enterprises” (WSDE). Estas son compañías dirigidas democráticamente por sus trabajadores y donde estos eligen qué hacer con las ganancias.</li>
 </ul>
 </div>
 
@@ -156,7 +182,7 @@
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

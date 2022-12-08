@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Algo de lo que hice esta semana (22/01/2017 - 29/01/2017)</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Algo de lo que hice esta semana (22/01/2017 - 29/01/2017)</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Jan 29 2017
@@ -84,26 +87,26 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Vida.html">Vida</a> 
+        Tags: <a title="All pages tagged 'Vida'." href="../tags/Vida.html">Vida</a> 
         
     </div>
     <hr>
     <p>Esta semana terminé de leer <a href="https://en.wikipedia.org/wiki/The_Double_(Saramago_novel)"><em>El hombre duplicado</em></a> de Saramago. No sé como describir la cosa, si decir si me gustó o no. Puedo decir que en su mayoría me gustó. Ahora recuerdo que la película <a href="http://www.imdb.com/title/tt2316411"><em>Enemy</em></a>, dirigida por Denis Villeneueve, es basada ligeramente en este libro, aunque creo con un distinto desenlace y enfoque. Ahora voy a empezar <a href="https://www.goodreads.com/book/show/7944987-sunset-park"><em>Sunset Park</em></a> de Paul Auster.</p>
 <p>También terminé el <a href="http://underscore.io/books/shapeless-guide/">libro</a> sobre <a href="https://github.com/milessabin/shapeless"><em>shapeless</em></a> que estaba leyendo. Puntos positivos: se enfoca en como usar la librería para hacer cosas útiles y la hace menos intimidante. El único punto negativo que le encuentro es que no tiene ejercicios que le permitan a uno validar si de verdad está entendiendo las cosas.</p>
 <p>Un detalle curioso: hablan del “patrón lema” que no es otra cosa que reusar operaciones ya existentes para implementar nuevas. El nombre del patrón se origina en las matemáticas: un lema se da cuando para demostrar ciertos teoremas se usan otros teoremas. Estos teoremas, que en el contexto de una demostración ayudan a demostrar otro teorema se denominan lemas. Reusar este término tiene una apariencia pedante para algo que como programadores hacemos en cada momento: invocar otras funciones para implementar otras funciones. Pero aquí el reuso tiene un significado distinto por que los “ops” corresponden a afirmaciones sobre los tipos. El ejemplo que ponen en el libro es el de implementar un “op” para extraer el penúltimo valor de un <code>HList</code>, reusando un “op” para sacar el segmento inicial de un <code>HList</code> y otro para sacar el último valor. En codigo:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> shapeless.<span class="fu">ops</span>.<span class="fu">hlist</span>
-
-<span class="kw">implicit</span> <span class="kw">def</span> hlistPenultimate[L &lt;: HList, M &lt;: HList, O](
-  <span class="kw">implicit</span>
-  init: hlist.<span class="fu">Init</span>.<span class="fu">Aux</span>[L, M],
-  last: hlist.<span class="fu">Last</span>.<span class="fu">Aux</span>[M, O]
-): Penultimate.<span class="fu">Aux</span>[L, O] =
-  <span class="kw">new</span> Penultimate[L] {
-    <span class="kw">type</span> Out = O
-    <span class="kw">def</span> <span class="fu">apply</span>(l: L): O =
-      last.<span class="fu">apply</span>(init.<span class="fu">apply</span>(l))
-                        
-  }</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> shapeless<span class="op">.</span>ops<span class="op">.</span>hlist</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">def</span> hlistPenultimate<span class="op">[</span>L <span class="op">&lt;:</span> HList<span class="op">,</span> M <span class="op">&lt;:</span> HList<span class="op">,</span> O<span class="op">](</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">implicit</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  init<span class="op">:</span> hlist<span class="op">.</span>Init<span class="op">.</span>Aux<span class="op">[</span>L<span class="op">,</span> M<span class="op">],</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  last<span class="op">:</span> hlist<span class="op">.</span>Last<span class="op">.</span>Aux<span class="op">[</span>M<span class="op">,</span> O<span class="op">]</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">):</span> Penultimate<span class="op">.</span>Aux<span class="op">[</span>L<span class="op">,</span> O<span class="op">]</span> <span class="op">=</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">new</span> Penultimate<span class="op">[</span>L<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">type</span> Out <span class="op">=</span> O</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">apply</span><span class="op">(</span>l<span class="op">:</span> L<span class="op">):</span> O <span class="op">=</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      last<span class="op">.</span><span class="fu">apply</span><span class="op">(</span>init<span class="op">.</span><span class="fu">apply</span><span class="op">(</span>l<span class="op">))</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
 <p>En este contexto el “lema” es la existencia de un <code>Init</code> y un <code>Last</code> y el “teorema” es la existencia de un <code>Penultimate</code>.</p>
 <p>Por otra parte usé <a href="http://elm-lang.org/">Elm</a> para graficar el problema del <a href="http://adventofcode.com/2016/day/8">día 8 de <em>Advent Of Code</em></a>:</p>
 <SCRIPT type="text/javascript" src="../code/elm-adv-8.js"></script>
@@ -136,7 +139,7 @@ Elm.Main.embed(document.getElementById("elm-adv-8"));
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>

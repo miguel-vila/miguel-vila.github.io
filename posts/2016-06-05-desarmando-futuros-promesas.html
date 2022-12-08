@@ -35,48 +35,51 @@
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
         <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        <script>
-            const htmlEl = document.getElementsByTagName("html")[0];
-            console.log('local '+ window.localStorage.getItem('theme'))
-            let _theme = htmlEl.dataset.theme || window.localStorage.getItem('theme') || 'light'
-            function setToggleText(theme) {
-                const themeTogglerEl = document.getElementById("theme-toggler");
-                themeTogglerEl.textContent = theme;
-            }
-            function setTheme(theme) {
-                window.localStorage.setItem('theme', _theme)
-                htmlEl.dataset.theme = _theme;
-            }
-            setTheme(_theme);
-            const toggleTheme = () => {
-                setToggleText(_theme + ' mode');
-                _theme = _theme == 'light' ? 'dark': 'light';
-                setTheme(_theme)
-            };
-        </script>
+        <link rel="stylesheet" href="../css/style.css">
         
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
     <header>
         <h1>Miguel Vil&aacute;</h1>
-        <nav>
-            <a href="../">Home</a>
-            <a href="../archive.html">Blog</a>
-            <a href="../resume_EN.pdf">Resume</a>
-            <a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a>|
-            <a href="https://github.com/miguel-vila/">Github</a>
-            <a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a>
-            <!-- <a id="theme-toggler" class="clickable"  onclick="toggleTheme();">dark mode</a> -->
-        </nav>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
     </header>
-    <article>
-    <h2>Desarmando las Promesas y los Futuros de la librería estándar de Scala</h2>
-    <div id="content" class="inside">
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Desarmando las Promesas y los Futuros de la librería estándar de Scala</h2>
+        </div>
+        <div id="content" class="inside">
     <div class="info">
         
         Jun 05 2016
@@ -84,7 +87,7 @@
     </div>
     <div class="info">
         
-        Tags: <a href="../tags/Scala.html">Scala</a>, <a href="../tags/Functional%20Programming.html">Functional Programming</a>, <a href="../tags/Monads.html">Monads</a>, <a href="../tags/Concurrency.html">Concurrency</a>, <a href="../tags/Futures.html">Futures</a>, <a href="../tags/Promises.html">Promises</a>, <a href="../tags/Async.html">Async</a> 
+        Tags: <a title="All pages tagged 'Scala'." href="../tags/Scala.html">Scala</a>, <a title="All pages tagged 'Functional Programming'." href="../tags/Functional%20Programming.html">Functional Programming</a>, <a title="All pages tagged 'Monads'." href="../tags/Monads.html">Monads</a>, <a title="All pages tagged 'Concurrency'." href="../tags/Concurrency.html">Concurrency</a>, <a title="All pages tagged 'Futures'." href="../tags/Futures.html">Futures</a>, <a title="All pages tagged 'Promises'." href="../tags/Promises.html">Promises</a>, <a title="All pages tagged 'Async'." href="../tags/Async.html">Async</a> 
         
     </div>
     <hr>
@@ -113,54 +116,54 @@
 <p>Entonces veamos como se podría construir nuestra propia implementación de promesas y futuros:</p>
 <h2 id="las-interfaces-de-los-dos-lados">Las interfaces de los dos lados</h2>
 <p>Empecemos por el Futuro, que es el lado de lectura. Inicialmente va a tener un método que permite agregar un <em>callback</em> cuando el Futuro emita algún valor, sea exitoso o fallido, para lo cuál aprovechamos el tipo <code>Try</code>:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> Futuro[T] {
-
-  <span class="kw">def</span> <span class="fu">onComplete</span>(f: Try[T] =&gt; Unit)(<span class="kw">implicit</span> executionContext: ExecutionContext): Unit
-
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Futuro<span class="op">[</span>T<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">onComplete</span><span class="op">(</span>f<span class="op">:</span> Try<span class="op">[</span>T<span class="op">]</span> <span class="op">=&gt;</span> <span class="bu">Unit</span><span class="op">)(</span><span class="kw">implicit</span> executionContext<span class="op">:</span> ExecutionContext<span class="op">):</span> <span class="bu">Unit</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Recibe una función que lee el resultado y hace algo con ella e implícitamente recibe un <a href="http://www.scala-lang.org/api/2.10.3/#scala.concurrent.ExecutionContext"><code>ExecutionContext</code></a>, que es una especie de <em>pool</em> de <em>threads</em>, dónde se va a ejecutar la función eventualmente.</p>
 <p>Este es el lado de lectura aunque por ahora se ve muy imperativo. Esto cambiará muy pronto gracias a la interacción con el lado de escritura.</p>
 <p>La Promesa por su parte es el lugar donde se almacena el resultado de una computación eventual. Tiene una interfaz muy simple:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> Promesa[T] {
-
-  <span class="kw">def</span> futuro: Futuro[T]
-
-  <span class="kw">def</span> <span class="fu">complete</span>(value: Try[T]): Boolean
-
-}</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Promesa<span class="op">[</span>T<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> futuro<span class="op">:</span> Futuro<span class="op">[</span>T<span class="op">]</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">complete</span><span class="op">(</span>value<span class="op">:</span> Try<span class="op">[</span>T<span class="op">]):</span> <span class="ex">Boolean</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Tiene una propiedad de tipo <code>Futuro</code>, es decir del lado de lectura de la variable, y tiene una función <code>complete</code> que permite escribir la variable, sea con un valor exitoso o fallido. Esta última función devuelve un booleano indicando si se pudo hacer la escritura dado que nadie haya escrito la variable antes. Si se llama <code>complete</code> por segunda vez ese intento de escritura falla y retorna <code>false</code>. Se suele decir que una promesa ha sido “resuelta” cuando alguien ha escrito un valor exitoso. De forma similar se dice que ha sido “rechazada” si el valor con el que se ha escrito es erróneo.</p>
 <h2 id="wishful-thinking"><em>Wishful thinking</em></h2>
 <p>En este punto, con algo de <em>wishful thinking</em>, ya podemos empezar a implementar los combinadores funcionales. Imaginémos que tenemos alguna implementación de <code>Promesa</code> y <code>Futuro</code> con las interfaces de arriba y que podemos construir una promesa sin completar. Con esto ya podríamos describir <code>map</code>, uno de los combinadores funcionales más comúnes:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> Futuro[T] {
-
-  <span class="kw">def</span> <span class="fu">onComplete</span>(f: Try[T] =&gt; Unit)(<span class="kw">implicit</span> executionContext: ExecutionContext): Unit
-
-  <span class="kw">def</span> map[S](f: T =&gt; S)(<span class="kw">implicit</span> executionContext: ExecutionContext): Futuro[S] = {
-    <span class="co">// Define una promesa del tipo esperado S</span>
-    <span class="kw">val</span> promesa = Promesa[S]()
-    onComplete {
-      <span class="kw">case</span> <span class="fu">Success</span>(t) =&gt;
-        <span class="co">// &quot;Lee&quot; el valor del futuro actual y con ese valor</span>
-        <span class="co">// ejecuta la función f para obtener un valor con</span>
-        <span class="co">// el que escribir la promesa:</span>
-        <span class="kw">val</span> value = <span class="kw">try</span> { <span class="fu">Success</span>( <span class="fu">f</span>(t) ) } <span class="kw">catch</span> { <span class="kw">case</span> <span class="fu">NonFatal</span>(error) =&gt; <span class="fu">Failure</span>(error) }
-        promesa.<span class="fu">complete</span>( value )
-      <span class="kw">case</span> <span class="fu">Failure</span>(error) =&gt;
-        <span class="co">// Si el futuro actual es fallido escribimos la</span>
-        <span class="co">// misma falla en el nuevo futuro</span>
-        promesa.<span class="fu">complete</span>( <span class="fu">Failure</span>(error) )
-    }
-    <span class="co">// Al final devolvemos el lado de lectura de la promesa</span>
-    promesa.<span class="fu">futuro</span>
-  }
-
-}</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Futuro<span class="op">[</span>T<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">onComplete</span><span class="op">(</span>f<span class="op">:</span> Try<span class="op">[</span>T<span class="op">]</span> <span class="op">=&gt;</span> <span class="bu">Unit</span><span class="op">)(</span><span class="kw">implicit</span> executionContext<span class="op">:</span> ExecutionContext<span class="op">):</span> <span class="bu">Unit</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> map<span class="op">[</span>S<span class="op">](</span>f<span class="op">:</span> T <span class="op">=&gt;</span> S<span class="op">)(</span><span class="kw">implicit</span> executionContext<span class="op">:</span> ExecutionContext<span class="op">):</span> Futuro<span class="op">[</span>S<span class="op">]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Define una promesa del tipo esperado S</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> promesa <span class="op">=</span> Promesa<span class="op">[</span>S<span class="op">]()</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    onComplete <span class="op">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="cf">case</span> <span class="fu">Success</span><span class="op">(</span>t<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// &quot;Lee&quot; el valor del futuro actual y con ese valor</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ejecuta la función f para obtener un valor con</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">// el que escribir la promesa:</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">val</span> value <span class="op">=</span> <span class="cf">try</span> <span class="op">{</span> <span class="fu">Success</span><span class="op">(</span> <span class="fu">f</span><span class="op">(</span>t<span class="op">)</span> <span class="op">)</span> <span class="op">}</span> <span class="cf">catch</span> <span class="op">{</span> <span class="cf">case</span> <span class="fu">NonFatal</span><span class="op">(</span>error<span class="op">)</span> <span class="op">=&gt;</span> <span class="fu">Failure</span><span class="op">(</span>error<span class="op">)</span> <span class="op">}</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        promesa<span class="op">.</span><span class="fu">complete</span><span class="op">(</span> value <span class="op">)</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      <span class="cf">case</span> <span class="fu">Failure</span><span class="op">(</span>error<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Si el futuro actual es fallido escribimos la</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">// misma falla en el nuevo futuro</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        promesa<span class="op">.</span><span class="fu">complete</span><span class="op">(</span> <span class="fu">Failure</span><span class="op">(</span>error<span class="op">)</span> <span class="op">)</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Al final devolvemos el lado de lectura de la promesa</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    promesa<span class="op">.</span>futuro</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Otro combinador funcional como <code>flatMap</code> se puede describir con un patrón similar pero con ciertas diferencias. Dejémoslo por aparte por ahora y veamos como se implementarían los tipos <code>Futuro</code> y <code>Promesa</code>.</p>
 <h2 id="el-estado-de-una-promesa">El estado de una promesa</h2>
 <p>Resulta que esto no es tan complicado. Una computación eventual puede estar en dos estados: o pendiente o completada, sea con un valor o con un error. Más aún puede que alguien haya programado la ejecución de una función que use el valor de la promesa cuando esta sea completada. Debido a esto en el estado pendiente tenemos que persistir estos pedidos. Materializando esto en tipos tenemos lo siguiente:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> EstadoPromesa[T]
-<span class="kw">case</span> <span class="kw">class</span> Completada[T](value    : Try[T]           ) <span class="kw">extends</span> EstadoPromesa[T]
-<span class="kw">case</span> <span class="kw">class</span> Pendiente [T](callbacks: List[Callback[T]]) <span class="kw">extends</span> EstadoPromesa[T]</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> EstadoPromesa<span class="op">[</span>T<span class="op">]</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> Completada<span class="op">[</span>T<span class="op">](</span>value    <span class="op">:</span> Try<span class="op">[</span>T<span class="op">]</span>           <span class="op">)</span> <span class="kw">extends</span> EstadoPromesa<span class="op">[</span>T<span class="op">]</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> Pendiente <span class="op">[</span>T<span class="op">](</span>callbacks<span class="op">:</span> <span class="ex">List</span><span class="op">[</span><span class="ex">Callback</span><span class="op">[</span>T<span class="op">]])</span> <span class="kw">extends</span> EstadoPromesa<span class="op">[</span>T<span class="op">]</span></span></code></pre></div>
 <div class="note">
 <p class="aside-header">
 <strong>Nota aparte</strong> <span class="clickable">(Click!)</span>
@@ -170,19 +173,19 @@
 </div>
 </div>
 <p>Aquí <code>Callback</code> es algo que lee el valor resuelto y se va a ejecutar en algún <code>ExecutionContext</code>:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">class</span> Callback[T](callback: Try[T] =&gt; Unit, executionContext: ExecutionContext) {
-
-  <span class="kw">def</span> <span class="fu">executeWith</span>(value: Try[T]): Unit = executionContext.<span class="fu">execute</span>(<span class="kw">new</span> Runnable {
-    <span class="kw">override</span> <span class="kw">def</span> <span class="fu">run</span>(): Unit = {
-      <span class="kw">try</span> {
-        <span class="fu">callback</span>(value)
-      } <span class="kw">catch</span> {
-        <span class="kw">case</span> <span class="fu">NonFatal</span>(t) =&gt; executionContext.<span class="fu">reportFailure</span>(t)
-      }
-    }
-  })
-
-}</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="ex">Callback</span><span class="op">[</span>T<span class="op">](</span>callback<span class="op">:</span> Try<span class="op">[</span>T<span class="op">]</span> <span class="op">=&gt;</span> <span class="bu">Unit</span><span class="op">,</span> executionContext<span class="op">:</span> ExecutionContext<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">executeWith</span><span class="op">(</span>value<span class="op">:</span> Try<span class="op">[</span>T<span class="op">]):</span> <span class="bu">Unit</span> <span class="op">=</span> executionContext<span class="op">.</span><span class="fu">execute</span><span class="op">(</span><span class="kw">new</span> <span class="ex">Runnable</span> <span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">override</span> <span class="kw">def</span> <span class="fu">run</span><span class="op">():</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">callback</span><span class="op">(</span>value<span class="op">)</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span> <span class="cf">catch</span> <span class="op">{</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="fu">NonFatal</span><span class="op">(</span>t<span class="op">)</span> <span class="op">=&gt;</span> executionContext<span class="op">.</span><span class="fu">reportFailure</span><span class="op">(</span>t<span class="op">)</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">})</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>En este punto les debería sonar el tipo <code>Try[T] =&gt; Unit</code>. El método <code>executeWith</code> es el que se llamará eventualmente cuando la promesa se resuelva y simplemente programa, en el <code>ExecutionContext</code>, la ejecución de la función pasándole el valor.</p>
 <h2 id="una-simple-descomposición">Una simple descomposición</h2>
 <p>Armados con esto lo demás sigue más o menos fácilmente. Cuándo se instancie una promesa iniciará en el estado <code>Pendiente</code>. Si, estando en este estado alguien programa la ejecución de un pedido con <code>onComplete</code> entonces debemos incluir este pedido en el estado (el atributo <code>callbacks</code>). Pero si alguien llama <code>complete</code> cuando estamos en el estado <code>Pendiente</code> pasamos a <code>Completada</code>, almacenamos ese valor y podemos ejecutar los <em>callbacks</em> que teníamos en el estado <code>Pendiente</code>. Y si alguien llama <code>onComplete</code> en el estado <code>Completada</code> podemos ejecutar ese <em>callback</em> directamente. Esencialmente tenemos esta maquina de estados:</p>
@@ -202,38 +205,38 @@
 </div>
 <h2 id="la-estructura-de-la-implementación">La estructura de la implementación</h2>
 <p>Resulta que la diferenciación entre <code>Futuro</code> y <code>Promesa</code> resulta útil para los usuarios externos de la librería. Sin embargo tanto <code>onComplete</code> como <code>complete</code> necesitan acceder al estado de la computación. Debido a esto nuestro tipo implementación puede tener la siguiente definición:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">class</span> PromesaImpl[T]
-  <span class="kw">extends</span> AtomicReference[EstadoPromesa[T]](<span class="fu">Pendiente</span>(List.<span class="fu">empty</span>))
-  <span class="kw">with</span> Promesa[T]
-  <span class="kw">with</span> Futuro[T] {
-
-  <span class="kw">override</span> <span class="kw">def</span> futuro: Futuro[T] = <span class="kw">this</span>
-
-  <span class="co">// implementación de `complete` y `onComplete`</span>
-
-}</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PromesaImpl<span class="op">[</span>T<span class="op">]</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">extends</span> <span class="ex">AtomicReference</span><span class="op">[</span>EstadoPromesa<span class="op">[</span>T<span class="op">]](</span><span class="fu">Pendiente</span><span class="op">(</span><span class="ex">List</span><span class="op">.</span>empty<span class="op">))</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">with</span> Promesa<span class="op">[</span>T<span class="op">]</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">with</span> Futuro<span class="op">[</span>T<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">override</span> <span class="kw">def</span> futuro<span class="op">:</span> Futuro<span class="op">[</span>T<span class="op">]</span> <span class="op">=</span> <span class="kw">this</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">// implementación de `complete` y `onComplete`</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Como podrán notar heredamos de <code>AtomicReference</code> e iniciamos en el estado <code>Pendiente</code> con una lista vacía de <em>callbacks</em>.</p>
 <h2 id="programando-tareas-futuras">Programando tareas futuras</h2>
 <p>Primero veamos como podemos construir <code>onComplete</code>. Podemos implementar una función con esta firma:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">onComplete</span>(callback: Callback[T]): Unit</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">onComplete</span><span class="op">(</span>callback<span class="op">:</span> <span class="ex">Callback</span><span class="op">[</span>T<span class="op">]):</span> <span class="bu">Unit</span></span></code></pre></div>
 <p>y con ella podemos construir la función con la firma familiar:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">onComplete</span>(f: Try[T] =&gt; Unit)(<span class="kw">implicit</span> executionContext: ExecutionContext): Unit = {
-  <span class="kw">val</span> callback = <span class="kw">new</span> Callback(f,executionContext)
-  <span class="fu">onComplete</span>(callback)
-}</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">onComplete</span><span class="op">(</span>f<span class="op">:</span> Try<span class="op">[</span>T<span class="op">]</span> <span class="op">=&gt;</span> <span class="bu">Unit</span><span class="op">)(</span><span class="kw">implicit</span> executionContext<span class="op">:</span> ExecutionContext<span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> callback <span class="op">=</span> <span class="kw">new</span> <span class="ex">Callback</span><span class="op">(</span>f<span class="op">,</span>executionContext<span class="op">)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">onComplete</span><span class="op">(</span>callback<span class="op">)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Esto se reduce a inspeccionar el estado de la promesa: si ya está resuelta pedimos inmediatamente la ejecución del <em>callback</em>. Si está <code>Pendiente</code> agregamos, atomicamente, el <em>callback</em> a la lista:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">@tailrec
-<span class="kw">private</span> <span class="kw">def</span> <span class="fu">onComplete</span>(callback: Callback[T]): Unit = {
-  <span class="fu">get</span>() <span class="kw">match</span> {
-    <span class="kw">case</span> <span class="fu">Completada</span>(value)                          =&gt;
-      callback.<span class="fu">executeWith</span>(value)
-    <span class="kw">case</span> currentState @ <span class="fu">Pendiente</span>(currentCallbacks) =&gt;
-      <span class="kw">if</span>(<span class="fu">compareAndSet</span>(currentState, <span class="fu">Pendiente</span>( callback :: currentCallbacks )))
-        ()
-      <span class="kw">else</span>
-        <span class="fu">onComplete</span>(callback)
-  }
-}</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>@tailrec</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="kw">def</span> <span class="fu">onComplete</span><span class="op">(</span>callback<span class="op">:</span> <span class="ex">Callback</span><span class="op">[</span>T<span class="op">]):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get</span><span class="op">()</span> <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="fu">Completada</span><span class="op">(</span>value<span class="op">)</span>                          <span class="op">=&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      callback<span class="op">.</span><span class="fu">executeWith</span><span class="op">(</span>value<span class="op">)</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> currentState @ <span class="fu">Pendiente</span><span class="op">(</span>currentCallbacks<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span><span class="op">(</span><span class="fu">compareAndSet</span><span class="op">(</span>currentState<span class="op">,</span> <span class="fu">Pendiente</span><span class="op">(</span> callback <span class="op">::</span> currentCallbacks <span class="op">)))</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">()</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>      <span class="cf">else</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">onComplete</span><span class="op">(</span>callback<span class="op">)</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Es importante notar que:</p>
 <ul>
 <li><code>get</code> y <code>compareAndSet</code> son métodos heredados de <code>AtomicReference</code>.</li>
@@ -241,76 +244,76 @@
 </ul>
 <h2 id="escribiendo-la-promesa">Escribiendo la promesa</h2>
 <p>Para escribir la promesa, suponiendo que no ha sido resuelta anteriormente, hay que tener en cuenta que además de cambiar de <code>Pendiente</code> a <code>Completada</code> debemos recordar el listado de <em>callbacks</em>, para ejecutarlos con el valor resuelto. Para esto creamos el método <code>getCallbacksAndSetValue</code> que funciona recibiendo un valor con el que escribirá la promesa y devolverá una lista de <em>callbacks</em>. Pero también hay que tener en cuenta el caso en el que este método se llame sobre una promesa resuelta. Debido a esto nuestro tipo de retorno será <code>Option[List[Callback]]</code>:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">@tailrec
-<span class="kw">private</span> <span class="kw">def</span> <span class="fu">getCallbacksAndSetValue</span>(value: Try[T]): Option[List[Callback[T]]] = {
-  <span class="fu">get</span>() <span class="kw">match</span> {
-    <span class="kw">case</span> <span class="fu">Completada</span>(_)                              =&gt;
-      None
-    <span class="kw">case</span> currentState @ <span class="fu">Pendiente</span>(currentCallbacks) =&gt;
-      <span class="kw">if</span> (<span class="fu">compareAndSet</span>(currentState, <span class="fu">Completada</span>(value))) {
-        Some(currentCallbacks)
-      } <span class="kw">else</span> {
-        <span class="fu">getCallbacksAndSetValue</span>(value)
-      }
-  }
-}</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>@tailrec</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="kw">def</span> <span class="fu">getCallbacksAndSetValue</span><span class="op">(</span>value<span class="op">:</span> Try<span class="op">[</span>T<span class="op">]):</span> <span class="ex">Option</span><span class="op">[</span><span class="ex">List</span><span class="op">[</span><span class="ex">Callback</span><span class="op">[</span>T<span class="op">]]]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get</span><span class="op">()</span> <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="fu">Completada</span><span class="op">(</span>_<span class="op">)</span>                              <span class="op">=&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>      <span class="bu">None</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> currentState @ <span class="fu">Pendiente</span><span class="op">(</span>currentCallbacks<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> <span class="op">(</span><span class="fu">compareAndSet</span><span class="op">(</span>currentState<span class="op">,</span> <span class="fu">Completada</span><span class="op">(</span>value<span class="op">)))</span> <span class="op">{</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Some</span><span class="op">(</span>currentCallbacks<span class="op">)</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">getCallbacksAndSetValue</span><span class="op">(</span>value<span class="op">)</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>En esta función retornar <code>None</code> nos sirve para indicar que la promesa ya había sido escrita anteriormente y <code>Some</code> de una lista para indicar que la promesa fué resuelta y al mismo tiempo devolver la lista de <em>callbacks</em>. Es importante notar que, al igual que <code>onComplete</code>, esta función modifica el estado atómicamente.</p>
 <p>Ahora podemos implementar <code>complete</code> de una forma muy sencilla:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">complete</span>(value: Try[T]): Boolean = {
-   <span class="fu">getCallbacksAndSetValue</span>(value) <span class="kw">match</span> {
-     <span class="kw">case</span> None            =&gt;
-      <span class="kw">false</span>
-     <span class="kw">case</span> Some(callbacks) =&gt;
-      callbacks.<span class="fu">foreach</span>(_.<span class="fu">executeWith</span>(value))
-      <span class="kw">true</span>
-   }
- }</code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">complete</span><span class="op">(</span>value<span class="op">:</span> Try<span class="op">[</span>T<span class="op">]):</span> <span class="ex">Boolean</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">getCallbacksAndSetValue</span><span class="op">(</span>value<span class="op">)</span> <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>     <span class="cf">case</span> <span class="bu">None</span>            <span class="op">=&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>      <span class="kw">false</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>     <span class="cf">case</span> <span class="bu">Some</span><span class="op">(</span>callbacks<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>      callbacks<span class="op">.</span><span class="fu">foreach</span><span class="op">(</span>_<span class="op">.</span><span class="fu">executeWith</span><span class="op">(</span>value<span class="op">))</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">true</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>   <span class="op">}</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a> <span class="op">}</span></span></code></pre></div>
 <p>Y ese es el corazón de como funcionan las promesas y los futuros en la librería estándar. Lo demás es solo un uso inteligente de estas bases. Por último podemos crear un constructor para las promesas:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">object</span> Promesa {
-
-  <span class="kw">def</span> apply[T](): Promesa[T] = <span class="kw">new</span> PromesaImpl[T]()
-
-}</code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Promesa <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> apply<span class="op">[</span>T<span class="op">]():</span> Promesa<span class="op">[</span>T<span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> PromesaImpl<span class="op">[</span>T<span class="op">]()</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h2 id="los-constructores-más-simples">Los constructores más simples</h2>
 <p><code>Futuro.successful</code> y <code>Futuro.failed</code> son constructores que sirven para envolver valores, existosos o fallidos, dentro de un Futuro. Para implementarlos debemos empezar con una versión de una promesa ya resuelta. Y para esto se deben implementar los métodos de una forma “constante” y por esto no es necesario usar un <code>ExecutionContext</code>. Para ahorrar espacio digamos que ese es un ejercicio para el lector o pueden verlo <a href="https://github.com/miguel-vila/grupo-concurrencia-paralelismo/blob/b0cd2b63a3daa41bcdc31c1a5b4850ba5c8007df/futuro-y-promesa/src/main/scala/futuro/Promesa.scala#L21-L37">acá</a>.</p>
 <h2 id="los-otros-combinadores-funcionales">Los otros combinadores funcionales</h2>
 <p>Ya vimos como se puede construir <code>map</code>. Sigamos con <code>flatMap</code>. La firma de <code>flatMap</code> es la siguiente:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> Futuro[T] {
-
-  <span class="co">//...</span>
-
-  <span class="kw">def</span> flatMap[S](f: T =&gt; Futuro[S])(<span class="kw">implicit</span> executionContext: ExecutionContext): Futuro[S]
-
- <span class="co">//...</span>
-
-}</code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Futuro<span class="op">[</span>T<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">//...</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> flatMap<span class="op">[</span>S<span class="op">](</span>f<span class="op">:</span> T <span class="op">=&gt;</span> Futuro<span class="op">[</span>S<span class="op">])(</span><span class="kw">implicit</span> executionContext<span class="op">:</span> ExecutionContext<span class="op">):</span> Futuro<span class="op">[</span>S<span class="op">]</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a> <span class="co">//...</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Se puede interpretar así: <code>flatMap</code> sirve para tomar un resultado eventual y encadenarlo con una computación que usa ese resultado para crear otro resultado eventual.</p>
 <p>Esto es algo más complicado que <code>map</code>, pero sigue el mismo esquema de solución:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> flatMap[S](f: T =&gt; Futuro[S])(<span class="kw">implicit</span> executionContext: ExecutionContext): Futuro[S] = {
-  <span class="co">// Define una promesa del tipo esperado S</span>
-  <span class="kw">val</span> promesa = Promesa[S]()
-  onComplete {
-    <span class="kw">case</span> <span class="fu">Success</span>(t) =&gt;
-      <span class="co">// &quot;Lee&quot; el valor del futuro actual y con ese valor</span>
-      <span class="co">// ejecuta la función f para obtener otro futuro de</span>
-      <span class="co">// tipo S</span>
-      <span class="kw">try</span> {
-        <span class="co">// &quot;Lee&quot; el valor de este nuevo futuro y</span>
-        <span class="co">// completa la promesa con ese valor</span>
-        <span class="fu">f</span>(t).<span class="fu">onComplete</span> { result2 =&gt; promesa.<span class="fu">complete</span>( result2 ) }
-      } <span class="kw">catch</span> {
-        <span class="co">// Maneja el error en caso de que la función f falle</span>
-        <span class="kw">case</span> <span class="fu">NonFatal</span>(error) =&gt;
-          promesa.<span class="fu">complete</span>( <span class="fu">Failure</span>(error) )
-      }
-    <span class="kw">case</span> <span class="fu">Failure</span>(error) =&gt;
-      <span class="co">// Si el futuro actual es fallido resolvemos la</span>
-      <span class="co">// promesa con ese error</span>
-      promesa.<span class="fu">complete</span>( <span class="fu">Failure</span>(error) )
-  }
-  <span class="co">// Al final devolvemos el lado de lectura de la promesa</span>
-  promesa.<span class="fu">futuro</span>
-}</code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flatMap<span class="op">[</span>S<span class="op">](</span>f<span class="op">:</span> T <span class="op">=&gt;</span> Futuro<span class="op">[</span>S<span class="op">])(</span><span class="kw">implicit</span> executionContext<span class="op">:</span> ExecutionContext<span class="op">):</span> Futuro<span class="op">[</span>S<span class="op">]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Define una promesa del tipo esperado S</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> promesa <span class="op">=</span> Promesa<span class="op">[</span>S<span class="op">]()</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  onComplete <span class="op">{</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="fu">Success</span><span class="op">(</span>t<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>      <span class="co">// &quot;Lee&quot; el valor del futuro actual y con ese valor</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>      <span class="co">// ejecuta la función f para obtener otro futuro de</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>      <span class="co">// tipo S</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>      <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// &quot;Lee&quot; el valor de este nuevo futuro y</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// completa la promesa con ese valor</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">f</span><span class="op">(</span>t<span class="op">).</span>onComplete <span class="op">{</span> result2 <span class="op">=&gt;</span> promesa<span class="op">.</span><span class="fu">complete</span><span class="op">(</span> result2 <span class="op">)</span> <span class="op">}</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span> <span class="cf">catch</span> <span class="op">{</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Maneja el error en caso de que la función f falle</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="fu">NonFatal</span><span class="op">(</span>error<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>          promesa<span class="op">.</span><span class="fu">complete</span><span class="op">(</span> <span class="fu">Failure</span><span class="op">(</span>error<span class="op">)</span> <span class="op">)</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="fu">Failure</span><span class="op">(</span>error<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Si el futuro actual es fallido resolvemos la</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>      <span class="co">// promesa con ese error</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>      promesa<span class="op">.</span><span class="fu">complete</span><span class="op">(</span> <span class="fu">Failure</span><span class="op">(</span>error<span class="op">)</span> <span class="op">)</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Al final devolvemos el lado de lectura de la promesa</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  promesa<span class="op">.</span>futuro</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <div class="note">
 <p class="aside-header">
 <strong>Nota aparte</strong> <span class="clickable">(Click!)</span>
@@ -324,38 +327,38 @@
 <p>Esta similitud es la que nos podría llevar a un refactor, que es el que precisamente hacen en <a href="https://github.com/scala/scala/blob/804a4cc1ff9fa159c576be7c685dbb81220c11da/src/library/scala/concurrent/impl/Promise.scala#L27-L44">la implementación de la librería estándar</a>. Creo que después de ver la repetición de código es más fácil entender como se puede generalizar.</p>
 <h2 id="futuro.sequence-y-futuro.traverse"><code>Futuro.sequence</code> y <code>Futuro.traverse</code></h2>
 <p>Otro combinador funcional común es <code>sequence</code>, que sirve para reunir múltiples resultados eventuales en uno solo. Una forma de imaginarnos como está implementado es la siguiente:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> sequence[T](futuros: List[Futuro[T]])(<span class="kw">implicit</span> e: ExecutionContext): Futuro[List[T]] = {
-  <span class="kw">for</span> {
-    t0  &lt;- <span class="fu">futuros</span>(<span class="dv">0</span>)
-    t1  &lt;- <span class="fu">futuros</span>(<span class="dv">1</span>)
-    .
-    .
-    .
-    tn  &lt;- <span class="fu">futuros</span>(n)
-  } <span class="kw">yield</span> t0 :: t1 :: ... :: tn :: List.<span class="fu">empty</span>[T]
-}</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sequence<span class="op">[</span>T<span class="op">](</span>futuros<span class="op">:</span> <span class="ex">List</span><span class="op">[</span>Futuro<span class="op">[</span>T<span class="op">]])(</span><span class="kw">implicit</span> e<span class="op">:</span> ExecutionContext<span class="op">):</span> Futuro<span class="op">[</span><span class="ex">List</span><span class="op">[</span>T<span class="op">]]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    t0  <span class="op">&lt;-</span> <span class="fu">futuros</span><span class="op">(</span><span class="dv">0</span><span class="op">)</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    t1  <span class="op">&lt;-</span> <span class="fu">futuros</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    tn  <span class="op">&lt;-</span> <span class="fu">futuros</span><span class="op">(</span>n<span class="op">)</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">yield</span> t0 <span class="op">::</span> t1 <span class="op">::</span> <span class="op">...</span> <span class="op">::</span> tn <span class="op">::</span> <span class="ex">List</span><span class="op">.</span>empty<span class="op">[</span>T<span class="op">]</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Es decir la implementación solo depende de <code>flatMap</code> y de <code>map</code>. Más concretamente se podria materializar así:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> sequence[T](futures: List[Futuro[T]])(<span class="kw">implicit</span> e: ExecutionContext): Futuro[List[T]] = {
-  futures.<span class="fu">foldRight</span>(Futuro.<span class="fu">successful</span>(List.<span class="fu">empty</span>[T])) { (fh,ftl) =&gt;
-    <span class="kw">for</span> {
-      h  &lt;- fh
-      tl &lt;- ftl
-    } <span class="kw">yield</span> h :: tl
-  }
-}</code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sequence<span class="op">[</span>T<span class="op">](</span>futures<span class="op">:</span> <span class="ex">List</span><span class="op">[</span>Futuro<span class="op">[</span>T<span class="op">]])(</span><span class="kw">implicit</span> e<span class="op">:</span> ExecutionContext<span class="op">):</span> Futuro<span class="op">[</span><span class="ex">List</span><span class="op">[</span>T<span class="op">]]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  futures<span class="op">.</span><span class="fu">foldRight</span><span class="op">(</span>Futuro<span class="op">.</span><span class="fu">successful</span><span class="op">(</span><span class="ex">List</span><span class="op">.</span>empty<span class="op">[</span>T<span class="op">]))</span> <span class="op">{</span> <span class="op">(</span>fh<span class="op">,</span>ftl<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>      h  <span class="op">&lt;-</span> fh</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>      tl <span class="op">&lt;-</span> ftl</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">yield</span> h <span class="op">::</span> tl</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>En la librería estándar ésta función sirve no solo para listas sino también para otras estructuras de datos. Esto se logra mediante el <em>typeclass</em> <code>CanBuildFrom</code>. Si quieren saber más en la parte 3 de <a href="https://adriaanm.github.io/files/higher.pdf">este artículo</a> explican un <em>typeclass</em> similar bajo el nombre de <code>Buildable</code>.</p>
 <p>La función <code>traverse</code> es muy parecida:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> traverse[A,B](list: List[A])
-                 (f: A =&gt; Futuro[B])
-                 (<span class="kw">implicit</span> e: ExecutionContext): Futuro[List[B]] = {
-  list.<span class="fu">foldRight</span>(Futuro.<span class="fu">successful</span>(List.<span class="fu">empty</span>[B])) { (a,ftl) =&gt;
-    <span class="kw">val</span> fh = <span class="fu">f</span>(a)
-    <span class="kw">for</span> {
-      h  &lt;- fh
-      tl &lt;- ftl
-    } <span class="kw">yield</span> h :: tl
-  }
-}</code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> traverse<span class="op">[</span>A<span class="op">,</span>B<span class="op">](</span>list<span class="op">:</span> <span class="ex">List</span><span class="op">[</span>A<span class="op">])</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                 <span class="op">(</span>f<span class="op">:</span> A <span class="op">=&gt;</span> Futuro<span class="op">[</span>B<span class="op">])</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                 <span class="op">(</span><span class="kw">implicit</span> e<span class="op">:</span> ExecutionContext<span class="op">):</span> Futuro<span class="op">[</span><span class="ex">List</span><span class="op">[</span>B<span class="op">]]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  list<span class="op">.</span><span class="fu">foldRight</span><span class="op">(</span>Futuro<span class="op">.</span><span class="fu">successful</span><span class="op">(</span><span class="ex">List</span><span class="op">.</span>empty<span class="op">[</span>B<span class="op">]))</span> <span class="op">{</span> <span class="op">(</span>a<span class="op">,</span>ftl<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> fh <span class="op">=</span> <span class="fu">f</span><span class="op">(</span>a<span class="op">)</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>      h  <span class="op">&lt;-</span> fh</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>      tl <span class="op">&lt;-</span> ftl</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">yield</span> h <span class="op">::</span> tl</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <div class="note">
 <p class="aside-header">
 <strong>Nota aparte</strong> <span class="clickable">(Click!)</span>
@@ -366,68 +369,68 @@
 </div>
 <h2 id="futuro.apply"><code>Futuro.apply</code></h2>
 <p>La función <code>apply</code> del companion object <code>Futuro</code> es una de las formas más fáciles de crear futuros. Por ejemplo:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">val</span> exec: ExecutionContext = ...
-<span class="kw">val</span> myFuture = Futuro { <span class="fu">miCodigo</span>() }</code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">val</span> exec<span class="op">:</span> ExecutionContext <span class="op">=</span> <span class="op">...</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> myFuture <span class="op">=</span> Futuro <span class="op">{</span> <span class="fu">miCodigo</span><span class="op">()</span> <span class="op">}</span></span></code></pre></div>
 <p>En este caso <code>myFuture</code> servirá como un futuro del resultado eventual de <code>miCodigo()</code>. Hacer esto sirve para hacer concurrentemente otras cosas mientras se ejecuta <code>miCodigo()</code>.</p>
 <p>Una forma de implementar este método es simplemente programar la ejecución del código dentro del <code>ExecutionContext</code> y guardar el resultado en una promesa:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> apply[T](block :=&gt; T)(<span class="kw">implicit</span> executor: ExecutionContext): Futuro[T] = {
-  <span class="kw">val</span> promesa = Promesa[T]()
-  executor.<span class="fu">execute</span>(<span class="kw">new</span> Runnable {
-    <span class="kw">override</span> <span class="kw">def</span> <span class="fu">run</span>(): Unit = {
-      <span class="kw">val</span> result = Try { block }
-      promesa.<span class="fu">complete</span>( result )
-    }
-  })
-  promesa.<span class="fu">futuro</span>
-}</code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> apply<span class="op">[</span>T<span class="op">](</span>block <span class="op">:=&gt;</span> T<span class="op">)(</span><span class="kw">implicit</span> executor<span class="op">:</span> ExecutionContext<span class="op">):</span> Futuro<span class="op">[</span>T<span class="op">]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> promesa <span class="op">=</span> Promesa<span class="op">[</span>T<span class="op">]()</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  executor<span class="op">.</span><span class="fu">execute</span><span class="op">(</span><span class="kw">new</span> <span class="ex">Runnable</span> <span class="op">{</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">override</span> <span class="kw">def</span> <span class="fu">run</span><span class="op">():</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">val</span> result <span class="op">=</span> Try <span class="op">{</span> block <span class="op">}</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>      promesa<span class="op">.</span><span class="fu">complete</span><span class="op">(</span> result <span class="op">)</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">})</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  promesa<span class="op">.</span>futuro</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Un detalle importante de esta implementación es que el bloque de código es un argumento <em>call-by-name</em> y no <em>call-by-value</em> para que quién invoque este código no sea el que lo ejecute sino el <code>ExecutionContext</code>.</p>
 <p>Pero hay otra forma de implementar esta función y es aprovechado un truco funcional:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> apply[T](block :=&gt; T)(<span class="kw">implicit</span> executor: ExecutionContext): Futuro[T] = {
-  Futuro.<span class="fu">successful</span>( () ).<span class="fu">map</span>( _ =&gt; block )
-}</code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> apply<span class="op">[</span>T<span class="op">](</span>block <span class="op">:=&gt;</span> T<span class="op">)(</span><span class="kw">implicit</span> executor<span class="op">:</span> ExecutionContext<span class="op">):</span> Futuro<span class="op">[</span>T<span class="op">]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  Futuro<span class="op">.</span><span class="fu">successful</span><span class="op">(</span> <span class="op">()</span> <span class="op">).</span><span class="fu">map</span><span class="op">(</span> _ <span class="op">=&gt;</span> block <span class="op">)</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>Partimos de un Futuro con un valor arbitrario y lo reemplazamos mediante map por el resultado de ejecutar el bloque. Conociendo como funcionan <code>successful</code> y <code>map</code> nos podemos dar cuenta de que ambas implementaciones hacen lo mismo.</p>
 <p>Ahora ¿de qué sirve este método? ¿Sirve para convertir código bloqueante en no bloqueante? Ya sabemos como funciona por debajo para saber que la respuesta es no. Si un pedazo de código es bloqueante envolverlo con <code>Futuro { codigoBloqueante }</code> servirá para que, en un buen caso, el bloqueo suceda en otro hilo. ¿Por qué en un buen caso? Por que depende del <code>ExecutionContext</code>. Uno podría pasarle un <code>ExecutionContext</code> que ejecute lo <code>Runnable</code>s sobre el mismo <em>thread</em> que llame <code>execute</code> y con esto el <em>thread</em> que crea los futuros también se bloquearía.</p>
 <h2 id="reemplazando-callbacks">Reemplazando <em>callbacks</em></h2>
 <p>Hay otra forma de crear Futuros y es la que se se usa cuando se está trabajando con un API asincrónica. Incluso ya hemos visto este método de construcción. Como ejemplo supongamos que vamos a envolver un cliente HTTP asincrónico en Futuros, para así poder manipular más fácilmente los resultados.</p>
 <p>Por ejemplo <a href="https://github.com/AsyncHttpClient/async-http-client">este</a> cliente en Java que se puede usar con <em>callbacks</em>:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">AsyncHttpClient asyncHttpClient = <span class="kw">new</span> <span class="fu">DefaultAsyncHttpClient</span>();
-asyncHttpClient.<span class="fu">prepareGet</span>(<span class="st">&quot;http://www.example.com/&quot;</span>)
-.<span class="fu">execute</span>(<span class="kw">new</span> AsyncCompletionHandler&lt;Response&gt;(){
-
-    <span class="fu">@Override</span>
-    <span class="kw">public</span> Response <span class="fu">onCompleted</span>(Response response) <span class="kw">throws</span> Exception{
-        <span class="co">// Do something with the Response</span>
-        <span class="co">// ...</span>
-        <span class="kw">return</span> response;
-    }
-
-    <span class="fu">@Override</span>
-    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onThrowable</span>(Throwable t){
-        <span class="co">// Something wrong happened.</span>
-    }
-});</code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>AsyncHttpClient asyncHttpClient <span class="op">=</span> <span class="kw">new</span> <span class="fu">DefaultAsyncHttpClient</span><span class="op">();</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>asyncHttpClient<span class="op">.</span><span class="fu">prepareGet</span><span class="op">(</span><span class="st">&quot;http://www.example.com/&quot;</span><span class="op">)</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">execute</span><span class="op">(</span><span class="kw">new</span> AsyncCompletionHandler<span class="op">&lt;</span><span class="bu">Response</span><span class="op">&gt;(){</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">Response</span> <span class="fu">onCompleted</span><span class="op">(</span><span class="bu">Response</span> response<span class="op">)</span> <span class="kw">throws</span> <span class="bu">Exception</span><span class="op">{</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Do something with the Response</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ...</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> response<span class="op">;</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onThrowable</span><span class="op">(</span><span class="bu">Throwable</span> t<span class="op">){</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Something wrong happened.</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span></code></pre></div>
 <p>El API permite manipular los resultados como <code>java.util.concurrent.Future</code>, pero estos tienen la desventaja de ser bloqueantes cuando se quiere manipular el resultado. Debido a esto sería deseable envolver la llamada para que retorne un <code>Futuro</code>. En Scala esto sería:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">example</span>(): Futuro[Response] = {
-  <span class="kw">val</span> asyncHttpClient = <span class="kw">new</span> <span class="fu">DefaultAsyncHttpClient</span>();
-  <span class="kw">val</span> promesa = Promesa[Response]()
-  asyncHttpClient.<span class="fu">prepareGet</span>(<span class="st">&quot;http://www.example.com/&quot;</span>)
-  .<span class="fu">execute</span>(<span class="kw">new</span> AsyncCompletionHandler[Response](){
-
-    <span class="kw">override</span> <span class="kw">def</span> <span class="fu">onCompleted</span>(Response response) = {
-      promesa.<span class="fu">complete</span>( <span class="fu">Success</span>(response) )
-    }
-  
-    <span class="kw">override</span> <span class="kw">def</span> <span class="fu">onThrowable</span>(Throwable t) = {
-      promesa.<span class="fu">complete</span>( <span class="fu">Failure</span>(t) )
-    }
-
-  })
-  promesa.<span class="fu">futuro</span>
-}</code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">example</span><span class="op">():</span> Futuro<span class="op">[</span><span class="ex">Response</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> asyncHttpClient <span class="op">=</span> <span class="kw">new</span> <span class="fu">DefaultAsyncHttpClient</span><span class="op">();</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> promesa <span class="op">=</span> Promesa<span class="op">[</span><span class="ex">Response</span><span class="op">]()</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  asyncHttpClient<span class="op">.</span><span class="fu">prepareGet</span><span class="op">(</span><span class="st">&quot;http://www.example.com/&quot;</span><span class="op">)</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">execute</span><span class="op">(</span><span class="kw">new</span> AsyncCompletionHandler<span class="op">[</span><span class="ex">Response</span><span class="op">](){</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">override</span> <span class="kw">def</span> <span class="fu">onCompleted</span><span class="op">(</span><span class="ex">Response</span> response<span class="op">)</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>      promesa<span class="op">.</span><span class="fu">complete</span><span class="op">(</span> <span class="fu">Success</span><span class="op">(</span>response<span class="op">)</span> <span class="op">)</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">override</span> <span class="kw">def</span> <span class="fu">onThrowable</span><span class="op">(</span><span class="ex">Throwable</span> t<span class="op">)</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>      promesa<span class="op">.</span><span class="fu">complete</span><span class="op">(</span> <span class="fu">Failure</span><span class="op">(</span>t<span class="op">)</span> <span class="op">)</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">})</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  promesa<span class="op">.</span>futuro</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h2 id="uso-del-executioncontext">Uso del <code>ExecutionContext</code></h2>
 <p>Conociendo la implementación podemos ahondar en un detalle. Por ejemplo, ¿hay alguna diferencia entre estos dos pedazos de código?:</p>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">futuro.<span class="fu">map</span>(f).<span class="fu">map</span>(g)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">futuro.<span class="fu">map</span>(f andThen g)</code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>futuro<span class="op">.</span><span class="fu">map</span><span class="op">(</span>f<span class="op">).</span><span class="fu">map</span><span class="op">(</span>g<span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>futuro<span class="op">.</span><span class="fu">map</span><span class="op">(</span>f andThen g<span class="op">)</span></span></code></pre></div>
 <p>Resulta que no hay diferencia con respecto al valor que eventualmente computan. Incluso si <code>f</code> o <code>g</code> fallan el valor con el que se complete el Futuro será el mismo en ambos casos. La diferencia radica en el uso de recursos. La primera versión llama <code>onComplete</code> dos veces, y por lo tanto programa la ejecución de dos tareas en el <code>ExecutionContext</code>, una tras de otra. En cambio la segunda versión solo lo hace una vez. Esto quiere decir que la primera versión programa la ejecución de dos tareas muy relacionadas en hilos posiblemente distintos. En resumen cada vez que llamamos <code>map</code> o <code>flatMap</code> producimos el efecto secundario de programar una tarea en el <code>ExecutionContext</code>.</p>
 <div class="note">
 <p class="aside-header">
@@ -461,7 +464,7 @@ asyncHttpClient.<span class="fu">prepareGet</span>(<span class="st">&quot;http:/
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-    </article>
+    </div>
     <footer>
         <hr>
         <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
