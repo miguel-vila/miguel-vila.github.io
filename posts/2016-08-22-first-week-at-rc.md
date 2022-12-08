@@ -4,7 +4,9 @@ description: How my first week at Recurse Center went
 tags: rc, ny
 ---
 
+<p class="image__article">
 <img src="/images/rc-w1.jpeg" style="float: right; padding: 0.5em; width: 35%">
+</p>
 
 My first week at [Recurse Center's (RC)](https://www.recurse.com/) just ended and so far it has been very cool. If you don't know what RC is the short description is "a retreat for programmers". If that's not enough you can go to their site.
 

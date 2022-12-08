@@ -20,5 +20,7 @@ Ahora empecé a leer [1984](https://www.goodreads.com/book/show/17841055-1984). 
 
 Ahora estoy intentando dejar de leer _blog posts_, o consumir material técnico a través de _Twitter_. Quiero concentrarme en leer libros y hacer tutoriales más profundos. Esto me recuerda [este](https://lobste.rs/s/7wzss8/how_does_one_improve_as_intermediate) _thread_ en _Lobsters_:
 
+<p class="image__article">
 <img src="/images/lobsters-thread.png" style="display: block; margin-left: auto; margin-right: auto; padding: 0.5em; width: 85%;">
+</p>
 

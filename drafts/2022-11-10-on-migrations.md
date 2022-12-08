@@ -40,12 +40,16 @@ called a backfill or a write back), and to the new persistence.
 
 Before the migration, clients would simply hit the old service directly:
 
+<p class="image__article">
 <img src="/images/backfill-before.png" class="article-centered-image"/>
+</p>
 
 The new service, would provide the same functionality to clients, but it would
 also perform a dual write:
 
+<p class="image__article">
 <img src="/images/backfill-after.png" class="article-centered-image"/>
+</p>
 
 There are some interesting details about how to make this dual write process
 safe. On one hand, we need some atomicity guarantees, so that we don't end up
@@ -58,14 +62,18 @@ pulling from a queue and performing the dual writes, as long as each operation
 is idempotent, then it should be OK. If a command fails, it will be retried,
 and as the operation is idempotent, it will be safe.
 
+<p class="image__article">
 <img src="/images/backfill-async.png" class="article-centered-image"/>
+</p>
 
 How about the case in which the operation is expected to be visible immediately
 after the request? For example, something an end user is performing, let's say,
 updating their profile. In this case, we could still apply the same strategy, if
 clients are still reading from the old service:
 
+<p class="image__article">
 <img src="/images/backfill-sync-write.png" class="article-centered-image"/>
+</p>
 
 This requires a bit more detail if the new API receives more data than the old
 API and we want to store that data in the new database, but the high level idea

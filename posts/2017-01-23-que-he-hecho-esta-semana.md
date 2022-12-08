@@ -4,7 +4,9 @@ description: Algo de lo que hice esta semana (15/01/2017 - 22/01/2017)
 tags: Vida
 ---
 
+<p class="image__article">
 <img src="/images/shapeless-book.png" style="float: right; padding: 0.5em; width: 30%">
+</p>
 
 Ésta fue la segunda semana en mi nuevo trabajo y esta vez fue un poco más movida. Ya tengo acceso de escritura a los repos y he estado haciendo _commits_ y abriendo _PRs_. Por ahora he cogido tres _tickets_ que son de deuda técnica o arreglar _bugs_ y un solo _ticket_ de un nuevo "_feature_". Espero coger _tickets_ más "ambiciosos" la próxima semana.
 
@@ -16,7 +18,9 @@ He seguido leyendo [_El hombre duplicado_](https://en.wikipedia.org/wiki/The_Dou
 
 Por otra parte retomé un poco los problemas de [_Advent of Code_](http://adventofcode.com/) que empecé en Diciembre pero que dejé por un tiempo. _Advent Of Code_ es una serie de retos de programación diarios en los 25 días previos a navidad. En Diciembre llegué hasta el día 15 saltándome los días 9 y 11. Resulta que mi solución para el día 9 estaba mal por una güevonada: me faltaba un `.strip()` al _input_. El día 11 no lo he vuelto a leer. En cambio resolví el día 16 y la primera parte del día 17. Algunos problemas son bastante algorítmicos. Algunos tienen el detalle de que la parte dos del problema implica hacerle cambios a la primera parte del problema. En ocasiones es resolver el mismo problema con un _input_ más grande o resolver otro problema relacionado que implica modificar el código. Los he estado resolviendo en Python y unos pocos en Scala.
 
+<p class="image__article">
 <img src="/images/bike-jan-2016.jpg" style="float: left; padding: 0.5em; width: 30%">
+</p>
 
 Con respecto al curso de redes neuronales de Coursera que estaba haciendo lo abandoné (Oh sorpresa). Creo que mi plan para la tercera semana era ponerme al día el Domingo pero ese día por la mañana salí a montar en cicla y por la tarde fuí a un asado del que volví como a media noche, sin los anímos de pegarme una clavada. Me falta retomar esa poquita disciplina que una vez tuve para los cursitos esos en línea. Recuerdo que hace 4 años, cuando todavía estaba en la universidad logré hacer el curso de _Machine Learning_ y el de algoritmos en Coursera. En esa ocasión aprendí bastante de ellos y fuí bastante juicioso. Todavía tengo los apuntes y cuando los veo por encima me sorprendo de lo ñoño que fuí.
 
