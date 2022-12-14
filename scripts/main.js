@@ -29,3 +29,17 @@ $(document).ready(function () {
 		$('body,html').css("overflow-y", "initial");
 	});
 });
+
+if ($(".post-meta").length) {
+	let post = 0;
+	$('.post-meta').each(function (index, elem) {
+		if (post == 0) {
+			if ($(elem).text().length > 7) {
+				post = 1;
+				$(".post-meta").css("min-width", "105px");
+			} else {
+				$(".post-meta").css("min-width", "65px");
+			}
+		}
+	});
+}
