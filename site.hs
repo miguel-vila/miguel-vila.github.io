@@ -110,11 +110,8 @@ main = hakyll $ do
 
     create ["side-projects.html"] $ do
         route idRoute
-        let sideProjectsCtx =
-                    constField "title" "Side Projects" `mappend`
-                    siteCtx
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" sideProjectsCtx
+            >>= loadAndApplyTemplate "templates/default.html" siteCtx
             >>= relativizeUrls
 
     create ["archive.html"] $ do
