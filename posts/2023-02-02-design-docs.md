@@ -207,7 +207,7 @@ tecnología.
 </div>
 </div>
 
-## Conclusión (?)
+## Palabras Finales
 
 No voy a concluir diciendo una burrada como "documentar es bueno y se puede
 hacer de muchas formas". Creo que es más importante enfatizar que estas son
