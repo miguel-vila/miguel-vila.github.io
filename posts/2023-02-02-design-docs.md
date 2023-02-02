@@ -66,7 +66,7 @@ de componentes, etc...). La ventaja de uno de estos sobre, por ejemplo
 [Lucid](https://lucid.app/) es que los diagramas son escritos en un lenguaje y
 el archivo puede ser versionado a través de, por ejemplo, git. De esta forma la
 documentación puede quedar en el mismo sitio que el código.
-* [Swagger](https://swagger.io/), [OpenAPI](https://www.openapis.org/) o algo
+* [OpenAPI](https://www.openapis.org/) o algo
 como [Smithy](https://smithy.io/2.0/index.html) pueden ser usados para discutir
 APIs. Estos son especialmente importantes cuando uno quiere discutir los
 detalles de una integración con otro equipo, o por lo general dejar documentadas
@@ -174,12 +174,38 @@ que tienen que ser actualizados cada X meses. Una buena idea es darle estos
 documentos a nuevos integrantes y que verifiquen que están a la fecha.
 
 Por último, los documentos formales son los que más sujetos están a ser
-verificados. De forma superficial la sintaxis se puede verificar. Los API specs
-pueden ser verificados a través de tests _end to end_ / de integración, donde
-los clientes son generados a través de los APIs specs. Esto sirve para verificar
+verificados. De forma superficial la sintaxis se puede verificar. Pero los API
+specs pueden ser verificados con respecto a una implementación.
+Por ejemplo a través de tests _end to end_ / de integración, donde los clientes
+son generados a través de los APIs specs. Esto sirve para verificar
 la estructura de las entradas y las salidas, pero vienen con la desventaja de
 ser lentos y frágiles, entre otras desventajas. Otra posibilidad es usar
 [pact testing](https://www.infoq.com/presentations/pact/).
+
+<div class="note">
+<p class="aside-header"><strong>Nota aparte</strong> <span class="clickable">(Click!)</span></p>
+
+<div class="note-content">
+
+Un acercamiento para sincronizar API specs e implementación es general el API
+spec a partir de la implementación. Por ejemplo en Scala esto se puede hacer con
+[Tapir](https://tapir.softwaremill.com/en/latest/). Este acercamiento tiene
+varias desventajas:
+
+* No permite discutir solamente el API spec en un formato neutro. Por ejemplo,
+si mi servicio en Scala usa Tapir, sería raro compartir un PR con código de Tapir
+a otro equipo que usa una tecnología distinta, por ejemplo Python.
+* Tener un único lugar donde se reúnan todos los API specs de la compañía se
+vuelve un poco más complicado.
+
+En mis trabajos recientes he visto el acercamiento contrario (API first) y los
+servicios se adhieren al spec generando una interfaz (por ejemplo
+[smithy4s](https://disneystreaming.github.io/smithy4s/)). La ventaja es que las
+discusiones se pueden empezar en un formato neutro y es agnóstico a cualquier
+tecnología.
+
+</div>
+</div>
 
 ## Conclusión (?)
 
