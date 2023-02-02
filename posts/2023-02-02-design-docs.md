@@ -44,11 +44,11 @@ sentido ser discutidos de forma asíncrona.
 * Versionada (opcional): Este es un punto más importante para los diseños
 técnicos que para las decisiones técnicas.
 
-Hay tres grandes categorías de documentos:
+Dividí los documentos en tres categorías, tal vez un poco arbitrarias:
 
-* Formales
-* Semi estructurados
-* Informales
+* Formales: UML et al
+* Semi estructurados: RFCs y ADRs
+* Informales: documentos de diseño
 
 ## Formales
 
@@ -115,17 +115,25 @@ un RFC y termine como un ADR (cuando se trata de una decisión arquitectónica).
 Otras compañías pueden ser más informales: empiezan con una discusión _ad hoc_ y
 concluyen con un ADR.
 
-## No estructuradas / Informales
+## Informales
 
-Estos son documentos que no tienen "campos" o esquemas bien definidos. Muchas
-veces estos son simplemente documentos, en lenguaje natural, con secciones
-definidas por los ingenieros. Por lo general este tipo de herramientas se usan
-en etapas muy exploratorias y muchas veces no se hacen dentro del contexto de un
-proyecto o de un equipo. Por ejemplo, un equipo quiere desarrollar un nuevo
-_feature_ y se ha dado cuenta de que tienen que haber varios cambios técnicos
-con distintas posibilidades.
+Estos son documentos que no tienen "campos" o esquemas bien definidos. El 
+exponente principal son "documentos de diseño". Muchas veces estos son
+documentos, en lenguaje natural, con secciones definidas por los ingenieros. Por
+lo general este tipo de herramientas se usan en etapas muy exploratorias y
+muchas veces no se hacen dentro del contexto de un proyecto o de un equipo.
+Por ejemplo, un equipo quiere desarrollar un nuevo _feature_ y se ha dado cuenta
+de que tienen que haber varios cambios técnicos con distintas posibilidades.
 
-En estos casos no es tan útil llegar al nivel de formalidad de especificar hasta
+No es del todo cierto que este tipo de documentos sean informales, por que
+existen plantillas. Hay varios artículos en Internet detallando diferentes
+plantillas: por ejemplo
+[esta plantilla de Google](https://www.industrialempathy.com/posts/design-docs-at-google/)
+o [este artículo](https://www.range.co/blog/better-tech-specs). Pero en la
+práctica he visto que la gente no es estricta sobre esto y agrega o remueve
+secciones según el tipo de proyecto.
+
+Para documentos de diseño no es útil llegar al nivel de formalidad de especificar hasta
 el último detalle el API del nuevo servicio. En fases exploratorias es mejor
 hacer una descripción informal. Una vez haya luz verde de la propuesta y el
 proyecto empiece si valdrá la pena usar formas de documentación más formales.
