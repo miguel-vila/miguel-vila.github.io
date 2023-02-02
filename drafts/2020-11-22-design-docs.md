@@ -1,7 +1,7 @@
 ---
 title: Sobre documentos de diseño
 description: Sobre documentos de diseño
-tags: software engineering
+tags: software engineering, technical decisions, software architecture, systems design
 ---
 
 Como ingenieros o desarrolladores una de nuestras responsabilidades, más allá de
@@ -55,14 +55,14 @@ Ejemplos de estos:
 * [PlantUML](https://plantuml.com/) o [Mermaid](https://mermaid-js.github.io/)
 pueden ser usados para diferentes tipos de diagramas (de secuencia, de clases,
 de componentes, etc...). La ventaja de uno de estos sobre, por ejemplo
-[Lucid](lucid.app) es que los diagramas son escritos en un lenguaje y el archivo
-puede ser versionado a través de, por ejemplo, git. De esta forma la
+[Lucid](https://lucid.app/) es que los diagramas son escritos en un lenguaje y
+el archivo puede ser versionado a través de, por ejemplo, git. De esta forma la
 documentación puede quedar en el mismo sitio que el código.
 * [Swagger](https://swagger.io/), [OpenAPI](https://www.openapis.org/) o algo
-como [Smithy](smithy.io/) pueden ser usados para discutir APIs. Estos son
-especialmente importantes cuando uno quiere discutir los detalles de una
-integración con otro equipo, o por lo general dejar documentadas las capacidades
-de un sistema.
+como [Smithy](https://smithy.io/2.0/index.html) pueden ser usados para discutir
+APIs. Estos son especialmente importantes cuando uno quiere discutir los
+detalles de una integración con otro equipo, o por lo general dejar documentadas
+las capacidades de un sistema.
 
 ## Semi estructurados
 
@@ -86,7 +86,7 @@ Aquí hay varios enlaces a cosas relacionadas con RFCs:
 Otro tipo de documentos, muy similar, son los _Architecture Design Records_ y
 son usados para describir decisiones o acercamientos arquitecturales.
 Por ejemplo, como vamos a aprovisionar la infraestructura, como vamos a exponer
-APIs públicos, como vamos a monitorear los servicios, etc... 
+APIs públicos, como vamos a monitorear los servicios, etc...
 
 Algunos enlaces:
 
@@ -100,7 +100,7 @@ Suelen ser [_Living Documents_](https://en.wikipedia.org/wiki/Living_document)
 que son discutidos por un buen tiempo hasta que en un punto convergen a una
 decision. Los RFCs suelen invitar discusión. Pero los ADRs suelen ser más finales
 (e.g. este es el acercamiento que vamos a tener de ahora en adelante), pero en
-general siento que pueden ser usados para los mismos objetivos. 
+general siento que pueden ser usados para los mismos objetivos.
 
 Algunas compañías pueden formalizar el proceso a que un documento empiece como
 un RFC y termine como un ADR (cuando se trata de una decisión arquitectónica).
@@ -121,33 +121,63 @@ En estos casos no es tan útil llegar al nivel de formalidad de especificar hast
 el último detalle el API del nuevo servicio. En fases exploratorias es mejor
 hacer una descripción informal. Una vez haya luz verde de la propuesta y el
 proyecto empiece si valdrá la pena usar formas de documentación más formales.
-Puede ser útil usar [Lucid](lucid.app) en estos casos para agregar diagramas
-informales.
+Puede ser útil usar [Lucid](https://lucid.app/) en estos casos para agregar
+diagramas informales.
 
 Ejemplos de herramientas que se pueden usar para esto:
 
 * Documentos en Markdown
 * Google docs
+* Agregar diagrams con Lucid
 
-Ambos pueden permitir agregar comentarios en partes específicas del documento
-(para markdown usando algo como PRs de github).
+Con markdown y Google Docs se pueden agregar comentarios en partes específicas
+del documento (para markdown usando algo como PRs de github). Esto permite
+iniciar discusiones sobre temas puntuales, hacer sugerencias, preguntas o
+requerir cambios.
 
-Estos son preferibles a otros medios de comunicación como:
+En varios trabajos he necesitado escribir este tipo de documentos. La estructura
+es usualmente informal pero la motivación común es resolver un problema. Es útil
+poner un párrafo breve con contexto y empezar a proponer una solución. También
+es común proponer varias soluciones y listar los pros, cons, y consecuencias de
+cada alternativa. Si se proponen varias soluciones es buena idea que el autor
+ponga su preferida de primero.
 
-* Threads de slack
-* Cadenas de correos
+Para los detalles de la solución puede ser útil poner diagramas informales, o
+pseudocódigo.
 
+## Future proofing
 
+En el desarrollo de software es importante asegurarse que la documentación está
+actualizada. Cosas como el código pueden ser entendidos a través de los tests
+(que ojalá se tengan), pero no tenemos un mecanismo similar para la
+documentación. Mantener buena documentación es más responsabilidad de los
+sistemas de trabajo que tenga la compañía o el equipo.
 
-## "Future proofing"
+Uno de los tipos de documento que es más importante de mantener actualizado es
+aquel que describe como funciona un sistema específico a alto nivel. Por
+ejemplo: como esperamos recibir pagos asíncronos, o como funciona tal integración
+con terceros. Otros tipos de documentos como los ADRs, por su naturaleza,
+terminan convergiendo y pueden dar lugar al diseño de otros sistemas. Estos no
+tienen que ser actualizados, en cambio son reemplazados por nuevos ADRs si se
+quiere cambiar una decisión técnica.
 
-* ¿Qué hacer con el problema de "se nos olvidó actualizar la documentación cuando hubo un cambio"?
-* ADRs: por su naturaleza son immutables
-* PlantUML:
-* API Specs: e2e/integration tests con clientes generados a partir de la especificación. Adicionalmente: tener un job en jenkins qué ejecute los tests e2e con los clientes generados usando la última verión de los specs
+Una idea que he visto es que cada equipo mantenga una lista con los documentos
+que tienen que ser actualizados cada X meses. Una buena idea es darle estos
+documentos a nuevos integrantes y que verifiquen que están a la fecha.
 
-# Decision tecnica:
+Por último, los documentos formales son los que más sujetos están a ser
+verificados. De forma superficial la sintaxis se puede verificar. Los API specs
+pueden ser verificados a través de tests _end to end_ / de integración, donde
+los clientes son generados a través de los APIs specs. Esto sirve para verificar
+la estructura de las entradas y las salidas, pero vienen con la desventaja de
+ser lentos y frágiles, entre otras desventajas. Otra posibilidad es usar
+[pact testing](https://www.infoq.com/presentations/pact/).
 
-- el problema
-- contexto técnico
-- solución(es)
+## Conclusión (?)
+
+No voy a concluir diciendo una burrada como "documentar es bueno y se puede
+hacer de muchas formas". Creo que es más importante enfatizar que estas son
+herramientas de comunicación y discusión: sirven para hacer más explicita la
+visión que tenemos en nuestras cabezas y compartirla con otras personas. El
+éxito de su uso depende de como se den las conversaciones que estos documentos
+inician.
