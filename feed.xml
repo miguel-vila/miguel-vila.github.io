@@ -7,8 +7,18 @@
         <description><![CDATA[Miguel Vilá's personal blog]]></description>
         <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Tue, 08 Nov 2022 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Thu, 02 Feb 2023 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Sobre documentos de diseño</title>
+    <link>http://miguel-vila.github.io/posts/2023-02-02-design-docs.html</link>
+    <description><![CDATA[Sobre algunos tipos de documentos que podemos usar para hablar de
+decisiones técnicas: RFCs, ADRs, y propuestas técnicas, entre otros.
+]]></description>
+    <pubDate>Thu, 02 Feb 2023 00:00:00 UT</pubDate>
+    <guid>http://miguel-vila.github.io/posts/2023-02-02-design-docs.html</guid>
+    <dc:creator>Miguel Vilá</dc:creator>
+</item>
+<item>
     <title>Stopping when Robert Shiller tells you to</title>
     <link>http://miguel-vila.github.io/posts/2022-11-08-shiller.html</link>
     <description><![CDATA[Should you stop investing if markets are expensive? A naive and simple approach]]></description>
@@ -38,14 +48,6 @@
     <description><![CDATA[Algo de lo que leí en 2020]]></description>
     <pubDate>Sat, 02 Jan 2021 00:00:00 UT</pubDate>
     <guid>http://miguel-vila.github.io/posts/2021-01-02-libros-2020.html</guid>
-    <dc:creator>Miguel Vilá</dc:creator>
-</item>
-<item>
-    <title>Advent Of Code 2020 en Rust. Día 1</title>
-    <link>http://miguel-vila.github.io/posts/2020-12-07-aoc-rust-1.html</link>
-    <description><![CDATA[Mi solución en Rust al día 1 de Advent of Code 2020]]></description>
-    <pubDate>Mon, 07 Dec 2020 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2020-12-07-aoc-rust-1.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 

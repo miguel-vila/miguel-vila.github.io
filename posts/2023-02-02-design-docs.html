@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        
+        <meta property="og:title" content="Sobre documentos de diseño" />
+        <meta property="twitter:title" content="Sobre documentos de diseño" />
+        
+
+        
+        <meta name="description" content="Sobre algunos tipos de documentos que podemos usar para hablar de
+decisiones técnicas: RFCs, ADRs, y propuestas técnicas, entre otros.
+" />
+        <meta property="og:description" content="Sobre algunos tipos de documentos que podemos usar para hablar de
+decisiones técnicas: RFCs, ADRs, y propuestas técnicas, entre otros.
+" />
+        <meta property="twitter:description" content="Sobre algunos tipos de documentos que podemos usar para hablar de
+decisiones técnicas: RFCs, ADRs, y propuestas técnicas, entre otros.
+" />
+        
+
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="@mglvl" />
+
+        
+        <meta property="og:image" content="https://miguel-vila.github.io/images/design.jpg" />
+        <meta property="twitter:image" content="https://miguel-vila.github.io/images/design.jpg" />
+        
+
+        <title>
+            
+                Sobre documentos de diseño | Miguel Vil&aacute;
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+        <link rel="stylesheet" href="../css/style.css">
+        
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../side-projects.html">Side Projects</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Sobre documentos de diseño</h2>
+        </div>
+        <div id="content" class="inside">
+    <div class="info">
+        
+        Feb 02 2023
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a title="All pages tagged 'software engineering'." href="../tags/software%20engineering.html">software engineering</a>, <a title="All pages tagged 'technical decisions'." href="../tags/technical%20decisions.html">technical decisions</a>, <a title="All pages tagged 'software architecture'." href="../tags/software%20architecture.html">software architecture</a>, <a title="All pages tagged 'systems design'." href="../tags/systems%20design.html">systems design</a> 
+        
+    </div>
+    <hr>
+    <p class="image__article">
+<img src="../images/design.jpg" class="article-photo" style="float: right">
+</p>
+<p>Como ingenieros o desarrolladores una de nuestras responsabilidades, más allá de
+programar, es definir qué trabajo se necesita hacer para materializar <em>features</em>
+nuevos. Para esto es útil escribir propuestas y diseños. Este es un corto post
+sobre algunas “herramientas” que he usado para estos fines.</p>
+<p>Por decisiones técnicas me refiero a:</p>
+<ul>
+<li>La creación de un nuevo servicio/componente.</li>
+<li>La implementación de un nuevo <em>feature</em>.</li>
+<li>Un patrón de integración con otro equipo.</li>
+</ul>
+<p>Por diseños técnicos me refiero a la necesidad de especificar cosas como:</p>
+<ul>
+<li>La creación de un nuevo servicio/componente.</li>
+<li>La coordinación de múltiple componentes para entregar una nueva funcionalidad.</li>
+</ul>
+<p>Algo que motiva el uso de estas herramientas es que toda decisión importante
+debería ser:</p>
+<ul>
+<li>Documentada: Los integrantes del equipo deberían poder referirse a
+documentación que explique diseños y decisiones pasadas.</li>
+<li>Compartida: Debería producir artefactos que puedan ser compartidos en la
+organización. Resulta especialmente útil incluir enlaces a este tipo
+documentación dentro del proceso de <em>onboarding</em> de nuevos integrantes.</li>
+<li>Discutida: Toda decisión debería ser discutida entre los miembros relevantes
+del equipo. Preferiblemente de forma asíncrona, sin incurrir en reuniones que
+bloqueen el tiempo de toda la gente. Tiene sentido tener reuniones para alinear
+a alto nivel, pero detalles finos (e.g. el nombre de esta variable) tienen más
+sentido ser discutidos de forma asíncrona.</li>
+<li>Versionada (opcional): Este es un punto más importante para los diseños
+técnicos que para las decisiones técnicas.</li>
+</ul>
+<p>Hay tres grandes categorías de documentos:</p>
+<ul>
+<li>Formales</li>
+<li>Semi estructurados</li>
+<li>Informales</li>
+</ul>
+<h2 id="formales">Formales</h2>
+<p>Estos son documentos escritos en algún lenguaje de <em>markup</em>. Este tipo de
+documentos guían implementación y presentan detalles finos. Un líder técnico o
+ingeniero <em>senior</em> pueden escribir estos para materializar una visión técnica
+y guiar la implementación. También pueden ser usados para coordinar detalles
+finos con otros equipos.</p>
+<p>Ejemplos de estos:</p>
+<ul>
+<li><a href="https://plantuml.com/">PlantUML</a> o <a href="https://mermaid-js.github.io/">Mermaid</a>
+pueden ser usados para diferentes tipos de diagramas (de secuencia, de clases,
+de componentes, etc…). La ventaja de uno de estos sobre, por ejemplo
+<a href="https://lucid.app/">Lucid</a> es que los diagramas son escritos en un lenguaje y
+el archivo puede ser versionado a través de, por ejemplo, git. De esta forma la
+documentación puede quedar en el mismo sitio que el código.</li>
+<li><a href="https://swagger.io/">Swagger</a>, <a href="https://www.openapis.org/">OpenAPI</a> o algo
+como <a href="https://smithy.io/2.0/index.html">Smithy</a> pueden ser usados para discutir
+APIs. Estos son especialmente importantes cuando uno quiere discutir los
+detalles de una integración con otro equipo, o por lo general dejar documentadas
+las capacidades de un sistema.</li>
+</ul>
+<h2 id="semi-estructurados">Semi estructurados</h2>
+<p>A diferencia de los anteriores estos documentos son escritos en lenguaje natural
+, tienen una estructura semi definida (un listado de campos) y suelen ser de más
+alto nivel.</p>
+<p>Por ejemplo <em>Requests For Comments (RFCs)</em> son comunes para iniciar discusiones
+técnicas alrededor de un tópico. Esto puede ser: qué lenguaje de programación
+vamos a usar, como vamos a emitir eventos de dominio, como vamos a integrarnos
+con un servicio externo, etc… Algunos de los campos involucrados en estos
+documentos pueden ser un resumen, la motivación, una propuesta de implementación
+y desventajas entre otros.</p>
+<p>Aquí hay varios enlaces a cosas relacionadas con RFCs:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Request_for_Comments">Request for Comments - Wikipedia</a></li>
+<li><a href="https://buriti.ca/6-lessons-i-learned-while-implementing-technical-rfcs-as-a-management-tool-34687dbf46cb">RFCs en “prod”</a></li>
+<li><a href="https://github.com/buritica/mgt/blob/master/es/guia-de-rfcs.md#gu%C3%ADa-de-rfcs">Guía de RFCs</a></li>
+</ul>
+<p>Otro tipo de documentos, muy similar, son los <em>Architecture Design Records</em> y
+son usados para describir decisiones o acercamientos arquitecturales.
+Por ejemplo, como vamos a aprovisionar la infraestructura, como vamos a exponer
+APIs públicos, como vamos a monitorear los servicios, etc…</p>
+<p>Algunos enlaces:</p>
+<ul>
+<li><a href="https://github.com/joelparkerhenderson/architecture_decision_record#architecture-decision-record-adr">ADRs</a></li>
+<li><a href="https://github.com/joelparkerhenderson/architecture-decision-record/blob/main/templates/decision-record-template-by-michael-nygard/index.md">Template ejemplo</a></li>
+<li>En mi trabajo actual usamos <a href="https://github.com/npryce/adr-tools">adr-tools</a>
+para centralizar los ADRs.</li>
+</ul>
+<p>Algunos de estos documentos no son finales y suelen evolucionar con el tiempo.
+Suelen ser <a href="https://en.wikipedia.org/wiki/Living_document"><em>Living Documents</em></a>
+que son discutidos por un buen tiempo hasta que en un punto convergen a una
+decision. Los RFCs suelen invitar discusión. Pero los ADRs suelen ser más finales
+(e.g. este es el acercamiento que vamos a tener de ahora en adelante), pero en
+general siento que pueden ser usados para los mismos objetivos.</p>
+<p>Algunas compañías pueden formalizar el proceso a que un documento empiece como
+un RFC y termine como un ADR (cuando se trata de una decisión arquitectónica).
+Otras compañías pueden ser más informales: empiezan con una discusión <em>ad hoc</em> y
+concluyen con un ADR.</p>
+<h2 id="no-estructuradas-informales">No estructuradas / Informales</h2>
+<p>Estos son documentos que no tienen “campos” o esquemas bien definidos. Muchas
+veces estos son simplemente documentos, en lenguaje natural, con secciones
+definidas por los ingenieros. Por lo general este tipo de herramientas se usan
+en etapas muy exploratorias y muchas veces no se hacen dentro del contexto de un
+proyecto o de un equipo. Por ejemplo, un equipo quiere desarrollar un nuevo
+<em>feature</em> y se ha dado cuenta de que tienen que haber varios cambios técnicos
+con distintas posibilidades.</p>
+<p>En estos casos no es tan útil llegar al nivel de formalidad de especificar hasta
+el último detalle el API del nuevo servicio. En fases exploratorias es mejor
+hacer una descripción informal. Una vez haya luz verde de la propuesta y el
+proyecto empiece si valdrá la pena usar formas de documentación más formales.
+Puede ser útil usar <a href="https://lucid.app/">Lucid</a> en estos casos para agregar
+diagramas informales.</p>
+<p>Ejemplos de herramientas que se pueden usar para esto:</p>
+<ul>
+<li>Documentos en Markdown</li>
+<li>Google docs</li>
+<li>Agregar diagrams con Lucid</li>
+</ul>
+<p>Con markdown y Google Docs se pueden agregar comentarios en partes específicas
+del documento (para markdown usando algo como PRs de github). Esto permite
+iniciar discusiones sobre temas puntuales, hacer sugerencias, preguntas o
+requerir cambios.</p>
+<p>En varios trabajos he necesitado escribir este tipo de documentos. La estructura
+es usualmente informal pero la motivación común es resolver un problema. Es útil
+poner un párrafo breve con contexto y empezar a proponer una solución. También
+es común proponer varias soluciones y listar los pros, cons, y consecuencias de
+cada alternativa. Si se proponen varias soluciones es buena idea que el autor
+ponga su preferida de primero.</p>
+<p>Para los detalles de la solución puede ser útil poner diagramas informales, o
+pseudocódigo.</p>
+<h2 id="future-proofing">Future proofing</h2>
+<p>En el desarrollo de software es importante asegurarse que la documentación está
+actualizada. Cosas como el código pueden ser entendidos a través de los tests
+(que ojalá se tengan), pero no tenemos un mecanismo similar para la
+documentación. Mantener buena documentación es más responsabilidad de los
+sistemas de trabajo que tenga la compañía o el equipo.</p>
+<p>Uno de los tipos de documento que es más importante de mantener actualizado es
+aquel que describe como funciona un sistema específico a alto nivel. Por
+ejemplo: como esperamos recibir pagos asíncronos, o como funciona tal integración
+con terceros. Otros tipos de documentos como los ADRs, por su naturaleza,
+terminan convergiendo y pueden dar lugar al diseño de otros sistemas. Estos no
+tienen que ser actualizados, en cambio son reemplazados por nuevos ADRs si se
+quiere cambiar una decisión técnica.</p>
+<p>Una idea que he visto es que cada equipo mantenga una lista con los documentos
+que tienen que ser actualizados cada X meses. Una buena idea es darle estos
+documentos a nuevos integrantes y que verifiquen que están a la fecha.</p>
+<p>Por último, los documentos formales son los que más sujetos están a ser
+verificados. De forma superficial la sintaxis se puede verificar. Los API specs
+pueden ser verificados a través de tests <em>end to end</em> / de integración, donde
+los clientes son generados a través de los APIs specs. Esto sirve para verificar
+la estructura de las entradas y las salidas, pero vienen con la desventaja de
+ser lentos y frágiles, entre otras desventajas. Otra posibilidad es usar
+<a href="https://www.infoq.com/presentations/pact/">pact testing</a>.</p>
+<h2 id="conclusión">Conclusión (?)</h2>
+<p>No voy a concluir diciendo una burrada como “documentar es bueno y se puede
+hacer de muchas formas”. Creo que es más importante enfatizar que estas son
+herramientas de comunicación y discusión: sirven para hacer más explicita la
+visión que tenemos en nuestras cabezas y compartirla con otras personas. El
+éxito de su uso depende de como se den las conversaciones que estos documentos
+inician.</p>
+</div>
+
+<hr>
+<div class="inside">
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+        this.page.url = "http://miguel-vila.github.io/posts/2023-02-02-design-docs.html";
+        this.page.identifier = "posts/2023-02-02-design-docs.md".replace('posts/','').replace('.markdown',''); 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//miguel-vila.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+    <footer>
+        <hr>
+        <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+        <div class="rc-scout"></div>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=e913a8c2facd4191d76c6f34cea12f75"></script>
+    </body>
+</html>
