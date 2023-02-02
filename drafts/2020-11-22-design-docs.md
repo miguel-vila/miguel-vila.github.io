@@ -1,8 +1,16 @@
 ---
 title: Sobre documentos de diseño
-description: Sobre documentos de diseño
+description: |
+    Sobre algunos tipos de documentos que podemos usar para hablar de
+    decisiones técnicas: RFCs, ADRs, y propuestas técnicas, entre otros.
 tags: software engineering, technical decisions, software architecture, systems design
+image: https://miguel-vila.github.io/images/design.jpg
+use_plotly: false
 ---
+
+<p class="image__article">
+<img src="/images/design.jpg" class="article-photo" style="float: right">
+</p>
 
 Como ingenieros o desarrolladores una de nuestras responsabilidades, más allá de
 programar, es definir qué trabajo se necesita hacer para materializar _features_
