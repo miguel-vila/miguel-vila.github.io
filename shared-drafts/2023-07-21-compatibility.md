@@ -1,6 +1,9 @@
 ---
-title: Sobre compatibidad, hacia adelante y hacia atrás
-description: Explicando algo sobre compatibilidad, en relación a arquitecturas orientadas a eventos
+title: Sobre compatibilidad, hacia adelante y hacia atrás
+description: |
+   ¿Sabes qué cambios de esquema son seguros de desplegar en un sistema 
+   distribuido? En este post hablo sobre conceptos de compatibilidad y de cómo
+   pensar cuáles son los cambios que se pueden desplegar de forma segura.
 tags: compatibility, software engineering, system design
 include_plotly: false
 ---
@@ -22,9 +25,11 @@ el cliente va a esperar un `string` y recibe un `int`.
 
 Este es un ejemplo de una ruptura que sucede en cualquier dirección:
 sea en la solicitud o en la respuesta, sea que se despliegue el servidor o el
-cliente primero. Hay otro tipo de rupturas que se dan en una sola dirección,
+cliente primero. Pero, existe otro tipo de rupturas que se dan en una sola dirección,
 y que se pueden desplegar de forma segura si primero se despliega el cambio en
 un lado y luego en el otro.
+
+## Compatibilidad hacia atrás y hacia adelante
 
 Por ejemplo, si el servidor empieza a requerir un nuevo campo
 _obligatorio_ entonces cualquier solicitud que el cliente haga sin ese campo va
@@ -62,8 +67,11 @@ esquema nuevo o viejo.
 Hay varias complejidades en las compatibilidades para clientes/servidores que no
 he mencionado. Por ejemplo, dependiendo de si el cambio es en la solicitud o en
 la respuestas, la compatibilidad puede ser _hacia adelante_ o _hacia atrás_.
-Este post abordará la compatibilidad en el contexto de arquitecturas orientadas
-a eventos, lo cual simplifica el análisis.
+Este post abordará la compatibilidad en un contexto distinto: el de
+arquitecturas orientadas a eventos. En este contexto, hablar de compatibilidad
+es un poco más simple.
+
+## Compatibilidad en arquitecturas orientadas a eventos
 
 Primero, algunas definiciones. En una arquitectura orientada a eventos, diferentes
 servicios o dominios emiten eventos hacia _canales_ o _tópicos_. Entidades
@@ -117,3 +125,4 @@ detalle adicional. Los pasos son:
 3. Desplegar el cambio en los consumidores. En este punto, los consumidores
    podrán procesar todos los eventos en el tópico.
 
+## Conclusión

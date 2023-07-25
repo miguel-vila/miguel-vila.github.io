@@ -99,6 +99,28 @@ main = hakyll $ do
                 >>= loadAndApplyTemplate "templates/default.html" archiveCtx
                 >>= relativizeUrls
 
+    match "shared-drafts/*" $ do
+        route $ setExtension "html"
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/post.html" tagsPostCtx
+            >>= loadAndApplyTemplate "templates/default.html" tagsPostCtx
+            >>= relativizeUrls
+
+    create ["shared-drafts.html"] $ do
+        route idRoute
+        compile $ do
+            drafts <- recentFirst =<< loadAll "shared-drafts/*"
+            let archiveCtx =
+                    listField "posts" postCtx (return drafts) `mappend`
+                    constField "title" "Shared drafts"           `mappend`
+                    siteCtx
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/post-list.html" archiveCtx
+                >>= loadAndApplyTemplate "templates/default.html" archiveCtx
+                >>= relativizeUrls
+
+
     match "posts/*" $ do
         route $ setExtension "html"
         compile $ pandocCompiler
