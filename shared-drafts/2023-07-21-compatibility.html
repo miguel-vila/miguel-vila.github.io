@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Miguel Vilá" />
+        <link href="../images/favicon.ico" rel="icon">
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
+
+        
+        <meta property="og:title" content="Sobre compatibilidad, hacia adelante y hacia atrás" />
+        <meta property="twitter:title" content="Sobre compatibilidad, hacia adelante y hacia atrás" />
+        
+
+        
+        <meta name="description" content="¿Sabes qué cambios de esquema son seguros de desplegar en un sistema 
+distribuido? En este post hablo sobre conceptos de compatibilidad y de cómo
+pensar cuáles son los cambios que se pueden desplegar de forma segura.
+" />
+        <meta property="og:description" content="¿Sabes qué cambios de esquema son seguros de desplegar en un sistema 
+distribuido? En este post hablo sobre conceptos de compatibilidad y de cómo
+pensar cuáles son los cambios que se pueden desplegar de forma segura.
+" />
+        <meta property="twitter:description" content="¿Sabes qué cambios de esquema son seguros de desplegar en un sistema 
+distribuido? En este post hablo sobre conceptos de compatibilidad y de cómo
+pensar cuáles son los cambios que se pueden desplegar de forma segura.
+" />
+        
+
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="@mglvl" />
+
+        
+        <meta property="og:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        <meta property="twitter:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        
+
+        <title>
+            
+                Sobre compatibilidad, hacia adelante y hacia atrás | Miguel Vil&aacute;
+            
+        </title>
+        <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link rel="stylesheet" type="text/css" href="../assets/style.css" />
+        <link href="assets/css" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+        <link rel="stylesheet" href="../css/style.css">
+        
+        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        
+    </head>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <body>
+    <header>
+        <h1>Miguel Vil&aacute;</h1>
+        <div class="bottom__header">
+            <nav class="main__nav">
+                <a href="#" class="close__menu">
+                    <span></span>
+                    <span></span>
+                </a>
+                <li><a href="../">Home</a></li>
+                <li><a href="../archive.html">Blog</a></li>
+                <li><a href="../side-projects.html">Side Projects</a></li>
+                <li><a href="../resume_EN.pdf">Resume</a></li>
+                <li><a href="../feed.xml"><img src="../images/feed-icon.png" height="14px" width="14px" alt="rss-feed"></a></li>
+                <li class="spacer">|</li>
+                <li><a href="https://github.com/miguel-vila/">Github</a></li>
+                <li><a href="https://www.goodreads.com/user/show/64099742-miguel-vil">Goodreads</a></li>
+            </nav>
+            <div class="bottom__right">
+                <div class="menu__mobile">
+                    <a href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    </a>
+                </div>
+                <div class="dark__mode">
+                    <a href="#"><img src="../images/moon.png" alt="moon"></a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="main__container">
+        <div class="main_title">
+            <h2>Sobre compatibilidad, hacia adelante y hacia atrás</h2>
+        </div>
+        <div id="content" class="inside">
+    <div class="info">
+        
+        Jul 21 2023
+        
+    </div>
+    <div class="info">
+        
+        Tags: <a title="All pages tagged 'software engineering'." href="../tags/software%20engineering.html">software engineering</a> 
+        
+    </div>
+    <hr>
+    <p>En mi actual trabajo estamos construyendo herramientas relacionadas
+con modelamiento de interfaces de servicios y eventos. Para ser más precisos, mi
+equipo mantiene un repositorio donde varios equipos gestionan las versiones de
+las especificaciones (specs) de sus servicios y eventos, todo esto en el contexto
+de una plataforma orientada a servicios. Ese repositorio incluye validaciones de
+compatibilidad: si un cambio en un servicio o evento tiene el riesgo de romper
+algo, nuestra lógica lo detecta y lo advierte.</p>
+<p>¿Qué significa que un cambio rompa algo? Veámoslo en el contexto de un servidor
+y un cliente. Un ejemplo de una ruptura, <em>breaking change</em> en inglés, es cambiar
+el tipo de un campo, digamos, de <code>string</code> a <code>int</code>. Si el servidor espera un
+<code>int</code> para un request y el cliente le envía un <code>string</code>, entonces el servidor va
+a rechazar la solicitud. Lo mismo pasaría si el campo estuviera en la respuesta:
+el cliente va a esperar un <code>string</code> y recibe un <code>int</code>.</p>
+<p>Este es un ejemplo de una ruptura que sucede en cualquier dirección:
+sea en la solicitud o en la respuesta, sea que se despliegue el servidor o el
+cliente primero. Pero, existe otro tipo de rupturas que se dan en una sola dirección,
+y que se pueden desplegar de forma segura si primero se despliega el cambio en
+un lado y luego en el otro.</p>
+<h2 id="compatibilidad-hacia-atrás-y-hacia-adelante">Compatibilidad hacia atrás y hacia adelante</h2>
+<p>Por ejemplo, si el servidor empieza a requerir un nuevo campo
+<em>obligatorio</em> entonces cualquier solicitud que el cliente haga sin ese campo va
+a fallar. Este tipo de cambio es incompatible <strong>hacia atrás</strong>, porque el cliente
+tiene un esquema antiguo que es incompatible con el nuevo esquema que el
+servidor usa para validar las solicitudes. Este es el tipo de ruptura con el
+que seguramente estamos más familiarizados. En el caso anterior, si se despliega
+el cambio en el cliente primero, entonces no habrá ruptura.</p>
+<p>Hay otra forma de ruptura menos común. Si el cambio consiste en agregar un
+nuevo campo obligatorio a la respuesta (por obligatorio me refiero a que el servidor
+<em>garantiza</em> que el campo va a estar presente), entonces
+dependiendo del esquema que use el cliente, este puede ser compatible o no. Si
+el cliente usa, por adelantado, el nuevo esquema mientras el servidor emite
+respuestas con el viejo esquema, entonces el cliente se va a romper tratando de
+leer las respuestas del servidor. Esta es una ruptura <strong>hacia adelante</strong>. Como
+podrán intuir este tipo de incompatibilidad es menos común, porque no es tan
+usual que sean los clientes los que deseen usar una versión del esquema más
+nueva. Usualmente son los servidores los que quieren empezar a emitir respuestas
+con un esquema más nuevo.</p>
+<p>Es importante recordar que en cualquier caso, una ruptura afecta a los
+clientes: puede suceder en forma de un <em>bad request</em> o en forma de un error de
+procesamiento de una respuesta.</p>
+<p>La noción de compatibilidad <em>hacia adelante</em> y <em>hacia atrás</em> es un poco confusa
+y difícil de interiorizar, al menos para mí. La forma en la que yo lo pienso es
+preguntarme quién tiene el esquema nuevo y quién el esquema viejo.</p>
+<p>Nota aparte: es difícil traducir <em>backwards compatible</em> y <em>forward compatible</em>
+al español. Se me ocurre hablar de compatibilidad <em>hacia atrás</em> y
+<em>hacia adelante</em> por que así se transmite la idea de que es con respecto a un
+esquema nuevo o viejo.</p>
+<p>Hay varias complejidades en las compatibilidades para clientes/servidores que no
+he mencionado. Por ejemplo, dependiendo de si el cambio es en la solicitud o en
+la respuestas, la compatibilidad puede ser <em>hacia adelante</em> o <em>hacia atrás</em>.
+Este post abordará la compatibilidad en un contexto distinto: el de
+arquitecturas orientadas a eventos. En este contexto, hablar de compatibilidad
+es un poco más simple.</p>
+<h2 id="compatibilidad-en-arquitecturas-orientadas-a-eventos">Compatibilidad en arquitecturas orientadas a eventos</h2>
+<p>Primero, algunas definiciones. En una arquitectura orientada a eventos, diferentes
+servicios o dominios emiten eventos hacia <em>canales</em> o <em>tópicos</em>. Entidades
+interesadas en esos eventos se suscriben a esos <em>canales</em>. Los procesos emisores
+son llamados <em>productores</em> y los procesos que se suscriben a los <em>canales</em> son
+llamados <em>consumidores</em>. En medio de estos dos procesos hay un <em>broker</em> que es
+el que hace la transmisión de los eventos. Ejemplos de <em>brokers</em> son Kafka,
+RabbitMQ, AWS SNS, AWS Kinesis, etc. Para más información pueden ver
+<a href="https://www.asyncapi.com/docs/tutorials/getting-started/event-driven-architectures">esta</a>
+documentación de AsyncAPI.</p>
+<p>Vamos a hacer una suposición, que es cierta en varios <em>brokers</em>: para el <em>broker</em>
+un evento es un <em>blob</em> de datos. El <em>broker</em> no sabe nada sobre el contenido del
+evento, si debe adherirse a un esquema, si es un JSON, si es un XML, etc.
+Esto quiere decir, que por ejemplo, si mi servicio utiliza un cliente de AWS
+Kinesis y emite un evento que no se adhiere al esquema acordado para ese canal,
+AWS Kinesis aún aceptará y transmitirá ese evento. El evento va a ser transmitido al
+consumidor y este va a tener una ruptura al intentar leer el evento.</p>
+<p>Otra suposición es que no queremos que los consumidores tengan que procesar
+multiples versiones de un evento. Podríamos hacer que los consumidores inspeccionen
+un campo <code>version</code> en el evento y lo procesen según esa versión. Si
+no hay un “match” entre la versión del evento y la versión que el consumidor espera,
+entonces el consumidor puede rechazar el evento. Esta es una opción, pero puede
+ser un dolor de cabeza para los consumidores. Además, la mayoría del tiempo los
+consumidores solo van a estar procesando un mismo tipo o versión de un mensaje.</p>
+<p>Pensemos en ejemplos de cambios que pueden producir rupturas:</p>
+<p>Uno muy fácil es remover un campo que solía ser obligatorio. En este caso, la
+ruptura es <em>hacia atrás</em>, por que el consumidor tiene un esquema viejo que
+no sirve con nuevos eventos.</p>
+<p>Para desplegar este cambio, una opción es implementarlo primero en los
+consumidores: esto significa dejar de usar el campo que se va a remover. Luego,
+el productor se puede actualizar de forma segura.</p>
+<p>Ahora, otro ejemplo de un cambio sería agregar un nuevo campo obligatorio. En
+este caso, la ruptura es <em>hacia adelante</em>, por qué en caso de que el consumidor
+utilice el nuevo esquema, los eventos viejos no van a tener el campo nuevo.</p>
+<p>Desplegar este cambio de forma segura es el contrario del anterior: primero se
+despliega el cambio en el productor, y luego en los consumidores. Pero hay un
+detalle adicional. Los pasos son:</p>
+<ol type="1">
+<li>Desplegar el cambio en el productor. En este punto, el tópico va a contener
+eventos con el nuevo esquema y eventos con el viejo esquema, es decir eventos
+con y sin el nuevo campo.</li>
+<li>Esperar que los consumidores hayan procesado todos los eventos viejos (sin el
+nuevo campo).</li>
+<li>Desplegar el cambio en los consumidores. En este punto, los consumidores
+podrán procesar todos los eventos en el tópico.</li>
+</ol>
+<h2 id="conclusión">Conclusión</h2>
+</div>
+    </div>
+    <footer>
+        <hr>
+        <p>Built with <a href="http://jaspervdj.be/hakyll/">Hakyll</a>.</p>
+        <div class="rc-scout"></div>
+    </footer>
+    <script type="text/javascript" src="../scripts/main.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=e913a8c2facd4191d76c6f34cea12f75"></script>
+    </body>
+</html>
