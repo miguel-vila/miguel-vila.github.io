@@ -22,7 +22,8 @@ things safe.
 Before we start, let's list some of the requirements we had:
 
 - Zero downtime: this is an implicit assumption in most platforms nowadays.
-Minimizing user impact is a given.
+Minimizing user impact is a given. And counterintuitive as it might fell, making
+a process zero downtime can make the transition safer.
 - Read clients of the old service should continue to be able to read old data,
 and new data. Reason for this is that some read clients would take a long time
 to migrate to the new API.
@@ -40,16 +41,22 @@ called a backfill or a write back), and to the new persistence.
 
 Before the migration, clients would simply hit the old service directly:
 
-<p class="image__article">
-<img src="/images/backfill-before.png" class="article-centered-image"/>
+<span>
+<div>
+<p class="image__article__centered">
+<img src="/images/backfill-before.png"/>
 </p>
+</div>
+</span>
 
 The new service, would provide the same functionality to clients, but it would
 also perform a dual write:
 
+<div>
 <p class="image__article">
-<img src="/images/backfill-after.png" class="article-centered-image"/>
+<img src="/images/backfill-after.png" class="article-photo"/>
 </p>
+</div>
 
 There are some interesting details about how to make this dual write process
 safe. On one hand, we need some atomicity guarantees, so that we don't end up
@@ -63,7 +70,7 @@ is idempotent, then it should be OK. If a command fails, it will be retried,
 and as the operation is idempotent, it will be safe.
 
 <p class="image__article">
-<img src="/images/backfill-async.png" class="article-centered-image"/>
+<img src="/images/backfill-async.png" class="article-photo"/>
 </p>
 
 How about the case in which the operation is expected to be visible immediately
@@ -72,7 +79,7 @@ updating their profile. In this case, we could still apply the same strategy, if
 clients are still reading from the old service:
 
 <p class="image__article">
-<img src="/images/backfill-sync-write.png" class="article-centered-image"/>
+<img src="/images/backfill-sync-write.png" class="article-photoz"/>
 </p>
 
 This requires a bit more detail if the new API receives more data than the old
