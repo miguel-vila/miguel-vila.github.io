@@ -2,16 +2,22 @@
 title: Sobre compatibilidad, hacia adelante y hacia atrás
 description: |
    ¿Sabes qué cambios de esquema son seguros de desplegar en un sistema 
-   distribuido? En este post hablo sobre conceptos de compatibilidad y de cómo
-   pensar cuáles son los cambios que se pueden desplegar de forma segura.
-tags: compatibility, software engineering, system design
+   distribuido? En este post hablo sobre conceptos de compatibilidad, de cómo
+   pensar cuáles son los cambios que se pueden desplegar de forma segura y
+   , en especial, en el contexto de arquitecturas orientadas a eventos.
+tags: compatibility, software engineering, system design, event-driven architecture
 include_plotly: false
+image: https://miguel-vila.github.io/images/breaking-chain.jpg
 ---
+
+<p class="image__article">
+<img src="/images/breaking-chain.jpg" class="article-photo" style="float: right">
+</p>
 
 En mi actual trabajo estamos construyendo herramientas relacionadas
 con modelamiento de interfaces de servicios y eventos. Para ser más precisos, mi
 equipo mantiene un repositorio donde varios equipos gestionan las versiones de
-las especificaciones (specs) de sus servicios y eventos, todo esto en el contexto
+las especificaciones (_specs_) de sus servicios y eventos, todo esto en el contexto
 de una plataforma orientada a servicios. Ese repositorio incluye validaciones de
 compatibilidad: si un cambio en un servicio o evento tiene el riesgo de romper
 algo, nuestra lógica lo detecta y lo advierte.
@@ -19,7 +25,7 @@ algo, nuestra lógica lo detecta y lo advierte.
 ¿Qué significa que un cambio rompa algo? Veámoslo en el contexto de un servidor
 y un cliente. Un ejemplo de una ruptura, _breaking change_ en inglés, es cambiar
 el tipo de un campo, digamos, de `string` a `int`. Si el servidor espera un
-`int` para un request y el cliente le envía un `string`, entonces el servidor va
+`int` para un _request_ y el cliente le envía un `string`, entonces el servidor va
 a rechazar la solicitud. Lo mismo pasaría si el campo estuviera en la respuesta:
 el cliente va a esperar un `string` y recibe un `int`.
 
@@ -51,25 +57,34 @@ usual que sean los clientes los que deseen usar una versión del esquema más
 nueva. Usualmente son los servidores los que quieren empezar a emitir respuestas
 con un esquema más nuevo.
 
-Es importante recordar que en cualquier caso, una ruptura afecta a los
+Es importante recordar que, en cualquier caso, una ruptura afecta a los
 clientes: puede suceder en forma de un _bad request_ o en forma de un error de
 procesamiento de una respuesta.
 
-La noción de compatibilidad _hacia adelante_ y _hacia atrás_ es un poco confusa
+La noción de compatibilidad **hacia adelante** y **hacia atrás** es un poco confusa
 y difícil de interiorizar, al menos para mí. La forma en la que yo lo pienso es
 preguntarme quién tiene el esquema nuevo y quién el esquema viejo.
 
-Nota aparte: es difícil traducir _backwards compatible_ y _forward compatible_
-al español. Se me ocurre hablar de compatibilidad _hacia atrás_ y
-_hacia adelante_ por que así se transmite la idea de que es con respecto a un
+<div class="note">
+<p class="aside-header"><strong>Nota aparte</strong> <span class="clickable">(Click!)</span></p>
+
+<div class="note-content">
+
+Es difícil traducir **backwards compatible** y **forward compatible**
+al español. Se me ocurre hablar de compatibilidad **hacia atrás** y
+**hacia adelante** por que así se transmite la idea de que es con respecto a un
 esquema nuevo o viejo.
+
+</div>
+</div>
 
 Hay varias complejidades en las compatibilidades para clientes/servidores que no
 he mencionado. Por ejemplo, dependiendo de si el cambio es en la solicitud o en
-la respuestas, la compatibilidad puede ser _hacia adelante_ o _hacia atrás_.
-Este post abordará la compatibilidad en un contexto distinto: el de
-arquitecturas orientadas a eventos. En este contexto, hablar de compatibilidad
-es un poco más simple.
+la respuestas, la compatibilidad puede ser **hacia adelante** o **hacia atrás**,
+desde el punto de vista de quién produce un valor y quién lo lee. Si esto suena
+confuso, es por que lo es. Este _post_ abordará la compatibilidad en un contexto
+distinto: el de arquitecturas orientadas a eventos. En este contexto, hablar de
+compatibilidad es un poco más simple.
 
 ## Compatibilidad en arquitecturas orientadas a eventos
 
@@ -101,8 +116,8 @@ consumidores solo van a estar procesando un mismo tipo o versión de un mensaje.
 
 Pensemos en ejemplos de cambios que pueden producir rupturas:
 
-Uno muy fácil es remover un campo que solía ser obligatorio. En este caso, la
-ruptura es _hacia atrás_, por que el consumidor tiene un esquema viejo que
+Por ejemplo: remover un campo que solía ser obligatorio. En este caso, la
+ruptura es **hacia atrás**, por que el consumidor tiene un esquema viejo que
 no sirve con nuevos eventos.
 
 Para desplegar este cambio, una opción es implementarlo primero en los
@@ -110,7 +125,7 @@ consumidores: esto significa dejar de usar el campo que se va a remover. Luego,
 el productor se puede actualizar de forma segura.
 
 Ahora, otro ejemplo de un cambio sería agregar un nuevo campo obligatorio. En
-este caso, la ruptura es _hacia adelante_, por qué en caso de que el consumidor
+este caso, la ruptura es **hacia adelante**, por qué en caso de que el consumidor
 utilice el nuevo esquema, los eventos viejos no van a tener el campo nuevo.
 
 Desplegar este cambio de forma segura es el contrario del anterior: primero se
@@ -118,11 +133,31 @@ despliega el cambio en el productor, y luego en los consumidores. Pero hay un
 detalle adicional. Los pasos son:
 
 1. Desplegar el cambio en el productor. En este punto, el tópico va a contener
-   eventos con el nuevo esquema y eventos con el viejo esquema, es decir eventos
-   con y sin el nuevo campo.
+   eventos con el nuevo esquema **y** eventos con el viejo esquema, es decir eventos
+   **con y sin** el nuevo campo.
 2. Esperar que los consumidores hayan procesado todos los eventos viejos (sin el
    nuevo campo).
 3. Desplegar el cambio en los consumidores. En este punto, los consumidores
    podrán procesar todos los eventos en el tópico.
 
+¿Qué otros tipos de cambios existen y cuáles de ellos son compatibles o no?
+
+Listemos algunos:
+
+- Hacer opcional un campo que antes era obligatorio
+- Remover una variante de una enumeración: por ejemplo, si el campo `status` puede
+  ser `CREATED`, `PROCESSING` o `COMPLETED`, remover `PROCESSING`.
+- Contrario al anterior: agregar una variante a una enumeración.
+- Agregar un campo opcional.
+- Agregar un nuevo tipo de evento.
+
+Para el lector: ¿cuáles de estos cambios son compatibles? ¿cuáles son rupturas
+hacia adelante o hacia atrás?
+
 ## Conclusión
+
+Pensar en compatibilidad es una noción que se necesita tener en cuenta en sistemas
+que evolucionan y que se encuentran en producción. Desarrollar nociones de qué
+cambios son seguros y cuales no es importante para poder desplegar cambios de
+forma segura. En un _post_ futuro hablaré sobre el mismo problema en el contexto
+de clientes y servidores.
