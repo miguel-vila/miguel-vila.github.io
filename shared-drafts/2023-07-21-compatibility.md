@@ -7,6 +7,7 @@ description: |
    , en especial, en el contexto de arquitecturas orientadas a eventos.
 tags: compatibility, software engineering, system design, event-driven architecture
 include_plotly: false
+include_mermaid: true
 image: https://miguel-vila.github.io/images/breaking-chain.jpg
 ---
 
@@ -26,12 +27,38 @@ algo, nuestra lógica lo detecta y lo advierte.
 y un cliente. Un ejemplo de una ruptura, _breaking change_ en inglés, es cambiar
 el tipo de un campo, digamos, de `string` a `int`. Si el servidor espera un
 `int` para un _request_ y el cliente le envía un `string`, entonces el servidor va
-a rechazar la solicitud. Lo mismo pasaría si el campo estuviera en la respuesta:
-el cliente va a esperar un `string` y recibe un `int`.
+a rechazar la solicitud. 
 
-Este es un ejemplo de una ruptura que sucede en cualquier dirección:
+<pre class="mermaid">
+sequenceDiagram
+  participant Cliente as Cliente
+  participant Servidor as Servidor
+  Cliente->>Servidor: Solicitud (Campo: string)
+  Servidor-->>Cliente: OK 200
+  Note over Servidor: Cambio de tipo de campo a int
+  Cliente->>Servidor: Solicitud (Campo: string)
+  Servidor--xCliente: Bad Request 400  (Campo esperado: int)
+  Note over Cliente: Error de procesamiento: solicitud rechazada
+</pre>
+
+Lo mismo pasaría si el campo estuviera en la respuesta:
+el cliente va a esperar un `string` y recibe un `int`:
+
+<pre class="mermaid">
+sequenceDiagram
+  participant Cliente as Cliente
+  participant Servidor as Servidor
+  Cliente->>Servidor: Solicitud
+  Servidor-->>Cliente: OK 200 (Campo: string)
+  Note over Servidor: Cambio de tipo de campo a int
+  Cliente->>Servidor: Solicitud
+  Servidor-->>Cliente: OK 200 (Campo: int)
+  Note over Cliente: Error de procesamiento: esperaba string
+</pre>
+
+Los cambios abruptos de tipos son ejemplos de rupturas que suceden en cualquier dirección:
 sea en la solicitud o en la respuesta, sea que se despliegue el servidor o el
-cliente primero. Pero, existe otro tipo de rupturas que se dan en una sola dirección,
+cliente primero. Existe otro tipo de rupturas que se dan en una sola dirección,
 y que se pueden desplegar de forma segura si primero se despliega el cambio en
 un lado y luego en el otro.
 
