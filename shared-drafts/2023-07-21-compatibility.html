@@ -57,6 +57,12 @@ pensar cuáles son los cambios que se pueden desplegar de forma segura y
         <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         
+        
+        <script type="module">
+         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        </script>
+        
+
     </head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <body>
@@ -121,11 +127,34 @@ algo, nuestra lógica lo detecta y lo advierte.</p>
 y un cliente. Un ejemplo de una ruptura, <em>breaking change</em> en inglés, es cambiar
 el tipo de un campo, digamos, de <code>string</code> a <code>int</code>. Si el servidor espera un
 <code>int</code> para un <em>request</em> y el cliente le envía un <code>string</code>, entonces el servidor va
-a rechazar la solicitud. Lo mismo pasaría si el campo estuviera en la respuesta:
-el cliente va a esperar un <code>string</code> y recibe un <code>int</code>.</p>
-<p>Este es un ejemplo de una ruptura que sucede en cualquier dirección:
+a rechazar la solicitud.</p>
+<pre class="mermaid">
+sequenceDiagram
+  participant Cliente as Cliente
+  participant Servidor as Servidor
+  Cliente->>Servidor: Solicitud (Campo: string)
+  Servidor-->>Cliente: OK 200
+  Note over Servidor: Cambio de tipo de campo a int
+  Cliente->>Servidor: Solicitud (Campo: string)
+  Servidor--xCliente: Bad Request 400  (Campo esperado: int)
+  Note over Cliente: Error de procesamiento: solicitud rechazada
+</pre>
+<p>Lo mismo pasaría si el campo estuviera en la respuesta:
+el cliente va a esperar un <code>string</code> y recibe un <code>int</code>:</p>
+<pre class="mermaid">
+sequenceDiagram
+  participant Cliente as Cliente
+  participant Servidor as Servidor
+  Cliente->>Servidor: Solicitud
+  Servidor-->>Cliente: OK 200 (Campo: string)
+  Note over Servidor: Cambio de tipo de campo a int
+  Cliente->>Servidor: Solicitud
+  Servidor-->>Cliente: OK 200 (Campo: int)
+  Note over Cliente: Error de procesamiento: esperaba string
+</pre>
+<p>Los cambios abruptos de tipos son ejemplos de rupturas que suceden en cualquier dirección:
 sea en la solicitud o en la respuesta, sea que se despliegue el servidor o el
-cliente primero. Pero, existe otro tipo de rupturas que se dan en una sola dirección,
+cliente primero. Existe otro tipo de rupturas que se dan en una sola dirección,
 y que se pueden desplegar de forma segura si primero se despliega el cambio en
 un lado y luego en el otro.</p>
 <h2 id="compatibilidad-hacia-atrás-y-hacia-adelante">Compatibilidad hacia atrás y hacia adelante</h2>
