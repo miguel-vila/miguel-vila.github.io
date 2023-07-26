@@ -1,5 +1,5 @@
 ---
-title: Sobre compatibilidad, hacia adelante y hacia atrás
+title: Sobre compatibilidad, hacia adelante y hacia atrás [Borrador]
 description: |
    ¿Sabes qué cambios de esquema son seguros de desplegar en un sistema 
    distribuido? En este post hablo sobre conceptos de compatibilidad, de cómo
