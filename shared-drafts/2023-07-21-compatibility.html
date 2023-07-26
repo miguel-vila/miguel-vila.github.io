@@ -9,22 +9,25 @@
         <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate" />
 
         
-        <meta property="og:title" content="Sobre compatibilidad, hacia adelante y hacia atrás" />
-        <meta property="twitter:title" content="Sobre compatibilidad, hacia adelante y hacia atrás" />
+        <meta property="og:title" content="Sobre compatibilidad, hacia adelante y hacia atrás [Borrador]" />
+        <meta property="twitter:title" content="Sobre compatibilidad, hacia adelante y hacia atrás [Borrador]" />
         
 
         
         <meta name="description" content="¿Sabes qué cambios de esquema son seguros de desplegar en un sistema 
-distribuido? En este post hablo sobre conceptos de compatibilidad y de cómo
-pensar cuáles son los cambios que se pueden desplegar de forma segura.
+distribuido? En este post hablo sobre conceptos de compatibilidad, de cómo
+pensar cuáles son los cambios que se pueden desplegar de forma segura y
+, en especial, en el contexto de arquitecturas orientadas a eventos.
 " />
         <meta property="og:description" content="¿Sabes qué cambios de esquema son seguros de desplegar en un sistema 
-distribuido? En este post hablo sobre conceptos de compatibilidad y de cómo
-pensar cuáles son los cambios que se pueden desplegar de forma segura.
+distribuido? En este post hablo sobre conceptos de compatibilidad, de cómo
+pensar cuáles son los cambios que se pueden desplegar de forma segura y
+, en especial, en el contexto de arquitecturas orientadas a eventos.
 " />
         <meta property="twitter:description" content="¿Sabes qué cambios de esquema son seguros de desplegar en un sistema 
-distribuido? En este post hablo sobre conceptos de compatibilidad y de cómo
-pensar cuáles son los cambios que se pueden desplegar de forma segura.
+distribuido? En este post hablo sobre conceptos de compatibilidad, de cómo
+pensar cuáles son los cambios que se pueden desplegar de forma segura y
+, en especial, en el contexto de arquitecturas orientadas a eventos.
 " />
         
 
@@ -33,13 +36,13 @@ pensar cuáles son los cambios que se pueden desplegar de forma segura.
         <meta property="twitter:site" content="@mglvl" />
 
         
-        <meta property="og:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
-        <meta property="twitter:image" content="https://avatars3.githubusercontent.com/u/824335?v=3&s=400" />
+        <meta property="og:image" content="https://miguel-vila.github.io/images/breaking-chain.jpg" />
+        <meta property="twitter:image" content="https://miguel-vila.github.io/images/breaking-chain.jpg" />
         
 
         <title>
             
-                Sobre compatibilidad, hacia adelante y hacia atrás | Miguel Vil&aacute;
+                Sobre compatibilidad, hacia adelante y hacia atrás [Borrador] | Miguel Vil&aacute;
             
         </title>
         <link rel="stylesheet" type="text/css" href="../css/markdown.css" />
@@ -90,7 +93,7 @@ pensar cuáles son los cambios que se pueden desplegar de forma segura.
     </header>
     <div class="main__container">
         <div class="main_title">
-            <h2>Sobre compatibilidad, hacia adelante y hacia atrás</h2>
+            <h2>Sobre compatibilidad, hacia adelante y hacia atrás [Borrador]</h2>
         </div>
         <div id="content" class="inside">
     <div class="info">
@@ -104,17 +107,20 @@ pensar cuáles son los cambios que se pueden desplegar de forma segura.
         
     </div>
     <hr>
-    <p>En mi actual trabajo estamos construyendo herramientas relacionadas
+    <p class="image__article">
+<img src="../images/breaking-chain.jpg" class="article-photo" style="float: right">
+</p>
+<p>En mi actual trabajo estamos construyendo herramientas relacionadas
 con modelamiento de interfaces de servicios y eventos. Para ser más precisos, mi
 equipo mantiene un repositorio donde varios equipos gestionan las versiones de
-las especificaciones (specs) de sus servicios y eventos, todo esto en el contexto
+las especificaciones (<em>specs</em>) de sus servicios y eventos, todo esto en el contexto
 de una plataforma orientada a servicios. Ese repositorio incluye validaciones de
 compatibilidad: si un cambio en un servicio o evento tiene el riesgo de romper
 algo, nuestra lógica lo detecta y lo advierte.</p>
 <p>¿Qué significa que un cambio rompa algo? Veámoslo en el contexto de un servidor
 y un cliente. Un ejemplo de una ruptura, <em>breaking change</em> en inglés, es cambiar
 el tipo de un campo, digamos, de <code>string</code> a <code>int</code>. Si el servidor espera un
-<code>int</code> para un request y el cliente le envía un <code>string</code>, entonces el servidor va
+<code>int</code> para un <em>request</em> y el cliente le envía un <code>string</code>, entonces el servidor va
 a rechazar la solicitud. Lo mismo pasaría si el campo estuviera en la respuesta:
 el cliente va a esperar un <code>string</code> y recibe un <code>int</code>.</p>
 <p>Este es un ejemplo de una ruptura que sucede en cualquier dirección:
@@ -141,22 +147,30 @@ podrán intuir este tipo de incompatibilidad es menos común, porque no es tan
 usual que sean los clientes los que deseen usar una versión del esquema más
 nueva. Usualmente son los servidores los que quieren empezar a emitir respuestas
 con un esquema más nuevo.</p>
-<p>Es importante recordar que en cualquier caso, una ruptura afecta a los
+<p>Es importante recordar que, en cualquier caso, una ruptura afecta a los
 clientes: puede suceder en forma de un <em>bad request</em> o en forma de un error de
 procesamiento de una respuesta.</p>
-<p>La noción de compatibilidad <em>hacia adelante</em> y <em>hacia atrás</em> es un poco confusa
+<p>La noción de compatibilidad <strong>hacia adelante</strong> y <strong>hacia atrás</strong> es un poco confusa
 y difícil de interiorizar, al menos para mí. La forma en la que yo lo pienso es
 preguntarme quién tiene el esquema nuevo y quién el esquema viejo.</p>
-<p>Nota aparte: es difícil traducir <em>backwards compatible</em> y <em>forward compatible</em>
-al español. Se me ocurre hablar de compatibilidad <em>hacia atrás</em> y
-<em>hacia adelante</em> por que así se transmite la idea de que es con respecto a un
+<div class="note">
+<p class="aside-header">
+<strong>Nota aparte</strong> <span class="clickable">(Click!)</span>
+</p>
+<div class="note-content">
+<p>Es difícil traducir <strong>backwards compatible</strong> y <strong>forward compatible</strong>
+al español. Se me ocurre hablar de compatibilidad <strong>hacia atrás</strong> y
+<strong>hacia adelante</strong> por que así se transmite la idea de que es con respecto a un
 esquema nuevo o viejo.</p>
+</div>
+</div>
 <p>Hay varias complejidades en las compatibilidades para clientes/servidores que no
 he mencionado. Por ejemplo, dependiendo de si el cambio es en la solicitud o en
-la respuestas, la compatibilidad puede ser <em>hacia adelante</em> o <em>hacia atrás</em>.
-Este post abordará la compatibilidad en un contexto distinto: el de
-arquitecturas orientadas a eventos. En este contexto, hablar de compatibilidad
-es un poco más simple.</p>
+la respuestas, la compatibilidad puede ser <strong>hacia adelante</strong> o <strong>hacia atrás</strong>,
+desde el punto de vista de quién produce un valor y quién lo lee. Si esto suena
+confuso, es por que lo es. Este <em>post</em> abordará la compatibilidad en un contexto
+distinto: el de arquitecturas orientadas a eventos. En este contexto, hablar de
+compatibilidad es un poco más simple.</p>
 <h2 id="compatibilidad-en-arquitecturas-orientadas-a-eventos">Compatibilidad en arquitecturas orientadas a eventos</h2>
 <p>Primero, algunas definiciones. En una arquitectura orientada a eventos, diferentes
 servicios o dominios emiten eventos hacia <em>canales</em> o <em>tópicos</em>. Entidades
@@ -182,28 +196,45 @@ entonces el consumidor puede rechazar el evento. Esta es una opción, pero puede
 ser un dolor de cabeza para los consumidores. Además, la mayoría del tiempo los
 consumidores solo van a estar procesando un mismo tipo o versión de un mensaje.</p>
 <p>Pensemos en ejemplos de cambios que pueden producir rupturas:</p>
-<p>Uno muy fácil es remover un campo que solía ser obligatorio. En este caso, la
-ruptura es <em>hacia atrás</em>, por que el consumidor tiene un esquema viejo que
+<p>Por ejemplo: remover un campo que solía ser obligatorio. En este caso, la
+ruptura es <strong>hacia atrás</strong>, por que el consumidor tiene un esquema viejo que
 no sirve con nuevos eventos.</p>
 <p>Para desplegar este cambio, una opción es implementarlo primero en los
 consumidores: esto significa dejar de usar el campo que se va a remover. Luego,
 el productor se puede actualizar de forma segura.</p>
 <p>Ahora, otro ejemplo de un cambio sería agregar un nuevo campo obligatorio. En
-este caso, la ruptura es <em>hacia adelante</em>, por qué en caso de que el consumidor
+este caso, la ruptura es <strong>hacia adelante</strong>, por qué en caso de que el consumidor
 utilice el nuevo esquema, los eventos viejos no van a tener el campo nuevo.</p>
 <p>Desplegar este cambio de forma segura es el contrario del anterior: primero se
 despliega el cambio en el productor, y luego en los consumidores. Pero hay un
 detalle adicional. Los pasos son:</p>
 <ol type="1">
 <li>Desplegar el cambio en el productor. En este punto, el tópico va a contener
-eventos con el nuevo esquema y eventos con el viejo esquema, es decir eventos
-con y sin el nuevo campo.</li>
+eventos con el nuevo esquema <strong>y</strong> eventos con el viejo esquema, es decir eventos
+<strong>con y sin</strong> el nuevo campo.</li>
 <li>Esperar que los consumidores hayan procesado todos los eventos viejos (sin el
 nuevo campo).</li>
 <li>Desplegar el cambio en los consumidores. En este punto, los consumidores
 podrán procesar todos los eventos en el tópico.</li>
 </ol>
+<p>¿Qué otros tipos de cambios existen y cuáles de ellos son compatibles o no?</p>
+<p>Listemos algunos:</p>
+<ul>
+<li>Hacer opcional un campo que antes era obligatorio</li>
+<li>Remover una variante de una enumeración: por ejemplo, si el campo <code>status</code> puede
+ser <code>CREATED</code>, <code>PROCESSING</code> o <code>COMPLETED</code>, remover <code>PROCESSING</code>.</li>
+<li>Contrario al anterior: agregar una variante a una enumeración.</li>
+<li>Agregar un campo opcional.</li>
+<li>Agregar un nuevo tipo de evento.</li>
+</ul>
+<p>Para el lector: ¿cuáles de estos cambios son compatibles? ¿cuáles son rupturas
+hacia adelante o hacia atrás?</p>
 <h2 id="conclusión">Conclusión</h2>
+<p>Pensar en compatibilidad es una noción que se necesita tener en cuenta en sistemas
+que evolucionan y que se encuentran en producción. Desarrollar nociones de qué
+cambios son seguros y cuales no es importante para poder desplegar cambios de
+forma segura. En un <em>post</em> futuro hablaré sobre el mismo problema en el contexto
+de clientes y servidores.</p>
 </div>
     </div>
     <footer>
