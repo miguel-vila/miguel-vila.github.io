@@ -128,7 +128,7 @@ y un cliente. Un ejemplo de una ruptura, <em>breaking change</em> en inglés, es
 el tipo de un campo, digamos, de <code>string</code> a <code>int</code>. Si el servidor espera un
 <code>int</code> para un <em>request</em> y el cliente le envía un <code>string</code>, entonces el servidor va
 a rechazar la solicitud.</p>
-<pre class="mermaid">
+<pre class="mermaid" style="display: block; margin-left: auto; margin-right: auto; width: 90%">
 sequenceDiagram
   participant Cliente as Cliente
   participant Servidor as Servidor
@@ -141,7 +141,7 @@ sequenceDiagram
 </pre>
 <p>Lo mismo pasaría si el campo estuviera en la respuesta:
 el cliente va a esperar un <code>string</code> y recibe un <code>int</code>:</p>
-<pre class="mermaid">
+<pre class="mermaid" style="display: block; margin-left: auto; margin-right: auto; width: 90%">
 sequenceDiagram
   participant Cliente as Cliente
   participant Servidor as Servidor
@@ -224,7 +224,11 @@ no hay un “match” entre la versión del evento y la versión que el consumid
 entonces el consumidor puede rechazar el evento. Esta es una opción, pero puede
 ser un dolor de cabeza para los consumidores. Además, la mayoría del tiempo los
 consumidores solo van a estar procesando un mismo tipo o versión de un mensaje.</p>
-<p>Pensemos en ejemplos de cambios que pueden producir rupturas:</p>
+<p>El sistema funciona de forma normal cuando el esquema que tienen los productores
+es el mismo que el esquema que tienen los consumidores:</p>
+<p><img src="../images/compatibility-ok.jpeg" style="display: block; margin-left: auto; margin-right: auto; width: 100%;"></p>
+<p>Pensemos en ejemplos de cambios en el esquema de los eventos que pueden producir
+rupturas:</p>
 <p>Por ejemplo: remover un campo que solía ser obligatorio. En este caso, la
 ruptura es <strong>hacia atrás</strong>, por que el consumidor tiene un esquema viejo que
 no sirve con nuevos eventos.</p>
