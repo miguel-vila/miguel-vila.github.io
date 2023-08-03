@@ -29,7 +29,7 @@ el tipo de un campo, digamos, de `string` a `int`. Si el servidor espera un
 `int` para un _request_ y el cliente le envía un `string`, entonces el servidor va
 a rechazar la solicitud. 
 
-<pre class="mermaid">
+<pre class="mermaid" style="display: block; margin-left: auto; margin-right: auto; width: 90%">
 sequenceDiagram
   participant Cliente as Cliente
   participant Servidor as Servidor
@@ -44,7 +44,7 @@ sequenceDiagram
 Lo mismo pasaría si el campo estuviera en la respuesta:
 el cliente va a esperar un `string` y recibe un `int`:
 
-<pre class="mermaid">
+<pre class="mermaid" style="display: block; margin-left: auto; margin-right: auto; width: 90%">
 sequenceDiagram
   participant Cliente as Cliente
   participant Servidor as Servidor
@@ -141,7 +141,13 @@ entonces el consumidor puede rechazar el evento. Esta es una opción, pero puede
 ser un dolor de cabeza para los consumidores. Además, la mayoría del tiempo los
 consumidores solo van a estar procesando un mismo tipo o versión de un mensaje.
 
-Pensemos en ejemplos de cambios que pueden producir rupturas:
+El sistema funciona de forma normal cuando el esquema que tienen los productores
+es el mismo que el esquema que tienen los consumidores:
+
+<img src="/images/compatibility-ok.jpeg" style="display: block; margin-left: auto; margin-right: auto; width: 100%;">
+
+Pensemos en ejemplos de cambios en el esquema de los eventos que pueden producir
+rupturas:
 
 Por ejemplo: remover un campo que solía ser obligatorio. En este caso, la
 ruptura es **hacia atrás**, por que el consumidor tiene un esquema viejo que
