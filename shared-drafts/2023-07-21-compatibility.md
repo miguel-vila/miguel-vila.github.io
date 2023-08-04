@@ -16,7 +16,7 @@ image: https://miguel-vila.github.io/images/breaking-chain.jpg
 </p>
 
 En mi actual trabajo estamos construyendo herramientas relacionadas
-con modelamiento de interfaces de servicios y eventos. Para ser más precisos, mi
+con modelado de interfaces de servicios y eventos. Para ser más precisos, mi
 equipo mantiene un repositorio donde varios equipos gestionan las versiones de
 las especificaciones (_specs_) de sus servicios y eventos, todo esto en el contexto
 de una plataforma orientada a servicios. Ese repositorio incluye validaciones de
@@ -26,8 +26,8 @@ algo, nuestra lógica lo detecta y lo advierte.
 ¿Qué significa que un cambio rompa algo? Veámoslo en el contexto de un servidor
 y un cliente. Un ejemplo de una ruptura, _breaking change_ en inglés, es cambiar
 el tipo de un campo, digamos, de `string` a `int`. Si el servidor espera un
-`int` para un _request_ y el cliente le envía un `string`, entonces el servidor va
-a rechazar la solicitud. 
+`int` para una **solicitud** y el cliente le envía un `string`, entonces el servidor va
+a rechazar la solicitud:
 
 <pre class="mermaid" style="display: block; margin-left: auto; margin-right: auto; width: 90%">
 sequenceDiagram
@@ -37,11 +37,12 @@ sequenceDiagram
   Servidor-->>Cliente: OK 200
   Note over Servidor: Cambio de tipo de campo a int
   Cliente->>Servidor: Solicitud (Campo: string)
+  Note over Servidor: Error procesando solicitud: formato inesperado
   Servidor--xCliente: Bad Request 400  (Campo esperado: int)
-  Note over Cliente: Error de procesamiento: solicitud rechazada
+  Note over Cliente: Respuesta errónea: solicitud rechazada
 </pre>
 
-Lo mismo pasaría si el campo estuviera en la respuesta:
+Lo mismo pasaría si el campo estuviera en la **respuesta**:
 el cliente va a esperar un `string` y recibe un `int`:
 
 <pre class="mermaid" style="display: block; margin-left: auto; margin-right: auto; width: 90%">
@@ -58,7 +59,7 @@ sequenceDiagram
 
 Los cambios abruptos de tipos son ejemplos de rupturas que suceden en cualquier dirección:
 sea en la solicitud o en la respuesta, sea que se despliegue el servidor o el
-cliente primero. Existe otro tipo de rupturas que se dan en una sola dirección,
+cliente primero. Pero como veremos, existe otro tipo de rupturas que se dan en una sola dirección,
 y que se pueden desplegar de forma segura si primero se despliega el cambio en
 un lado y luego en el otro.
 
@@ -90,7 +91,10 @@ procesamiento de una respuesta.
 
 La noción de compatibilidad **hacia adelante** y **hacia atrás** es un poco confusa
 y difícil de interiorizar, al menos para mí. La forma en la que yo lo pienso es
-preguntarme quién tiene el esquema nuevo y quién el esquema viejo.
+preguntarme quién tiene el esquema nuevo y quién el esquema viejo. También es importante
+notar que un cambio puede ser compatible **hacia adelante** pero no **hacia atrás**,
+y vice versa: básicamente que un cambio sea compatible en una dirección no nos dice
+nada sobre la compatibilidad en la otra dirección.
 
 <div class="note">
 <p class="aside-header"><strong>Nota aparte</strong> <span class="clickable">(Click!)</span></p>
@@ -120,10 +124,9 @@ servicios o dominios emiten eventos hacia _canales_ o _tópicos_. Entidades
 interesadas en esos eventos se suscriben a esos _canales_. Los procesos emisores
 son llamados _productores_ y los procesos que se suscriben a los _canales_ son
 llamados _consumidores_. En medio de estos dos procesos hay un _broker_ que es
-el que hace la transmisión de los eventos. Ejemplos de _brokers_ son Kafka,
-RabbitMQ, AWS SNS, AWS Kinesis, etc. Para más información pueden ver
-[esta](https://www.asyncapi.com/docs/tutorials/getting-started/event-driven-architectures)
-documentación de AsyncAPI.
+el que hace la transmisión de los eventos, desde un _productor_ hacia sus
+_consumidores_. Ejemplos de _brokers_ son Kafka, RabbitMQ, AWS SNS, AWS Kinesis, etc.
+Para un buen resúmen de estos conceptos pueden ver [esta](https://www.asyncapi.com/docs/tutorials/getting-started/event-driven-architectures) documentación de AsyncAPI.
 
 Vamos a hacer una suposición, que es cierta en varios _brokers_: para el _broker_
 un evento es un _blob_ de datos. El _broker_ no sabe nada sobre el contenido del
@@ -140,6 +143,9 @@ no hay un "match" entre la versión del evento y la versión que el consumidor e
 entonces el consumidor puede rechazar el evento. Esta es una opción, pero puede
 ser un dolor de cabeza para los consumidores. Además, la mayoría del tiempo los
 consumidores solo van a estar procesando un mismo tipo o versión de un mensaje.
+Lo que queremos es introducir cambios sin mucha coordinación,
+de forma fluida. Si hay posibilidad de una ruptura, eso es algo que quisiéramos
+saber.
 
 El sistema funciona de forma normal cuando el esquema que tienen los productores
 es el mismo que el esquema que tienen los consumidores:
@@ -179,18 +185,33 @@ Listemos algunos:
 
 - Hacer opcional un campo que antes era obligatorio
 - Remover una variante de una enumeración: por ejemplo, si el campo `status` puede
-  ser `CREATED`, `PROCESSING` o `COMPLETED`, remover `PROCESSING`.
+  ser `CREATED`, `PROCESSING` o `COMPLETED`, remover `PROCESSING`. Es importante
+  anotar que sin importar que la representación subyacente para enumeraciones
+  sea `String`s, queremos asegurarnos que los valores que vemos corresponden a
+  un esquema.
 - Contrario al anterior: agregar una variante a una enumeración.
 - Agregar un campo opcional.
-- Agregar un nuevo tipo de evento.
+- Agregar un nuevo tipo de evento a un tópico.
 
 Para el lector: ¿cuáles de estos cambios son compatibles? ¿cuáles son rupturas
 hacia adelante o hacia atrás?
+
+Veámoslo acá:
+
+| Cambio | Compatible hacia atrás | Compatible hacia adelante |
+| ------ | ------------- | ------- |
+| Hacer opcional un campo que antes era obligatorio | No. El consumidor puede recibir un evento sin el campo. | Si. El consumidor va a seguir recibiendo el campo, aunque piense que es opcional. |
+| Remover una variante de una enumeración | Si. El consumidor va a ser capaz de procesar los valores que conoce. | No. El consumidor puede recibir un evento con el valor de la enumeración que fue removido. |
+| Agregar una variante a una enumeración | No. El consumidor puede recibir un evento con el nuevo valor de la enumeración que no reconoce. | Si. El consumidor va a seguir siendo capaz de identificar las mismas variantes, y va a estar listo para cuando el productor emita eventos con ese nuevo valor. |
+| Agregar un campo opcional | Si. El consumidor no leerá ese campo opcional. | Si. El consumidor sabrá que el campo es opcional, y no recibirá un valor hasta que el productor cambie. |
+| Agregar un nuevo tipo de evento a un tópico | No. El consumidor puede recibir una instancia del nuevo evento y no saber como procesarlo. | Si. El consumidor va a seguir siendo capaz de procesar los eventos que conoce, y va a estar listo para procesar el nuevo evento cuando el productor lo emita. |
 
 ## Conclusión
 
 Pensar en compatibilidad es una noción que se necesita tener en cuenta en sistemas
 que evolucionan y que se encuentran en producción. Desarrollar nociones de qué
 cambios son seguros y cuales no es importante para poder desplegar cambios de
-forma segura. En un _post_ futuro hablaré sobre el mismo problema en el contexto
+forma segura. Es importante distinguir entre compatibilidad hacia atrás y hacia
+adelante, por que esto indica como podemos desplegar de forma segura sin generar
+una disrrupción. En un _post_ futuro hablaré sobre el mismo problema en el contexto
 de clientes y servidores.
