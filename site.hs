@@ -130,11 +130,9 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/default.html" tagsPostCtx
             >>= relativizeUrls
 
-    create ["side-projects.html"] $ do
-        route idRoute
-        compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" siteCtx
-            >>= relativizeUrls
+    nonPostPage "side-projects.html"
+
+    nonPostPage "gifts-guide.html"
 
     create ["archive.html"] $ do
         route idRoute
@@ -188,6 +186,14 @@ main = hakyll $ do
           renderRss feedConfig feedCtx posts
 
 --------------------------------------------------------------------------------
+
+nonPostPage fileName =
+    create [ fileName ] $ do
+        route idRoute
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/default.html" siteCtx
+            >>= relativizeUrls
+
 draftCtx :: Context String
 draftCtx = defaultContext `mappend` activeClassField
 
