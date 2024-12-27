@@ -104,14 +104,6 @@ body {
 hr {
   border-color: #ccc; }
 
-.image__article_left {
-  width: 40%;
-  padding: 10px 20px;
-  margin: 0px; }
-  .image__article_left > img {
-    max-width: 100%;
-    margin-right: 25px; }
-
 .image__article {
   float: right;
   width: 40%;
