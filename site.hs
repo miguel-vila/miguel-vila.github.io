@@ -130,9 +130,9 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/default.html" tagsPostCtx
             >>= relativizeUrls
 
-    nonPostPage "side-projects.html"
+    nonPostPage "gifts-guide.md"
 
-    nonPostPage "gifts-guide.html"
+    nonPostPage "side-projects.md"
 
     create ["archive.html"] $ do
         route idRoute
@@ -161,7 +161,6 @@ main = hakyll $ do
                 >>= loadAndApplyTemplate "templates/default.html" archiveCtx
                 >>= relativizeUrls
 
-
     match "index.html" $ do
         route idRoute
         compile $ do
@@ -187,9 +186,9 @@ main = hakyll $ do
 
 --------------------------------------------------------------------------------
 
-nonPostPage fileName =
-    create [ fileName ] $ do
-        route idRoute
+nonPostPage name =
+    create [ name ] $ do
+        route (setExtension ".html")
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/default.html" siteCtx
             >>= relativizeUrls
