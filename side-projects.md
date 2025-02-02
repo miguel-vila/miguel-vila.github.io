@@ -6,6 +6,12 @@ description: A list of side projects I have done in the past.
 I have done a few side projects in the past in order to learn new things and have fun. 
 Here is a list of them:
 
+### [X Recs Remover](https://github.com/miguel-vila/x-recs-remover)
+
+Firefox plugin to remove recommendations bars on X / Twitter, in order to have a
+distraction free experience. This project was quickly done with the help of
+ChatGPT.
+
 ### [Fetch](https://github.com/miguel-vila/fetch)
 
 A proof of concept about implementing [Haxl](https://community.haskell.org/~simonmar/papers/haxl-icfp14.pdf) using Scala.
