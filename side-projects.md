@@ -8,8 +8,8 @@ Here is a list of them:
 
 ### [X Recs Remover](https://github.com/miguel-vila/x-recs-remover)
 
-Firefox plugin to remove recommendations bars on X / Twitter, in order to have a
-distraction free experience. This project was quickly done with the help of
+A [Firefox plugin](https://addons.mozilla.org/en-GB/firefox/addon/x-recommendations-remover/) to remove recommendations bars on X / Twitter, in order to have a
+distraction-free experience. This project was quickly done with the help of
 ChatGPT.
 
 ### [Fetch](https://github.com/miguel-vila/fetch)
