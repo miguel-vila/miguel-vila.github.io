@@ -107,11 +107,24 @@ hr {
 .image__article {
   float: right;
   width: 40%;
-  padding: 25px 25px;
-  margin: 0px; }
+  padding: 15px;
+  margin: 0 0 15px 15px; }
   .image__article > img {
     max-width: 100%;
-    margin: 0px; }
+    height: auto;
+    margin: 0px;
+    display: block; }
+  .image__article > a {
+    display: block;
+    border-bottom: none; }
+  .image__article > a:hover {
+    opacity: 0.9;
+    border-bottom: none; }
+  .image__article > a > img {
+    max-width: 100%;
+    height: auto;
+    margin: 0px;
+    display: block; }
 
 img {
   max-width: 100%;
@@ -122,6 +135,15 @@ img {
 .responsive-image {
   width: 100%;
   height: auto;
+}
+
+.book-cover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+
+.book-cover:hover {
+  transform: translateY(-5px);
 }
 
 .main__container .inside li {
@@ -151,6 +173,8 @@ body.dark {
     color: rgba(255, 255, 255, 0.8); }
   body.dark header > h1 {
     color: #fff; }
+  body.dark .book-cover {
+    box-shadow: 0 4px 8px rgba(255,255,255,0.1); }
 
 .dark__mode {
   margin-left: 15px; }
@@ -278,6 +302,8 @@ blockquote {
   .image__article {
     float: none;
     width: 100%;
+    max-width: 350px;
+    margin: 0 auto 20px auto;
     padding: 0px; } }
 @media (max-width: 480px) {
   .archive__grid .elem__archive > div .spacer__post {
