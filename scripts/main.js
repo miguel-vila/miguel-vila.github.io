@@ -57,6 +57,9 @@ $(document).ready(function () {
 		$('.bottom__header > nav').css("top", "-100%");
 		$('body,html').css("overflow-y", "initial");
 	});
+	
+	// Initialize responsive images
+	makeImagesResponsive();
 });
 
 if ($(".post-meta").length) {
@@ -75,6 +78,7 @@ if ($(".post-meta").length) {
 
 // Helper function to make images responsive
 function makeImagesResponsive() {
+	// Process all images in the main container
 	const contentImages = document.querySelectorAll('.main__container img:not(.responsive-image)');
 	contentImages.forEach(img => {
 		// Skip images that are already processed or are icons/logos
@@ -91,12 +95,20 @@ function makeImagesResponsive() {
 			img.parentElement.style.maxWidth = '100%';
 		}
 		
-		// Create a wrapper for the image if it doesn't have one
-		if (!img.parentElement.classList.contains('image-wrapper')) {
-			const wrapper = document.createElement('div');
-			wrapper.classList.add('image-wrapper');
-			img.parentNode.insertBefore(wrapper, img);
-			wrapper.appendChild(img);
+		// Handle book covers specifically
+		if (img.classList.contains('book-cover')) {
+			// Make sure book covers have proper styling
+			img.style.borderRadius = '4px';
+		}
+	});
+	
+	// Ensure image articles are properly laid out
+	const imageArticles = document.querySelectorAll('.image__article');
+	imageArticles.forEach(container => {
+		// Check if we're on mobile
+		if (window.innerWidth <= 640) {
+			// Center the image container on mobile
+			container.style.margin = '0 auto 20px auto';
 		}
 	});
 }
@@ -104,3 +116,5 @@ function makeImagesResponsive() {
 // Run on page load and after any AJAX content loads
 document.addEventListener('DOMContentLoaded', makeImagesResponsive);
 window.addEventListener('load', makeImagesResponsive);
+// Also run when window is resized to handle orientation changes
+window.addEventListener('resize', makeImagesResponsive);
