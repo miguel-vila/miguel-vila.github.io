@@ -113,6 +113,17 @@ hr {
     max-width: 100%;
     margin: 0px; }
 
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.responsive-image {
+  width: 100%;
+  height: auto;
+}
+
 .main__container .inside li {
   line-height: 26px; }
 

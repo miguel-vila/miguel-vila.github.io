@@ -15,6 +15,7 @@ import           Data.Ord (Down(..))
 import           Text.Pandoc.Definition
 import           Text.Pandoc.Shared
 import           Text.Pandoc.Options
+import           Text.Pandoc.Walk (walkM, walk)
 
 --------------------------------------------------------------------------------
 -- Used to specify whether to take all or some of an item list
@@ -50,6 +51,23 @@ getTimeInfo id = do
     time <- getItemUTC defaultTimeLocale id
     return $ DateAndYear { date =time, year = formatTime defaultTimeLocale "%Y" time }
 
+-- Make images responsive by adding appropriate attributes
+makeImagesResponsive :: Pandoc -> Pandoc
+makeImagesResponsive = walk processImage
+  where
+    processImage :: Inline -> Inline
+    processImage (Image attr alt (url, title)) = 
+      Image ("", ["responsive-image"], []) alt (url, title)
+    processImage x = x
+
+-- Custom Pandoc compiler with responsive images
+responsiveImagesCompiler :: Compiler (Item String)
+responsiveImagesCompiler = do
+    pandocCompilerWithTransform
+        defaultHakyllReaderOptions
+        defaultHakyllWriterOptions
+        makeImagesResponsive
+
 main :: IO ()
 main = hakyll $ do
     serveFilesAt "images/*"
@@ -80,7 +98,7 @@ main = hakyll $ do
     let tagsPostCtx = postCtxWithTags tags
     match "drafts/*" $ do
         route $ setExtension "html"
-        compile $ pandocCompiler
+        compile $ responsiveImagesCompiler
             >>= loadAndApplyTemplate "templates/post.html" tagsPostCtx
             >>= loadAndApplyTemplate "templates/default.html" tagsPostCtx
             >>= relativizeUrls
@@ -101,7 +119,7 @@ main = hakyll $ do
 
     match "shared-drafts/*" $ do
         route $ setExtension "html"
-        compile $ pandocCompiler
+        compile $ responsiveImagesCompiler
             >>= loadAndApplyTemplate "templates/post.html" tagsPostCtx
             >>= loadAndApplyTemplate "templates/default.html" tagsPostCtx
             >>= relativizeUrls
@@ -123,7 +141,7 @@ main = hakyll $ do
 
     match "posts/*" $ do
         route $ setExtension "html"
-        compile $ pandocCompiler
+        compile $ responsiveImagesCompiler
             >>= loadAndApplyTemplate "templates/post.html"    tagsPostCtx
             >>= saveSnapshot "content"
             >>= loadAndApplyTemplate "templates/disqus.html"  tagsPostCtx
@@ -189,7 +207,7 @@ main = hakyll $ do
 nonPostPage name =
     create [ name ] $ do
         route (setExtension ".html")
-        compile $ pandocCompiler
+        compile $ responsiveImagesCompiler
             >>= loadAndApplyTemplate "templates/default.html" siteCtx
             >>= relativizeUrls
 
@@ -224,3 +242,5 @@ activeClassField :: Context a
 activeClassField = functionField "activeClass" $ \[p] _ -> do 
     path <- toFilePath <$> getUnderlying 
     return $ if path == p then "active" else path 
+
+--------------------------------------------------------------------------------
