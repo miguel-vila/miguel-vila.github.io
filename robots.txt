@@ -1,0 +1,65 @@
+# Block OpenAI's GPT and ChatGPT crawlers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+# Block Google's AI crawlers
+User-agent: Google-Extended
+Disallow: /
+
+# Block Anthropic's Claude crawlers
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+# Block Common Crawl's data crawler
+User-agent: CCBot
+Disallow: /
+
+# Block Perplexity AI's crawler
+User-agent: PerplexityBot
+Disallow: /
+
+# Block Meta's AI crawlers
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+# Block Apple's data crawlers
+User-agent: Applebot-Extended
+Disallow: /
+
+# Block other known AI/scraping bots
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+User-agent: Omgili
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: YouBot
+Disallow: /
+
+# Allow legitimate search engines (optional - remove if you want to block all crawlers)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
