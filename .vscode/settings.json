@@ -1,11 +1,12 @@
 {
     "spellright.language": [
-        "en-GB-10-1."
+        "es"
     ],
     "spellright.documentTypes": [
         "markdown",
         "latex",
         "plaintext"
     ],
-    "cSpell.language": "en,es-ES"
+    "cSpell.language": "en,es-ES",
+    "github.copilot.editor.enableAutoCompletions": false    
 }
