@@ -76,6 +76,7 @@ main = hakyll $ do
     serveFilesAt "scripts/*"
     serveFilesAt "assets/*"
     serveFilesAt "robots.txt"
+    serveFilesAt "pgp.txt"
     serveFilesAt "keybase.txt"
     match "css/*" $ do
         route   idRoute
