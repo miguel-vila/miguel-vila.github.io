@@ -236,7 +236,6 @@ feedConfig = FeedConfiguration
     { feedTitle       = "Miguel Vilá"
     , feedDescription = "Miguel Vilá's personal blog"
     , feedAuthorName  = "Miguel Vilá"
-    , feedAuthorEmail = "miguelvilag@gmail.com"
     , feedRoot        = siteUrl
     }
 
