@@ -188,7 +188,6 @@ main = hakyll $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
                     listField "posts" postCtx (return $ maybeTake (Only 5) posts) `mappend`
-                    constField "title" "Hi, there!"              `mappend`
                     siteCtx
 
             getResourceBody
