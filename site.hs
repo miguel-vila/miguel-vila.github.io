@@ -68,6 +68,9 @@ responsiveImagesCompiler = do
         defaultHakyllWriterOptions
         makeImagesResponsive
 
+homepageTag :: Context a
+homepageTag = constField "is_homepage" "true"
+
 main :: IO ()
 main = hakyll $ do
     serveFilesAt "images/*"
@@ -188,6 +191,7 @@ main = hakyll $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
                     listField "posts" postCtx (return $ maybeTake (Only 5) posts) `mappend`
+                    homepageTag `mappend`
                     siteCtx
 
             getResourceBody
