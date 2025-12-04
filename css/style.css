@@ -67,7 +67,9 @@ header, .main__container, footer {
 header > h1 {
   margin: 0px;
   margin-bottom: 25px;
-  font-size: 2.8em; }
+  font-size: 2.8em;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.5em; }
 
 .bottom__header {
   display: flex;
