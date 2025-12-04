@@ -176,6 +176,10 @@ body.dark {
     color: #fff; }
   body.dark .book-cover {
     box-shadow: 0 4px 8px rgba(255,255,255,0.1); }
+  body.dark .homepage__strengths {
+    border-left-color: #fff; }
+  body.dark .homepage__muted {
+    color: #aaa; }
 
 .dark__mode {
   margin-left: 15px; }
@@ -193,6 +197,42 @@ body.dark {
 
 .hero__section p:last-child {
   margin-bottom: 0px; }
+
+.homepage__container {
+  max-width: 720px;
+  margin: 60px auto;
+  line-height: 1.8; }
+
+.homepage__title {
+  font-size: 2.2em;
+  font-weight: 400;
+  margin-bottom: 40px;
+  line-height: 1.3; }
+
+.homepage__text {
+  font-size: 1.15em;
+  margin-bottom: 30px; }
+
+.homepage__muted {
+  font-size: 1.15em;
+  margin-bottom: 50px;
+  color: #666; }
+
+.homepage__strengths {
+  border-left: 3px solid #333;
+  padding-left: 25px;
+  margin-top: 50px; }
+  .homepage__strengths p {
+    font-size: 1.05em;
+    margin-bottom: 15px;
+    font-weight: 500; }
+  .homepage__strengths ul {
+    list-style: none;
+    padding: 0;
+    margin: 0; }
+  .homepage__strengths li {
+    margin-bottom: 12px;
+    padding-left: 0; }
 
 .info:nth-child(1) {
   margin-bottom: 7px; }
