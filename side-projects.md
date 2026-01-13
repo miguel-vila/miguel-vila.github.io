@@ -6,6 +6,12 @@ description: A list of side projects I have done in the past.
 I have done a few side projects in the past in order to learn new things and have fun. 
 Here is a list of them:
 
+### [comparatasa.co](https://comparatasa.co)
+
+A website to compare mortgage rates in Colombia. Built using Claude code for the
+most part, refining a custom Skill. Created a spec beforehand using ChatGPT to
+guide the design and development.
+
 ### [X Recs Remover](https://github.com/miguel-vila/x-recs-remover)
 
 A [Firefox plugin](https://addons.mozilla.org/en-GB/firefox/addon/x-recommendations-remover/) to remove recommendations bars on X / Twitter, in order to have a
