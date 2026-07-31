@@ -123,6 +123,50 @@ function initGalleries() {
 		$next.on('click', function () { show(current + 1); });
 		$dotButtons.on('click', function () { show($(this).index()); });
 
+		// Swipe support for touch devices, in addition to the arrow buttons.
+		let touchStartX = 0;
+		let touchStartY = 0;
+		let swiping = false;
+		const SWIPE_THRESHOLD = 40; // px of horizontal travel to change slide
+
+		$slides.on('touchstart', function (e) {
+			const touch = e.originalEvent.touches[0];
+			touchStartX = touch.clientX;
+			touchStartY = touch.clientY;
+			swiping = false;
+		});
+
+		$slides.on('touchmove', function (e) {
+			const touch = e.originalEvent.touches[0];
+			const dx = touch.clientX - touchStartX;
+			const dy = touch.clientY - touchStartY;
+			// Once the gesture is clearly horizontal, treat it as a swipe:
+			// flag it (so the tap-to-open link doesn't fire) and stop the
+			// page from scrolling sideways. Vertical drags still scroll.
+			if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) {
+				swiping = true;
+				e.preventDefault();
+			}
+		});
+
+		$slides.on('touchend', function (e) {
+			if (!swiping) {
+				return; // a plain tap: let the link open the image
+			}
+			const dx = e.originalEvent.changedTouches[0].clientX - touchStartX;
+			if (Math.abs(dx) > SWIPE_THRESHOLD) {
+				show(dx < 0 ? current + 1 : current - 1); // left = next, right = prev
+			}
+		});
+
+		// Suppress the click the browser fires after a swipe so it doesn't
+		// navigate to the linked image.
+		$slides.on('click', function (e) {
+			if (swiping) {
+				e.preventDefault();
+			}
+		});
+
 		show(0);
 	});
 }
