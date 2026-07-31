@@ -3,51 +3,51 @@
     xmlns:dc="http://purl.org/dc/elements/1.1/">
     <channel>
         <title>Miguel Vilá</title>
-        <link>http://miguel-vila.github.io</link>
+        <link>https://invariante.co</link>
         <description><![CDATA[Miguel Vilá's personal blog]]></description>
-        <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
+        <atom:link href="https://invariante.co/feed.xml" rel="self"
                    type="application/rss+xml" />
         <lastBuildDate>Fri, 31 Jul 2026 00:00:00 UT</lastBuildDate>
         <item>
     <title>Montréal</title>
-    <link>http://miguel-vila.github.io/posts/2026-07-31-montreal.html</link>
+    <link>https://invariante.co/posts/2026-07-31-montreal.html</link>
     <description><![CDATA[Cool things I've noticed about Montréal]]></description>
     <pubDate>Fri, 31 Jul 2026 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2026-07-31-montreal.html</guid>
+    <guid>https://invariante.co/posts/2026-07-31-montreal.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 <item>
     <title>2024 in books</title>
-    <link>http://miguel-vila.github.io/posts/2024-12-27-2024-in-books.html</link>
+    <link>https://invariante.co/posts/2024-12-27-2024-in-books.html</link>
     <description><![CDATA[The books I read in 2024]]></description>
     <pubDate>Fri, 27 Dec 2024 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2024-12-27-2024-in-books.html</guid>
+    <guid>https://invariante.co/posts/2024-12-27-2024-in-books.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 <item>
     <title>Sobre documentos de diseño</title>
-    <link>http://miguel-vila.github.io/posts/2023-02-02-design-docs.html</link>
+    <link>https://invariante.co/posts/2023-02-02-design-docs.html</link>
     <description><![CDATA[Sobre algunos tipos de documentos que podemos usar para hablar de
 decisiones técnicas: RFCs, ADRs, y propuestas técnicas, entre otros.
 ]]></description>
     <pubDate>Thu, 02 Feb 2023 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2023-02-02-design-docs.html</guid>
+    <guid>https://invariante.co/posts/2023-02-02-design-docs.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 <item>
     <title>Stopping when Robert Shiller tells you to</title>
-    <link>http://miguel-vila.github.io/posts/2022-11-08-shiller.html</link>
+    <link>https://invariante.co/posts/2022-11-08-shiller.html</link>
     <description><![CDATA[Should you stop investing if markets are expensive? A naive and simple approach]]></description>
     <pubDate>Tue, 08 Nov 2022 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2022-11-08-shiller.html</guid>
+    <guid>https://invariante.co/posts/2022-11-08-shiller.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 <item>
     <title>2021 en libros</title>
-    <link>http://miguel-vila.github.io/posts/2022-01-01-libros-2021.html</link>
+    <link>https://invariante.co/posts/2022-01-01-libros-2021.html</link>
     <description><![CDATA[Algo de lo que leí en 2021]]></description>
     <pubDate>Sat, 01 Jan 2022 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2022-01-01-libros-2021.html</guid>
+    <guid>https://invariante.co/posts/2022-01-01-libros-2021.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 
