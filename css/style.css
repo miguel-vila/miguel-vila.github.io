@@ -223,11 +223,13 @@ img {
 
 /* Keep embeds (e.g. YouTube) within the viewport so a fixed-width
    iframe can't push the page wider than the screen and trigger
-   mobile shrink-to-fit. Aspect ratio is derived from the iframe's
-   own width/height attributes. */
+   mobile shrink-to-fit. The explicit 16:9 aspect-ratio keeps the
+   height correct as the width shrinks (height:auto alone collapses
+   the iframe and crops the video). */
 .main__container iframe {
   display: block;
   max-width: 100%;
+  aspect-ratio: 16 / 9;
   height: auto;
   margin: 25px auto;
 }
