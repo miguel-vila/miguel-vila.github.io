@@ -17,6 +17,22 @@ import           Text.Pandoc.Shared
 import           Text.Pandoc.Options
 import           Text.Pandoc.Walk (walkM, walk)
 
+import qualified Data.Map as M
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as LBS
+import           Data.Word (Word8)
+import           Data.Char (toLower)
+import           System.FilePath (dropExtension, takeExtension)
+-- NB: only the *type* `Image` is imported (no data constructor) so it does not
+-- clash with Pandoc's `Image` inline constructor used in makeImagesResponsive.
+import           Codec.Picture
+                   ( Image, DynamicImage, PixelRGB8(..)
+                   , decodeImage, convertRGB8
+                   , generateImage, pixelAt, imageWidth, imageHeight )
+import           Codec.Picture.Types (convertImage, pixelFold)
+import           Codec.Picture.Jpg (encodeJpegAtQuality)
+import           Codec.Picture.Extra (crop, scaleBilinear)
+
 --------------------------------------------------------------------------------
 -- Used to specify whether to take all or some of an item list
 data ItemCount = All | Only Int
@@ -71,6 +87,140 @@ responsiveImagesCompiler = do
 homepageTag :: Context a
 homepageTag = constField "is_homepage" "true"
 
+--------------------------------------------------------------------------------
+-- Open Graph social cards
+--
+-- Every post/draft that declares an `image:` gets a 1200x630 (1.91:1) card
+-- generated at build time from that image, compressed well under 1 MB. The
+-- template's og:image points at the generated `<name>-og.jpg`. Authors just set
+-- `image:` to the real photo; no manual cropping. Non-raster sources (e.g. SVG)
+-- keep their original image as the og:image.
+
+ogWidth, ogHeight :: Int
+ogWidth  = 1200
+ogHeight = 630
+
+ogQuality :: Word8
+ogQuality = 80
+
+-- How a source that isn't already 1.91:1 is fit into the card.
+--   Cover   = center-crop to fill (punchy; best for photos)
+--   Contain = scale whole image to fit, fill the rest (never crops content)
+data OgFit = Cover | Contain
+
+-- Site-wide default. Override per post with front matter `og_fit: cover|contain`.
+defaultOgFit :: OgFit
+defaultOgFit = Cover
+
+parseOgFit :: String -> OgFit
+parseOgFit s = case map toLower s of
+    "contain" -> Contain
+    _         -> Cover
+
+resolveOgFit :: Metadata -> OgFit
+resolveOgFit md = maybe defaultOgFit parseOgFit (lookupString "og_fit" md)
+
+-- Content whose `image:` we turn into cards.
+ogSourcePattern :: Pattern
+ogSourcePattern = "posts/*" .||. "drafts/*" .||. "shared-drafts/*"
+
+-- Only formats JuicyPixels can decode become cards; others fall back to original.
+isRasterImage :: FilePath -> Bool
+isRasterImage p =
+    map toLower (takeExtension p) `elem`
+        [".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".gif"]
+
+-- "images/foo.jpeg" -> "images/foo-og.jpg" (works with or without leading slash)
+toOgPath :: FilePath -> FilePath
+toOgPath p = dropExtension p ++ "-og.jpg"
+
+dropLeadingSlash :: FilePath -> FilePath
+dropLeadingSlash ('/':rest) = rest
+dropLeadingSlash p          = p
+
+-- The og:image URL for the current item (used in templates/default.html).
+ogImageField :: Context a
+ogImageField = field "ogimage" $ \item -> do
+    mbImg <- getMetadataField (itemIdentifier item) "image"
+    case mbImg of
+        Just img | isRasterImage img -> return (toOgPath img)
+                 | otherwise         -> return img   -- SVG etc.: use original
+        Nothing                      -> noResult "no image"
+
+-- Present only when a real 1200x630 card exists (gates og:image:width/height).
+ogCardField :: Context a
+ogCardField = field "ogcard" $ \item -> do
+    mbImg <- getMetadataField (itemIdentifier item) "image"
+    case mbImg of
+        Just img | isRasterImage img -> return "true"
+        _                            -> noResult "no card"
+
+ogContext :: Context a
+ogContext = ogImageField `mappend` ogCardField
+
+ogRoute :: Routes
+ogRoute = customRoute (toOgPath . toFilePath)
+
+ogCardCompiler :: M.Map FilePath OgFit -> Compiler (Item BS.ByteString)
+ogCardCompiler fitMap = do
+    path <- toFilePath <$> getUnderlying
+    let fit = M.findWithDefault defaultOgFit path fitMap
+    src <- itemBody <$> getResourceLBS
+    case decodeImage (LBS.toStrict src) of
+        Right dyn -> makeItem (LBS.toStrict (encodeCard (renderCard fit (convertRGB8 dyn))))
+        Left _    -> makeItem (LBS.toStrict src)
+
+encodeCard :: Image PixelRGB8 -> LBS.ByteString
+encodeCard = encodeJpegAtQuality ogQuality . convertImage
+
+renderCard :: OgFit -> Image PixelRGB8 -> Image PixelRGB8
+renderCard Cover   = coverCard
+renderCard Contain = containCard
+
+-- Center-crop to the target ratio, then scale to exactly 1200x630.
+coverCard :: Image PixelRGB8 -> Image PixelRGB8
+coverCard img =
+    let w       = imageWidth img
+        h       = imageHeight img
+        target  = fromIntegral ogWidth / fromIntegral ogHeight :: Double
+        current = fromIntegral w / fromIntegral h
+        (cw, ch)
+            | current > target = (round (fromIntegral h * target), h)
+            | otherwise        = (w, round (fromIntegral w / target))
+        x0 = (w - cw) `div` 2
+        y0 = (h - ch) `div` 2
+    in scaleBilinear ogWidth ogHeight (crop x0 y0 cw ch img)
+
+-- Scale whole image to fit inside 1200x630, centered on a fill of the image's
+-- average color (never crops content).
+containCard :: Image PixelRGB8 -> Image PixelRGB8
+containCard img =
+    let w      = imageWidth img
+        h      = imageHeight img
+        scale  = min (fromIntegral ogWidth  / fromIntegral w)
+                     (fromIntegral ogHeight / fromIntegral h) :: Double
+        fw     = max 1 (round (fromIntegral w * scale))
+        fh     = max 1 (round (fromIntegral h * scale))
+        scaled = scaleBilinear fw fh img
+        offX   = (ogWidth  - fw) `div` 2
+        offY   = (ogHeight - fh) `div` 2
+        bg     = averageColor scaled
+        pick x y
+            | x >= offX && x < offX + fw && y >= offY && y < offY + fh =
+                pixelAt scaled (x - offX) (y - offY)
+            | otherwise = bg
+    in generateImage pick ogWidth ogHeight
+
+averageColor :: Image PixelRGB8 -> PixelRGB8
+averageColor im =
+    let (rs, gs, bs, n) = pixelFold acc (0, 0, 0, 0 :: Int) im
+        acc (r, g, b, c) _ _ (PixelRGB8 pr pg pb) =
+            (r + fromIntegral pr, g + fromIntegral pg, b + fromIntegral pb, c + 1)
+        d = max 1 n
+    in PixelRGB8 (fromIntegral (rs `div` d))
+                 (fromIntegral (gs `div` d))
+                 (fromIntegral (bs `div` d))
+
 main :: IO ()
 main = hakyll $ do
     serveFilesAt "images/*"
@@ -81,6 +231,18 @@ main = hakyll $ do
     serveFilesAt "robots.txt"
     serveFilesAt "pgp.txt"
     serveFilesAt "keybase.txt"
+
+    -- Generate 1200x630 Open Graph cards from each post's `image:`
+    heroMeta <- getAllMetadata ogSourcePattern
+    let ogFitMap = M.fromList
+            [ (dropLeadingSlash img, resolveOgFit md)
+            | (_, md)   <- heroMeta
+            , Just img  <- [lookupString "image" md]
+            , isRasterImage img ]
+    match (fromList (map fromFilePath (M.keys ogFitMap))) $ version "og" $ do
+        route   ogRoute
+        compile (ogCardCompiler ogFitMap)
+
     match "css/*" $ do
         route   idRoute
         compile compressCssCompiler
@@ -92,10 +254,11 @@ main = hakyll $ do
         route idRoute 
         compile $ do 
             posts <- recentFirst =<< loadAll pattern 
-            let ctx = constField "title" title 
-                      `mappend` listField "posts" postCtx (return posts) 
-                      `mappend` activeClassField 
-                      `mappend` defaultContext 
+            let ctx = constField "title" title
+                      `mappend` listField "posts" postCtx (return posts)
+                      `mappend` ogContext
+                      `mappend` activeClassField
+                      `mappend` defaultContext
             makeItem "" 
                 >>= loadAndApplyTemplate "templates/tag.html" ctx 
                 >>= loadAndApplyTemplate "templates/default.html" ctx 
@@ -227,7 +390,8 @@ postCtx =
     siteCtx
 
 siteCtx :: Context String
-siteCtx = 
+siteCtx =
+    ogContext `mappend`
     activeClassField `mappend`
     defaultContext
 

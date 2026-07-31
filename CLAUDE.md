@@ -38,7 +38,25 @@ loads these, in order:
 
 - Posts live in `posts/`, drafts in `drafts/`, filenames are `YYYY-MM-DD-slug.md`.
 - Front matter keys in use: `title`, `description`, `tags`, `image`, `include_plotly`,
-  `include_mermaid`.
+  `include_mermaid`, `og_fit`.
+
+## Open Graph social cards (auto-generated)
+
+- Set `image:` to the **real photo** you want to represent the post — no manual
+  cropping/resizing. At build time `site.hs` generates a 1200×630 (1.91:1) card named
+  `<image>-og.jpg` (compressed JPEG, well under 1 MB) and the template's `og:image` /
+  `twitter:image` point at it, with `og:image:width/height`. Applies to `posts/`,
+  `drafts/`, `shared-drafts/`.
+- The generated `-og.jpg` files are **build artifacts** — they live only in `_site/`,
+  never commit them to the source `images/` dir.
+- `og_fit:` controls how a non-1.91:1 source is fit (default `cover`):
+  - `cover` — center-crop to fill (punchy; best for photos).
+  - `contain` — scale the whole image to fit, padded with its average color (never
+    crops; use for book-cover collages, diagrams, charts, memes).
+- **Non-raster sources (e.g. SVG) are skipped** — the original `image:` is used as the
+  `og:image` and no width/height is emitted. Image processing is pure Haskell
+  (JuicyPixels + JuicyPixels-extra), so it needs no external tools and runs on CI.
+- Editing `site.hs` requires `stack build` before the new cards appear.
 - Images use raw HTML in the markdown, styled by `css/style.css`:
   - `.image__article` (float right), `.image__article--left`, `.image__article--full`
   - `.gallery` — a `<div class="gallery">` with 2+ `<img>` is turned into a swipeable

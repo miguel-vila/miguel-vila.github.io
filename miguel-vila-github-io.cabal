@@ -12,5 +12,9 @@ executable site
                        pandoc >= 2.17.1.1,
                        pandoc-types >= 1.22.2.1,
                        hslua >= 2.1.0,
-                       containers >= 0.6.4.1
+                       containers >= 0.6.4.1,
+                       bytestring,
+                       filepath,
+                       JuicyPixels >= 3.3,
+                       JuicyPixels-extra >= 0.4
   default-language:    Haskell2010
