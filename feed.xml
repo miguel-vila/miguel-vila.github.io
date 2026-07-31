@@ -7,8 +7,16 @@
         <description><![CDATA[Miguel Vilá's personal blog]]></description>
         <atom:link href="http://miguel-vila.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Fri, 27 Dec 2024 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Fri, 31 Jul 2026 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Montréal</title>
+    <link>http://miguel-vila.github.io/posts/2026-07-31-montreal.html</link>
+    <description><![CDATA[Cool things I've noticed about Montréal]]></description>
+    <pubDate>Fri, 31 Jul 2026 00:00:00 UT</pubDate>
+    <guid>http://miguel-vila.github.io/posts/2026-07-31-montreal.html</guid>
+    <dc:creator>Miguel Vilá</dc:creator>
+</item>
+<item>
     <title>2024 in books</title>
     <link>http://miguel-vila.github.io/posts/2024-12-27-2024-in-books.html</link>
     <description><![CDATA[The books I read in 2024]]></description>
@@ -40,14 +48,6 @@ decisiones técnicas: RFCs, ADRs, y propuestas técnicas, entre otros.
     <description><![CDATA[Algo de lo que leí en 2021]]></description>
     <pubDate>Sat, 01 Jan 2022 00:00:00 UT</pubDate>
     <guid>http://miguel-vila.github.io/posts/2022-01-01-libros-2021.html</guid>
-    <dc:creator>Miguel Vilá</dc:creator>
-</item>
-<item>
-    <title>The unreasonable effectiveness of functional streams</title>
-    <link>http://miguel-vila.github.io/posts/2021-03-06-functional-streams.html</link>
-    <description><![CDATA[On the unreasonable effectiveness of functional streams]]></description>
-    <pubDate>Sat, 06 Mar 2021 00:00:00 UT</pubDate>
-    <guid>http://miguel-vila.github.io/posts/2021-03-06-functional-streams.html</guid>
     <dc:creator>Miguel Vilá</dc:creator>
 </item>
 
