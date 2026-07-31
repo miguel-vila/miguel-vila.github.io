@@ -83,11 +83,19 @@ function initGalleries() {
 			return; // nothing to cycle through
 		}
 
-		// Mark slides (so makeImagesResponsive skips them), move them into a
-		// slides container, and drop any leftover wrappers (e.g. Pandoc's <p>).
+		// Mark images (so makeImagesResponsive skips them), then move each
+		// slide into a slides container and drop any leftover wrappers
+		// (e.g. Pandoc's <p>). A slide is the <a> that links the image when
+		// the author wrapped it in one, so clicking a slide opens the full
+		// image; otherwise it's the bare <img>.
 		$images.addClass('gallery__slide');
 		const $slides = $('<div class="gallery__slides"></div>');
-		$images.appendTo($slides);
+		$images.each(function () {
+			const $img = $(this);
+			const $link = $img.closest('a');
+			const $slide = ($link.length && $gallery.has($link).length) ? $link : $img;
+			$slide.appendTo($slides);
+		});
 		$gallery.empty().append($slides);
 
 		// Build the bottom controls: Prev | dots | Next
