@@ -8,7 +8,7 @@ description: |
 tags: compatibility, software engineering, system design, event-driven architecture
 include_plotly: false
 include_mermaid: true
-image: https://miguel-vila.github.io/images/breaking-chain.jpg
+image: /images/breaking-chain.jpg
 ---
 
 <p class="image__article">

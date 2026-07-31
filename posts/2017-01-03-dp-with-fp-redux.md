@@ -2,7 +2,7 @@
 title: Solving Dynamic Programming problems using Functional Programming (Redux)
 description: How to implement Dynamic Programming algorithms using Functional Programming
 tags: Functional Programming, Dynamic Programming, Scala, Laziness
-image: https://miguel-vila.github.io/images/dp-fp-1.png
+image: /images/dp-fp-1.png
 ---
 
 ## Going top-down

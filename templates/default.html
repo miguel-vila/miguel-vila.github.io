@@ -24,12 +24,17 @@
         $endif$
 
         <meta property="og:type" content="website" />
-        <meta property="twitter:card" content="summary"/>
+        <meta property="og:site_name" content="invariante" />
+        <meta property="og:url" content="https://invariante.co$url$" />
+        <meta name="theme-color" content="#1a1818" />
+        <meta property="twitter:card" content="summary_large_image" />
 
         $if(image)$
-        <meta property="og:image" content="$image$" />
+        <meta property="og:image" content="https://invariante.co$image$" />
+        <meta property="twitter:image" content="https://invariante.co$image$" />
         $else$
-        <meta property="og:image" content="./images/logo.jpg" />
+        <meta property="og:image" content="https://invariante.co/images/logo.jpg" />
+        <meta property="twitter:image" content="https://invariante.co/images/logo.jpg" />
         $endif$
 
         <title>

@@ -22,7 +22,7 @@ import           Text.Pandoc.Walk (walkM, walk)
 data ItemCount = All | Only Int
 --------------------------------------------------------------------------------
 
-siteUrl = "http://miguel-vila.github.io"
+siteUrl = "https://invariante.co"
 
 maybeTake :: ItemCount -> [a] -> [a]
 maybeTake All  = id

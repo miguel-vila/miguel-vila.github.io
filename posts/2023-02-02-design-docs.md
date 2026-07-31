@@ -4,7 +4,7 @@ description: |
     Sobre algunos tipos de documentos que podemos usar para hablar de
     decisiones técnicas: RFCs, ADRs, y propuestas técnicas, entre otros.
 tags: software engineering, technical decisions, software architecture, systems design
-image: https://miguel-vila.github.io/images/design.jpg
+image: /images/design.jpg
 use_plotly: false
 ---
 
