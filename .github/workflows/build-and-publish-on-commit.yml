@@ -19,13 +19,13 @@ jobs:
         resolver: [lts-19.32]
     name: ${{ matrix.resolver }} (${{ matrix.ghc }}/${{ matrix.cabal }})
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         name: Checkout and submodules
         with:
           submodules: recursive
           token: ${{ github.token }}
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Cache ~/.stack
         with:
           path: ~/.stack
@@ -33,7 +33,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-stack-global-
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Cache .stack-work
         with:
           path: .stack-work
@@ -42,11 +42,12 @@ jobs:
             ${{ runner.os }}-stack-work-
 
       - name: Setup Haskell
-        uses: haskell/actions/setup@v1
+        uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc }}
           cabal-version: ${{ matrix.cabal }}
           enable-stack: true
+          stack-version: 'latest'
 
       - name: update module
         run: |

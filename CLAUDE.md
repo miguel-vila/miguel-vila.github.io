@@ -70,8 +70,9 @@ loads these, in order:
 
 ## Deploy / branches
 
-- Work happens on the **`hakyll`** branch (source). CI (`circle.yml`, CircleCI) builds
-  on `hakyll`, then commits and pushes the generated output.
+- Work happens on the **`hakyll`** branch (source). GitHub Actions
+  (`.github/workflows/build-and-publish-on-commit.yml`) builds on `hakyll`, then commits
+  and pushes the generated output. The `circle.yml` at the root is an unused leftover.
 - **`_site/` is a git submodule** pointing at the same GitHub repo; the built site is
   published from there. `_site/`, `_cache/`, `.stack-work/` are gitignored in the parent.
 - So: edit source on `hakyll`; the `master` branch is the published output.
