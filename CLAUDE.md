@@ -72,7 +72,7 @@ loads these, in order:
 
 - Work happens on the **`hakyll`** branch (source). GitHub Actions
   (`.github/workflows/build-and-publish-on-commit.yml`) builds on `hakyll`, then commits
-  and pushes the generated output. The `circle.yml` at the root is an unused leftover.
+  and pushes the generated output.
 - **`_site/` is a git submodule** pointing at the same GitHub repo; the built site is
   published from there. `_site/`, `_cache/`, `.stack-work/` are gitignored in the parent.
 - So: edit source on `hakyll`; the `master` branch is the published output.
