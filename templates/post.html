@@ -6,9 +6,21 @@
     </div>
     <div class="info">
         $if(tags)$
-        Tags: $tags$ 
+        $tags$
         $endif$
     </div>
     <hr>
+    $if(ai_assistance)$
+    <div class="ai-banner">
+        Parts of this post were written with AI assistance.
+        <a href="#ai-assistance">Details at the end &#8594;</a>
+    </div>
+    $endif$
     $body$
+    $if(ai_assistance)$
+    <details class="ai-disclosure" id="ai-assistance">
+        <summary>How AI was used in this post</summary>
+        $ai_assistance$
+    </details>
+    $endif$
 </div>

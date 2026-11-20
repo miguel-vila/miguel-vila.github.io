@@ -1,16 +1,20 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
-import           Data.List (sortOn)
+import           Data.List (sortOn, intersperse)
 import           Hakyll
 import           Hakyll.Web.Template.Context (getItemUTC)
 import           Control.Applicative
 import           Data.Time.Format (TimeLocale(..), defaultTimeLocale)
 import           Data.Maybe
-import           Data.Map (fromListWith, keys, (!))
+import           Data.Map (fromListWith, keys)
 import           Data.Time.Format (formatTime)
 import           Data.Time.Clock (UTCTime)
 import           Data.Ord (Down(..))
+
+import           Text.Blaze.Html (toHtml, toValue, (!))
+import qualified Text.Blaze.Html5 as H
+import qualified Text.Blaze.Html5.Attributes as A
 
 import           Text.Pandoc.Definition
 import           Text.Pandoc.Shared
@@ -328,7 +332,7 @@ main = hakyll $ do
             postsWithYears <- sortAndGroup <$> mapM (\post -> fmap (\timeInfo -> (year timeInfo, (date timeInfo, post))) (getTimeInfo $ itemIdentifier post)) posts
             let years = reverse $ keys postsWithYears
             let postsSortedRecentFirst = map snd . sortOn (Down . fst)
-            let postsItemsWithYears = mapM makeItem $ fmap (\year -> (year, postsSortedRecentFirst (postsWithYears ! year))) years
+            let postsItemsWithYears = mapM makeItem $ fmap (\year -> (year, postsSortedRecentFirst (postsWithYears M.! year))) years
 
             let postWithYearsCtx =
                     listField "postsWithYears"
@@ -396,7 +400,16 @@ siteCtx =
     defaultContext
 
 postCtxWithTags :: Tags -> Context String 
-postCtxWithTags tags = tagsField "tags" tags `mappend` postCtx
+postCtxWithTags tags = tagPillsField "tags" tags `mappend` postCtx
+
+-- Each tag as a pill, instead of Hakyll's comma-separated links.
+tagPillsField :: String -> Tags -> Context a
+tagPillsField =
+    tagsFieldWith getTags renderPill (mconcat . intersperse " ")
+  where
+    renderPill _   Nothing         = Nothing
+    renderPill tag (Just filePath) = Just $
+        H.a ! A.class_ "tag__pill" ! A.href (toValue (toUrl filePath)) $ toHtml tag
 
 feedConfig :: FeedConfiguration
 feedConfig = FeedConfiguration

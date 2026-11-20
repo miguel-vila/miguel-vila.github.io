@@ -38,7 +38,11 @@ loads these, in order:
 
 - Posts live in `posts/`, drafts in `drafts/`, filenames are `YYYY-MM-DD-slug.md`.
 - Front matter keys in use: `title`, `description`, `tags`, `image`, `include_plotly`,
-  `include_mermaid`, `og_fit`.
+  `include_mermaid`, `og_fit`, `ai_assistance`.
+- `ai_assistance:` declares that a post was written with AI help. Its value is the
+  explanation shown at the end of the post, inserted as raw HTML (front matter is not
+  run through Pandoc), so write it as a YAML block scalar with `<p>`/`<ul>` tags. Omit
+  the key and nothing renders.
 
 ## Open Graph social cards (auto-generated)
 
