@@ -100,6 +100,9 @@ header > h1 {
 body {
   transition: .3s ease all; }
 
+html {
+  transition: background-color .3s ease; }
+
 .sourceCode code {
   white-space: break-spaces;
   word-break: break-all; }
@@ -205,13 +208,13 @@ hr {
     background: #333;
     border-color: #333; }
 
-body.dark .gallery__btn {
+html.dark .gallery__btn {
   border-color: #555; }
 
-body.dark .gallery__dot {
+html.dark .gallery__dot {
   border-color: #888; }
 
-body.dark .gallery__dot.is-active {
+html.dark .gallery__dot.is-active {
   background: #fff;
   border-color: #fff; }
 
@@ -254,32 +257,32 @@ img {
 .main__container .inside p {
   line-height: 26px; }
 
-body.dark {
+html.dark {
   background-color: #1a1818;
   color: #fff; }
-  body.dark div.note {
+  html.dark div.note {
     background-color: #022e02; }
-  body.dark span.fu {
+  html.dark span.fu {
     color: #88a7f5 !important; }
-  body.dark span.st {
+  html.dark span.st {
     color: #6db6ff !important; }
-  body.dark div.sourceCode {
+  html.dark div.sourceCode {
     border: 1px solid #fff;
     background-color: #000; }
-  body.dark .menu__mobile > a > span {
+  html.dark .menu__mobile > a > span {
     background-color: #fff; }
-  body.dark a {
+  html.dark a {
     color: #fff;
     border-bottom: 1px solid rgba(255, 255, 255, 0.7); }
-  body.dark .archive__grid .elem__archive > div .post-meta {
+  html.dark .archive__grid .elem__archive > div .post-meta {
     color: rgba(255, 255, 255, 0.8); }
-  body.dark header > h1 {
+  html.dark header > h1 {
     color: #fff; }
-  body.dark .book-cover {
+  html.dark .book-cover {
     box-shadow: 0 4px 8px rgba(255,255,255,0.1); }
-  body.dark .homepage__strengths {
+  html.dark .homepage__strengths {
     border-left-color: #fff; }
-  body.dark .homepage__muted {
+  html.dark .homepage__muted {
     color: #aaa; }
 
 .dark__mode {
@@ -292,6 +295,16 @@ body.dark {
     border: 0px; }
     .dark__mode > a img {
       max-width: 24px; }
+
+/* Both icons are in the markup and CSS picks the one for the theme you can
+   switch to; setting the src from JavaScript showed the wrong icon until the
+   script had run. */
+.theme__icon--dark {
+  display: none; }
+html.dark .theme__icon--light {
+  display: none; }
+html.dark .theme__icon--dark {
+  display: inline; }
 
 .rc-scout__link {
   border-bottom: 0px !important; }
@@ -354,7 +367,7 @@ blockquote {
   text-align: left;
 }
 
-body.dark .ai-banner {
+html.dark .ai-banner {
   background: #262323;
   border-left-color: #777;
   color: #bbb;
@@ -374,13 +387,13 @@ body.dark .ai-banner {
   letter-spacing: 0.04em;
 }
 
-body.dark .ai-disclosure {
+html.dark .ai-disclosure {
   color: #bbb;
   border-top-color: #555;
 }
 
 /* Tag links, rendered as pills by tagPillsField in site.hs. The
-   `body.dark` rules repeat the border because `body.dark a` is more
+   `html.dark` rules repeat the border because `html.dark a` is more
    specific than `.tag__pill` alone. */
 .tag__pill {
   display: inline-block;
@@ -397,12 +410,12 @@ body.dark .ai-disclosure {
   opacity: 0.7;
 }
 
-body.dark .tag__pill {
+html.dark .tag__pill {
   color: #ccc;
   border-color: #666;
 }
 
-body.dark .tag__pill:hover {
+html.dark .tag__pill:hover {
   border-bottom: 1px solid #666;
 }
 
@@ -445,7 +458,7 @@ body.dark .tag__pill:hover {
       background-color: #000;
       transition: .3s ease all; }
 
-  body.dark .bottom__header > nav {
+  html.dark .bottom__header > nav {
     background-color: #000; }
 
   .bottom__header > nav {

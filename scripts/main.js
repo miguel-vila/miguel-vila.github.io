@@ -7,43 +7,19 @@ $('.note .aside-header').click(function (ev) {
 });
 
 $(document).ready(function () {
-	// Check for saved theme preference or respect OS preference
-	const savedTheme = localStorage.getItem('theme');
-	const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-	
-	// Apply saved theme or use OS preference
-	if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
-		$("body").addClass("dark");
-		$("#theme-toggle-icon").attr("src", "/images/sun.png");
-	} else {
-		$("body").removeClass("dark");
-		$("#theme-toggle-icon").attr("src", "/images/moon.png");
-	}
-
-	// Toggle theme and save preference
+	// The theme is already on <html>, set before the first paint by the inline
+	// script in templates/default.html. Here we only change it.
 	$('.dark__mode>a').on("click", function (e) {
 		e.preventDefault();
-		if ($("body").hasClass("dark")) {
-			$("body").removeClass("dark");
-			$(this).find("img").attr("src", "/images/moon.png");
-			localStorage.setItem('theme', 'light');
-		} else {
-			$("body").addClass("dark");
-			$(this).find("img").attr("src", "/images/sun.png");
-			localStorage.setItem('theme', 'dark');
-		}
+		const dark = !$("html").hasClass("dark");
+		$("html").toggleClass("dark", dark);
+		localStorage.setItem('theme', dark ? 'dark' : 'light');
 	});
 
-	// Listen for OS theme changes
-	prefersDarkScheme.addEventListener('change', function(e) {
+	// Follow the OS while the reader has not chosen a theme here.
+	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
 		if (!localStorage.getItem('theme')) {
-			if (e.matches) {
-				$("body").addClass("dark");
-				$("#theme-toggle-icon").attr("src", "/images/sun.png");
-			} else {
-				$("body").removeClass("dark");
-				$("#theme-toggle-icon").attr("src", "/images/moon.png");
-			}
+			$("html").toggleClass("dark", e.matches);
 		}
 	});
 
