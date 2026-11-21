@@ -96,10 +96,11 @@
     </div>
     <div class="info">
         
-        Tags: <a title="All pages tagged 'Scala'." href="../tags/Scala.html">Scala</a>, <a title="All pages tagged 'Functional Programming'." href="../tags/Functional%20Programming.html">Functional Programming</a>, <a title="All pages tagged 'Functional Streams'." href="../tags/Functional%20Streams.html">Functional Streams</a>, <a title="All pages tagged 'Concurrency'." href="../tags/Concurrency.html">Concurrency</a> 
+        <a class="tag__pill" href="../tags/Scala.html">Scala</a> <a class="tag__pill" href="../tags/Functional%20Programming.html">Functional Programming</a> <a class="tag__pill" href="../tags/Functional%20Streams.html">Functional Streams</a> <a class="tag__pill" href="../tags/Concurrency.html">Concurrency</a>
         
     </div>
     <hr>
+    
     <p>Recently we had an interesting problem to solve which involved some “file” processing.</p>
 <p>We will be processing a large file stored in <a href="https://aws.amazon.com/s3/">S3</a>.
 We estimate it’s going to be very large, so just downloading it and reading it line by
@@ -248,6 +249,7 @@ No surprise there given fs2 pre-dates ZIO.</p>
 purity or parametricity. No need to talk about abstract stuff to see the value in this
 style of writing things. Just the easiness in which you can build complex logic flows
 without compromising efficiency or legibility.</p>
+    
 </div>
 
 <hr>

@@ -96,10 +96,11 @@
     </div>
     <div class="info">
         
-        Tags: <a title="All pages tagged 'Scala'." href="../tags/Scala.html">Scala</a>, <a title="All pages tagged 'ZIO'." href="../tags/ZIO.html">ZIO</a>, <a title="All pages tagged 'Open source'." href="../tags/Open%20source.html">Open source</a> 
+        <a class="tag__pill" href="../tags/Scala.html">Scala</a> <a class="tag__pill" href="../tags/ZIO.html">ZIO</a> <a class="tag__pill" href="../tags/Open%20source.html">Open source</a>
         
     </div>
     <hr>
+    
     <p>Hace poco hice un Pull Request a una librería de métricas en Scala, con el objetivo de mejorar el API expuesto a usuarios.
 Resumiendo la cosa <a href="https://github.com/zio/zio-metrics"><code>zio-metrics</code></a> es una pequeña librería para publicar métricas
 con ZIO. La estamos usando para reportar una métrica a la medida pero al usarla, en su momento, me dí cuenta que
@@ -166,6 +167,7 @@ de los usos, puede resultar incómodo usar este API. Habría que propagar la ref
 <p>A partir de ahí las instancias de <code>Client</code> contarán con una referencia fija y privada a una cola. Además serán libres de empujar mensajes a ella cuando requieran reportar una métrica, sin tener que obligar a los invocadores a que provean la cola correcta.</p>
 <p>Eso era todo, la lección principal es que uno no se tiene que aguantar APIs incómodos y que siempre hay forma de mejorarlos.</p>
 <p>Gracias a <a href="https://github.com/toxicafunk">toxicafunk</a> por permitirme contribuir esto y asistirme en el PR.</p>
+    
 </div>
 
 <hr>

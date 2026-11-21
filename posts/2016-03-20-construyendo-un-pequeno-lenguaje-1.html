@@ -96,10 +96,11 @@
     </div>
     <div class="info">
         
-        Tags: <a title="All pages tagged 'Scala'." href="../tags/Scala.html">Scala</a>, <a title="All pages tagged 'Interpreter'." href="../tags/Interpreter.html">Interpreter</a>, <a title="All pages tagged 'Functional Programming'." href="../tags/Functional%20Programming.html">Functional Programming</a>, <a title="All pages tagged 'Programming languages'." href="../tags/Programming%20languages.html">Programming languages</a>, <a title="All pages tagged 'Construyendo un pequeño lenguaje'." href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a> 
+        <a class="tag__pill" href="../tags/Scala.html">Scala</a> <a class="tag__pill" href="../tags/Interpreter.html">Interpreter</a> <a class="tag__pill" href="../tags/Functional%20Programming.html">Functional Programming</a> <a class="tag__pill" href="../tags/Programming%20languages.html">Programming languages</a> <a class="tag__pill" href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a>
         
     </div>
     <hr>
+    
     <p>En el <a href="http://miguel-vila.github.io/posts/2016-03-15-construyendo-un-pequeno-lenguaje-0.html">anterior <em>post</em></a> establecimos unas bases para poder construir nuestro pequeño lenguaje. Definimos un tipo llamado <code>Value</code> para representar los tipos de valores de nuestro lenguaje y definimos otro tipo <code>Exp</code> que representa expresiones.</p>
 <div class="note">
 <p class="aside-header">
@@ -447,6 +448,7 @@ TypeError: cannot concatenate 'str' and 'int' objects
 <p>La ventaja de este acercamiento es que es mas eficiente en el uso del <em>stack</em>. El acercamiento de <strong><em>big-step semantics</em></strong> realiza muchas llamadas recursivas que podrían llenar el <em>stack</em> para programas grandes. En contraste el acercamiento de <strong><em>small-step semantics</em></strong> es iterativo.</p>
 <h2 id="concluyendo">Concluyendo</h2>
 <p>Gran parte de este <em>post</em> toma como base el capítulo 2 del libro <a href="http://computationbook.com/">Understanding Computation</a>, donde hacen un ejercicio similar. En los próximos <em>posts</em> vamos a desviarnos un poco. Primero vamos a ver una formulación alterna de lo que acabamos de hacer, que aprovecha un patrón común en programación funcional. Y después vamos a ver un tema que no es detallado en ése capítulo: cómo construir un objeto de tipo <code>Exp[V]</code> a partir de una cadena de caracteres, es decir el “<em>parseo</em>”.</p>
+    
 </div>
 
 <hr>

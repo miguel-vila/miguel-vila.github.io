@@ -100,10 +100,11 @@
     </div>
     <div class="info">
         
-        Tags: <a title="All pages tagged 'Elm'." href="../tags/Elm.html">Elm</a>, <a title="All pages tagged 'Functional Programming'." href="../tags/Functional%20Programming.html">Functional Programming</a>, <a title="All pages tagged 'Conway's Game Of Life'." href="../tags/Conway%27s%20Game%20Of%20Life.html">Conway's Game Of Life</a> 
+        <a class="tag__pill" href="../tags/Elm.html">Elm</a> <a class="tag__pill" href="../tags/Functional%20Programming.html">Functional Programming</a> <a class="tag__pill" href="../tags/Conway%27s%20Game%20Of%20Life.html">Conway's Game Of Life</a>
         
     </div>
     <hr>
+    
     <p><a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway’s Game Of Life</a> is a cellular automaton: just a very simple model of computation that pretends to emulate “life”. It consists of a grid of cells each one of which can be alive or dead. Taken from Wikipedia these are the rules:</p>
 <blockquote>
 <p>At each step in time, the following transitions occur:</p>
@@ -322,6 +323,7 @@ Elm.Conway.embed(document.getElementById("elm-conway"));
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        )</span></code></pre></div>
 <h2 id="conclusion">Conclusion</h2>
 <p>This was a fun exercise! I enjoyed very much programming in Elm! This exercise didn’t have too many side effects, though. Just the random grid generation so I don’t know if that model scales to “real” applications. Also this project didn’t involve that much component composition (not only composing the views but also the <code>update</code> functions and the <code>Model</code> types). Nevertheless, Elm is a very cool language and the Elm architecture is fun to follow. I’m not sure if it allows all the kind of patterns that can arise when building more complex applications. But unlike, say Angular, you can understand what’s going at each part of your application. No magic binding or anything like that. I don’t think I will use Elm at my job but I hope to learn more about it in the future.</p>
+    
 </div>
 
 <hr>

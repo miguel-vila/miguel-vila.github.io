@@ -100,10 +100,11 @@
     </div>
     <div class="info">
         
-        Tags: <a title="All pages tagged 'Functional Programming'." href="../tags/Functional%20Programming.html">Functional Programming</a>, <a title="All pages tagged 'Dynamic Programming'." href="../tags/Dynamic%20Programming.html">Dynamic Programming</a>, <a title="All pages tagged 'Scala'." href="../tags/Scala.html">Scala</a>, <a title="All pages tagged 'Laziness'." href="../tags/Laziness.html">Laziness</a> 
+        <a class="tag__pill" href="../tags/Functional%20Programming.html">Functional Programming</a> <a class="tag__pill" href="../tags/Dynamic%20Programming.html">Dynamic Programming</a> <a class="tag__pill" href="../tags/Scala.html">Scala</a> <a class="tag__pill" href="../tags/Laziness.html">Laziness</a>
         
     </div>
     <hr>
+    
     <h2 id="going-top-down">Going top-down</h2>
 <p>Going back to <a href="https://miguel-vila.github.io/posts/2017-01-02-dp-with-fp.html">solving Dynamic Programming (DP) problems by using Functional Programming</a> I found <a href="http://jelv.is/blog/Lazy-Dynamic-Programming/">this</a> article. In the article they describe a way to solve DP problems in a top-down fashion by using laziness. Scala doesn’t have the same lazy semantics as Haskell. If we are going to try to follow their same approach we are going to need a lazy array: an array whose elements are computed just when they are needed. Here’s a very simple implementation of that idea:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> LazyVector<span class="op">[</span>A<span class="op">](</span>thunks<span class="op">:</span> <span class="ex">Vector</span><span class="op">[()</span> <span class="op">=&gt;</span> A<span class="op">])</span> <span class="op">{</span></span>
@@ -213,6 +214,7 @@
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h2 id="conclusions">Conclusions</h2>
 <p>This top-down approach has the disadvantage that it may consume more memory than we need (if we are just interested in the maximum / minimum value). But for the kind of problems where we <em>need</em> to have all the decisions then it’s worth it anyway. It produces very clear and declarative code. The only disadvantage I can think of is that it may produce stack-overflows for large inputs.</p>
+    
 </div>
 
 <hr>

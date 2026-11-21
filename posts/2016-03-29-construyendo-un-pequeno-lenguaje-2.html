@@ -96,10 +96,11 @@
     </div>
     <div class="info">
         
-        Tags: <a title="All pages tagged 'Scala'." href="../tags/Scala.html">Scala</a>, <a title="All pages tagged 'Interpreter'." href="../tags/Interpreter.html">Interpreter</a>, <a title="All pages tagged 'Functional Programming'." href="../tags/Functional%20Programming.html">Functional Programming</a>, <a title="All pages tagged 'Programming languages'." href="../tags/Programming%20languages.html">Programming languages</a>, <a title="All pages tagged 'State Monad'." href="../tags/State%20Monad.html">State Monad</a>, <a title="All pages tagged 'Construyendo un pequeño lenguaje'." href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a> 
+        <a class="tag__pill" href="../tags/Scala.html">Scala</a> <a class="tag__pill" href="../tags/Interpreter.html">Interpreter</a> <a class="tag__pill" href="../tags/Functional%20Programming.html">Functional Programming</a> <a class="tag__pill" href="../tags/Programming%20languages.html">Programming languages</a> <a class="tag__pill" href="../tags/State%20Monad.html">State Monad</a> <a class="tag__pill" href="../tags/Construyendo%20un%20peque%C3%B1o%20lenguaje.html">Construyendo un pequeño lenguaje</a>
         
     </div>
     <hr>
+    
     <p>En el <a href="http://miguel-vila.github.io/posts/2016-03-20-construyendo-un-pequeno-lenguaje-1.html">anterior <em>post</em></a> vimos como evaluar las expresiones de nuestro pequeño lenguaje. En este <em>post</em> vamos a aprovechar un patrón funcional para hacer lo mismo que antes pero con ciertas facilidades. Vamos a retomar el mismo acercamiento de <em>big-step semantics</em> pero lo vamos a desarrollar de otra forma.</p>
 <p>Este <em>post</em> asume que el lector sabe qué es una monada, qué funciones define, por qué son útiles y cómo el mecanismo de <em>for-comprehensions</em> de Scala permite escribir fácilmente código con ellas. Si el lector no está familiarizado con esos temas aquí hay algunos enlaces:</p>
 <ul>
@@ -287,6 +288,7 @@ Traverse[List].traverse_(list)(g)
 <h2 id="concluyendo">Concluyendo</h2>
 <p>Por supuesto es discutible si todo esto es mas legible que lo que teníamos antes. Creo que en ocasiones al discutir estas cosas confundimos legibilidad con familiaridad. Para una persona que no esté familiarizada con estos patrones este código puede resultar abstracto, pero eso no quiere decir que no sea legible. Muchos patrones funcionales no son tan complicados, son formalizaciones de cosas que veníamos haciendo en otros lenguajes. Y una vez nos familiarizamos con estos patrones los encontramos legibles y hasta naturales.</p>
 <p>En la próxima entrada vamos a ver como leer una cadena de texto (el contenido de un archivo por ejemplo) para convertirlo en un arbol de sintáxis de nuestro lenguaje.</p>
+    
 </div>
 
 <hr>

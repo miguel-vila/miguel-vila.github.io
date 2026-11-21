@@ -96,10 +96,11 @@
     </div>
     <div class="info">
         
-        Tags: <a title="All pages tagged 'rc'." href="../tags/rc.html">rc</a>, <a title="All pages tagged 'ny'." href="../tags/ny.html">ny</a> 
+        <a class="tag__pill" href="../tags/rc.html">rc</a> <a class="tag__pill" href="../tags/ny.html">ny</a>
         
     </div>
     <hr>
+    
     <p class="image__article">
 <img src="../images/rc-w1.jpeg" style="float: right; padding: 0.5em; width: 35%">
 </p>
@@ -109,6 +110,7 @@
 <p>Right now I’m having a bug with an example I wrote for the small actors library and I’m trying to find the cause. First I used the good old <code>printf</code> but it looks like using <code>gdb</code> is a better idea (some of these simple things go over my head). Thanks to a fellow recurser I’ve learnt to do some basic things with it and I think it’s a good starting point to find the bug’s cause.</p>
 <p>Besides my silly C adventures I’m trying to learn Rust. So far the hardest thing I’ve found is the ownership system which is a feature of Rust’s type system. I think it’s intended to prevent wrong memory accesses (goodbye segfaults?) and maybe also make it safer for concurrency (avoid sharing the same memory location amongst diferent threads?).</p>
 <p>Also I finished reading very quickly the <a href="https://raft.github.io/">Raft</a> article and I have a very general view of the algorithm. Next week I would like to try reading it again while drafting a possible implementation.</p>
+    
 </div>
 
 <hr>

@@ -97,10 +97,11 @@
     </div>
     <div class="info">
         
-        Tags: <a title="All pages tagged 'Rust'." href="../tags/Rust.html">Rust</a>, <a title="All pages tagged 'Advent of code'." href="../tags/Advent%20of%20code.html">Advent of code</a> 
+        <a class="tag__pill" href="../tags/Rust.html">Rust</a> <a class="tag__pill" href="../tags/Advent%20of%20code.html">Advent of code</a>
         
     </div>
     <hr>
+    
     <p>Estoy intentando resolver problemas del <a href="https://adventofcode.com/2020">Advent of Code</a> de este año usando <a href="https://www.rust-lang.org/">Rust</a> y así aprender el lenguaje. La verdad creo que hace 4 años había intentado aprenderlo pero la verdad no recuerdo mucho. Recuerdo no haber entendido por completo el sistema de <em>borrowing</em> y otro montón de cosas. Pero esta vez quiero usar los ejercicios de Advent of Code como excusa para aprender.</p>
 <p>El problema del primer día consistía en, dada una lista de números, encontrar un par de ellos que sumados den <code>2020</code> y multiplicarlos. La segunda parte era hacer lo mismo pero encontrando 3 de ellos. Mi solución fue:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">std::collections::</span>HashSet<span class="op">;</span></span>
@@ -199,6 +200,7 @@
 <p>Lo más curioso que puedo notar es el <a href="https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html">operador <code>?</code></a>, que sirve para “extraer” el valor de un <code>Result</code>. Cualquiera que venga de un lenguaje funcional reconece que esto es muy similar a como funcionan las monadas. Curiosamente creo que go-lang es famoso por tener un problema similar pero, hasta donde sé, no tienen alguna ayuda sintáctica como Rust.</p>
 <h2 id="conclusión">Conclusión</h2>
 <p>Eso es todo, creo que tengo que entender mucho mejor algunas cosas. El sistema de <em>borrowing</em> se me hace un poco complicado de interiorizar y desafortunadamente estoy acostumbrado a simplemente no pensar en eso. Es bueno entender cuál es la firma más general que necesita una función, y por qué. Por ejemplo si requiere <em>borrowing</em> o no, si es una referencia a una variable mutable o no, o si simplemente es una variable mutable. Hay cosas que me gustan, por ejemplo las cosas semi-funcionales como <code>Result</code> o <code>?</code> o los <em>enums</em>.</p>
+    
 </div>
 
 <hr>
