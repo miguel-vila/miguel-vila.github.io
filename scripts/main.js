@@ -39,7 +39,26 @@ $(document).ready(function () {
 
 	// Initialize responsive images
 	makeImagesResponsive();
+
+	// Scale down embeds that are wider than the text column
+	fitEmbedsToColumn();
 });
+
+// An embed with a width of its own, such as the Elm app in the Game of Life
+// post, is wider than the text column on a phone. `zoom` shrinks the embed's
+// box together with its contents, so the whole embed stays visible, keeps its
+// proportions, leaves no empty space behind and still answers clicks at the
+// place the reader touched.
+function fitEmbedsToColumn() {
+	document.querySelectorAll('.embed__fit').forEach(embed => {
+		embed.style.zoom = ''; // measure the embed at its natural size
+		const natural = embed.scrollWidth;
+		const available = embed.clientWidth;
+		if (natural > available && natural > 0) {
+			embed.style.zoom = available / natural;
+		}
+	});
+}
 
 // Progressive-enhancement image gallery / slideshow.
 // Author writes:  <div class="gallery"> <img ...> <img ...> </div>
@@ -203,3 +222,4 @@ document.addEventListener('DOMContentLoaded', makeImagesResponsive);
 window.addEventListener('load', makeImagesResponsive);
 // Also run when window is resized to handle orientation changes
 window.addEventListener('resize', makeImagesResponsive);
+window.addEventListener('resize', fitEmbedsToColumn);

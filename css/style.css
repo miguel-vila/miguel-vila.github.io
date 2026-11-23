@@ -237,6 +237,25 @@ img {
   margin: 25px auto;
 }
 
+/* An embed with a width of its own (the Elm app and the Instagram post in
+   the Game of Life post) is wider than the text column on a phone, and
+   makes the whole page scroll sideways. Mark it .embed__fit to keep it in
+   the column: it becomes the containing block of an embed that places
+   itself, and the box an oversized one scrolls inside. scripts/main.js then
+   scales an oversized embed down to the column width, so in a browser with
+   scripts there is nothing left to scroll. */
+.embed__fit {
+  position: relative;
+  overflow-x: auto;
+}
+
+/* Instagram's script gives its iframe a width and a minimum width of its
+   own as inline styles, which a plain rule here cannot hold back. */
+.embed__fit iframe {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
 /* A MathJax display equation keeps its own width (white-space: nowrap)
    and on a narrow screen it is wider than the column. Let the equation
    scroll inside its own box, so the page does not scroll sideways. */

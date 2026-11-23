@@ -67,6 +67,10 @@ loads these, in order:
     slideshow by `scripts/main.js` (`initGalleries`).
 - YouTube/embeds are bare `<iframe>` tags. Responsive iframe CSS in `css/style.css`
   (`.main__container iframe`) handles sizing — see gotcha below.
+- An embed that keeps a width of its own on a phone (a JS widget, a third-party
+  embed) goes in a `<div class="embed__fit">`. CSS keeps it inside the text
+  column and `scripts/main.js` (`fitEmbedsToColumn`) scales it down to the
+  column width, so the page never scrolls sideways.
 
 ## Responsive content images (auto-generated)
 
