@@ -237,6 +237,14 @@ img {
   margin: 25px auto;
 }
 
+/* A MathJax display equation keeps its own width (white-space: nowrap)
+   and on a narrow screen it is wider than the column. Let the equation
+   scroll inside its own box, so the page does not scroll sideways. */
+.MJXc-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 .responsive-image {
   width: 100%;
   height: auto;
