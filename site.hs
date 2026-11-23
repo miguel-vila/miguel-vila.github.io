@@ -1,10 +1,11 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
-import           Data.List (sortOn, intersperse)
+import           Data.List (sortOn, intersperse, intercalate, isPrefixOf, nub)
 import           Hakyll
 import           Hakyll.Web.Template.Context (getItemUTC)
 import           Control.Applicative
+import           Control.Monad (forM_, unless)
 import           Data.Time.Format (TimeLocale(..), defaultTimeLocale)
 import           Data.Maybe
 import           Data.Map (fromListWith, keys)
@@ -23,17 +24,20 @@ import           Text.Pandoc.Walk (walkM, walk)
 
 import qualified Data.Map as M
 import qualified Data.ByteString as BS
+import qualified Data.ByteString.Char8 as BSC
 import qualified Data.ByteString.Lazy as LBS
 import           Data.Word (Word8)
 import           Data.Char (toLower)
 import           System.FilePath (dropExtension, takeExtension)
+import           System.IO (IOMode(ReadMode), withBinaryFile)
+import           Text.HTML.TagSoup (Tag(TagOpen), parseTags)
 -- NB: only the *type* `Image` is imported (no data constructor) so it does not
 -- clash with Pandoc's `Image` inline constructor used in makeImagesResponsive.
 import           Codec.Picture
-                   ( Image, DynamicImage, PixelRGB8(..)
-                   , decodeImage, convertRGB8
+                   ( Image, DynamicImage(..), PixelRGB8(..), PixelRGBA8(..)
+                   , decodeImage, convertRGB8, convertRGBA8
                    , generateImage, pixelAt, imageWidth, imageHeight )
-import           Codec.Picture.Types (convertImage, pixelFold)
+import           Codec.Picture.Types (convertImage, pixelFold, pixelMap)
 import           Codec.Picture.Jpg (encodeJpegAtQuality)
 import           Codec.Picture.Extra (crop, scaleBilinear)
 
@@ -225,6 +229,223 @@ averageColor im =
                  (fromIntegral (gs `div` d))
                  (fromIntegral (bs `div` d))
 
+--------------------------------------------------------------------------------
+-- Responsive content images
+--
+-- Posts embed camera originals many times wider than any layout shows them.
+-- Every image wide enough to gain from it gets width-capped copies at build
+-- time, and each <img> that points at one gets a `srcset`, so a phone downloads
+-- a few hundred KB instead of several MB. Like the Open Graph cards, the copies
+-- live only in _site/.
+
+-- Steps of the ladder, ascending. The last one covers the full content column
+-- on a 2x display; nothing on the site is ever shown larger.
+imageWidths :: [Int]
+imageWidths = [480, 960, 1440, 1920]
+
+-- markdown.css caps the body at 1000 px and insets the article by 30 px a side.
+bodyWidth, contentWidth :: Int
+bodyWidth    = 1000
+contentWidth = bodyWidth - 60
+
+-- A browser picks from the ladder before it knows the layout, so the slot width
+-- is stated here. Narrower slots - floats, galleries - are left to over-state
+-- their width: the browser then takes a step larger than it needs, never one
+-- too small to stay sharp.
+imageSizes :: String
+imageSizes =
+    "(max-width: " ++ show bodyWidth ++ "px) 100vw, " ++ show contentWidth ++ "px"
+
+copyQuality :: Word8
+copyQuality = 82
+
+-- Everything whose body can embed an image.
+contentPattern :: Pattern
+contentPattern = ogSourcePattern .||. "*.md"
+
+-- The copies built for an image, and the width of the source they came from.
+-- The source closes the `srcset`: a display that outruns the last copy then
+-- still gets the sharpest file there is, as it did before any of this.
+data ImageCopies = ImageCopies
+    { sourceWidth :: Int
+    , copyWidths  :: [Int]
+    }
+
+-- Keyed by repository path. An image with no copy worth building is absent and
+-- is served as it is.
+type ImageManifest = M.Map FilePath ImageCopies
+
+-- Only the images that content embeds get copies: the site chrome - the feed
+-- and theme icons - is shown a few pixels wide, under a `sizes` that describes
+-- the article column.
+imageManifest :: [FilePath] -> [FilePath] -> IO ImageManifest
+imageManifest images content = do
+    embedded <- referencedImages content
+    M.fromList . catMaybes <$> mapM entry (filter (`elem` embedded) images)
+  where
+    entry path = fmap (ladderFor path =<<) (readImageSize path)
+    ladderFor path (w, _) =
+        case takeWhile (worthBuilding w) imageWidths of
+            [] -> Nothing
+            ws -> Just (path, ImageCopies { sourceWidth = w, copyWidths = ws })
+    -- A step that is almost as wide as the source saves nothing and can even
+    -- come out larger than the file it replaces.
+    worthBuilding source step = step * 5 <= source * 4
+
+-- Post images are written as raw HTML, so the markdown is read with the same
+-- parser that rewrites the rendered page.
+referencedImages :: [FilePath] -> IO [FilePath]
+referencedImages sources = nub . concat <$> mapM imagesIn sources
+  where
+    imagesIn path = embeddedPaths <$> BS.readFile path
+    embeddedPaths markdown =
+        [ path
+        | TagOpen name attrs <- parseTags markdown
+        , name == BSC.pack "img"
+        , Just src <- [lookup (BSC.pack "src") attrs]
+        , let path = repositoryPath (BSC.unpack src)
+        , "images/" `isPrefixOf` path ]
+
+sourcesAtWidth :: ImageManifest -> Int -> [Identifier]
+sourcesAtWidth manifest w =
+    [ fromFilePath path
+    | (path, copies) <- M.toList manifest, w `elem` copyWidths copies ]
+
+-- "images/foo.png" -> "images/foo-960.jpg". Also used on the URLs of the
+-- rendered page, so it must work on any spelling of the path.
+atWidth :: Int -> FilePath -> FilePath
+atWidth w path = dropExtension path ++ '-' : show w ++ ".jpg"
+
+resizedImageCompiler :: Int -> Compiler (Item BS.ByteString)
+resizedImageCompiler w = do
+    bytes <- LBS.toStrict . itemBody <$> getResourceLBS
+    -- An image JuicyPixels cannot read keeps its original bytes, so the page
+    -- still shows it.
+    makeItem (fromMaybe bytes (resizeToWidth w bytes))
+
+-- Copies are JPEG whatever the source is. The screenshots on the site are PNGs
+-- that this PNG encoder writes back twice as large as the camera originals it
+-- is meant to replace; JPEG keeps their text readable at a tenth of the bytes.
+resizeToWidth :: Int -> BS.ByteString -> Maybe BS.ByteString
+resizeToWidth w bytes = do
+    dyn <- either (const Nothing) Just (decodeImage bytes)
+    return . LBS.toStrict . encodeJpegAtQuality copyQuality
+           . convertImage . scaleToWidth w . flattened $ dyn
+
+scaleToWidth :: Int -> Image PixelRGB8 -> Image PixelRGB8
+scaleToWidth w img = scaleBilinear w h img
+  where
+    h = max 1 (round (fromIntegral (imageHeight img) * ratio))
+    ratio = fromIntegral w / fromIntegral (imageWidth img) :: Double
+
+-- JPEG has no alpha channel, so transparency is resolved before the scaling
+-- that would otherwise bleed the colors hidden under it. White is what both
+-- themes show behind an image: the light one directly, the dark one through the
+-- invert filter it puts over the whole page.
+flattened :: DynamicImage -> Image PixelRGB8
+flattened dyn
+    | transparent dyn = pixelMap onWhite (convertRGBA8 dyn)
+    | otherwise       = convertRGB8 dyn
+  where
+    onWhite (PixelRGBA8 r g b a) = PixelRGB8 (over r a) (over g a) (over b a)
+    over c a = fromIntegral
+        ((fromIntegral c * fromIntegral a + 255 * (255 - fromIntegral a)) `div` 255 :: Int)
+
+transparent :: DynamicImage -> Bool
+transparent dyn = case dyn of
+    ImageYA8 _    -> True
+    ImageYA16 _   -> True
+    ImageRGBA8 _  -> True
+    ImageRGBA16 _ -> True
+    _             -> False
+
+-- Point every <img> at the copies built for it. This runs on the rendered page,
+-- after relativizeUrls, because post images are written as raw HTML: they reach
+-- Pandoc as opaque raw blocks, never as the Image inline that a walk can see.
+addImageSrcsets :: ImageManifest -> Item String -> Compiler (Item String)
+addImageSrcsets manifest = return . fmap (withTags withSrcset)
+  where
+    withSrcset (TagOpen "img" attrs)
+        | Just src    <- lookup "src" attrs
+        , Nothing     <- lookup "srcset" attrs
+        , Just copies <- M.lookup (repositoryPath src) manifest =
+            TagOpen "img" (attrs ++ [ ("srcset", srcset src copies)
+                                    , ("sizes", imageSizes) ])
+    withSrcset tag = tag
+    srcset src copies = intercalate ", " $
+        [ candidate (atWidth w src) w | w <- copyWidths copies ]
+        ++ [ candidate src (sourceWidth copies) ]
+    candidate url w = url ++ " " ++ show w ++ "w"
+
+-- "/images/foo.jpeg" and "../images/foo.jpeg" both name "images/foo.jpeg".
+repositoryPath :: String -> FilePath
+repositoryPath url = case url of
+    '/'             : rest -> repositoryPath rest
+    '.' : '/'       : rest -> repositoryPath rest
+    '.' : '.' : '/' : rest -> repositoryPath rest
+    _                      -> url
+
+--------------------------------------------------------------------------------
+-- Image headers
+--
+-- JuicyPixels reports the size of an image only by decoding all of it, which is
+-- minutes of work across the images directory and would be paid on every build.
+-- The JPEG and PNG headers are read directly instead. A header that cannot be
+-- read means no copies for that image: it is served as it is, as before.
+
+readImageSize :: FilePath -> IO (Maybe (Int, Int))
+readImageSize path =
+    withBinaryFile path ReadMode $ \h -> headerSize <$> BS.hGet h headerBytes
+
+-- An embedded EXIF thumbnail can push a JPEG's frame header a long way in.
+headerBytes :: Int
+headerBytes = 256 * 1024
+
+headerSize :: BS.ByteString -> Maybe (Int, Int)
+headerSize bs
+    | BS.pack [0x89, 0x50, 0x4E, 0x47] `BS.isPrefixOf` bs = pngSize bs
+    | BS.pack [0xFF, 0xD8]             `BS.isPrefixOf` bs = jpegSize bs
+    | otherwise                                           = Nothing
+
+-- The IHDR chunk is first and holds the size in its first eight bytes.
+pngSize :: BS.ByteString -> Maybe (Int, Int)
+pngSize bs
+    | BS.take 4 (BS.drop 12 bs) == BSC.pack "IHDR" =
+        (,) <$> bigEndian 4 16 bs <*> bigEndian 4 20 bs
+    | otherwise = Nothing
+
+-- Walk the marker segments up to the frame header, which carries the size.
+jpegSize :: BS.ByteString -> Maybe (Int, Int)
+jpegSize bs = segmentAt 2
+  where
+    segmentAt i = do
+        0xFF   <- byteAt i bs
+        j      <- markerAt (i + 1)
+        marker <- byteAt j bs
+        if isFrameHeader marker
+            then (,) <$> bigEndian 2 (j + 6) bs <*> bigEndian 2 (j + 4) bs
+            else if hasNoPayload marker
+                then segmentAt (j + 1)
+                else do
+                    len <- bigEndian 2 (j + 1) bs
+                    if len < 2 then Nothing else segmentAt (j + 1 + len)
+    -- Any number of 0xFF fill bytes may precede a marker.
+    markerAt j = do
+        b <- byteAt j bs
+        if b == 0xFF then markerAt (j + 1) else Just j
+    isFrameHeader m = m >= 0xC0 && m <= 0xCF && m `notElem` [0xC4, 0xC8, 0xCC]
+    hasNoPayload m = m == 0x01 || (m >= 0xD0 && m <= 0xD9)
+
+byteAt :: Int -> BS.ByteString -> Maybe Word8
+byteAt i bs
+    | i >= 0 && i < BS.length bs = Just (BS.index bs i)
+    | otherwise                  = Nothing
+
+bigEndian :: Int -> Int -> BS.ByteString -> Maybe Int
+bigEndian n i bs =
+    foldl (\acc b -> acc * 256 + fromIntegral b) 0
+        <$> mapM (\k -> byteAt k bs) [i .. i + n - 1]
+
 main :: IO ()
 main = hakyll $ do
     serveFilesAt "images/*"
@@ -246,6 +467,17 @@ main = hakyll $ do
     match (fromList (map fromFilePath (M.keys ogFitMap))) $ version "og" $ do
         route   ogRoute
         compile (ogCardCompiler ogFitMap)
+
+    -- Build the width-capped copies that back the `srcset` of content images
+    images   <- map toFilePath <$> getMatches ("images/*" .||. "images/**/*")
+    content  <- map toFilePath <$> getMatches contentPattern
+    manifest <- preprocess (imageManifest images content)
+    forM_ imageWidths $ \width -> do
+        let sources = sourcesAtWidth manifest width
+        unless (null sources) $
+            match (fromList sources) $ version (show width ++ "w") $ do
+                route   (customRoute (atWidth width . toFilePath))
+                compile (resizedImageCompiler width)
 
     match "css/*" $ do
         route   idRoute
@@ -275,6 +507,7 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/post.html" tagsPostCtx
             >>= loadAndApplyTemplate "templates/default.html" tagsPostCtx
             >>= relativizeUrls
+            >>= addImageSrcsets manifest
 
     create ["drafts.html"] $ do
         route idRoute
@@ -296,6 +529,7 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/post.html" tagsPostCtx
             >>= loadAndApplyTemplate "templates/default.html" tagsPostCtx
             >>= relativizeUrls
+            >>= addImageSrcsets manifest
 
     create ["shared-drafts.html"] $ do
         route idRoute
@@ -320,10 +554,11 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/disqus.html"  tagsPostCtx
             >>= loadAndApplyTemplate "templates/default.html" tagsPostCtx
             >>= relativizeUrls
+            >>= addImageSrcsets manifest
 
-    nonPostPage "gifts-guide.md"
+    nonPostPage manifest "gifts-guide.md"
 
-    nonPostPage "side-projects.md"
+    nonPostPage manifest "side-projects.md"
 
     create ["archive.html"] $ do
         route idRoute
@@ -377,12 +612,13 @@ main = hakyll $ do
 
 --------------------------------------------------------------------------------
 
-nonPostPage name =
+nonPostPage manifest name =
     create [ name ] $ do
         route (setExtension ".html")
         compile $ responsiveImagesCompiler
             >>= loadAndApplyTemplate "templates/default.html" siteCtx
             >>= relativizeUrls
+            >>= addImageSrcsets manifest
 
 draftCtx :: Context String
 draftCtx = defaultContext `mappend` activeClassField

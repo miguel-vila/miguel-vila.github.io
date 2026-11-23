@@ -68,6 +68,26 @@ loads these, in order:
 - YouTube/embeds are bare `<iframe>` tags. Responsive iframe CSS in `css/style.css`
   (`.main__container iframe`) handles sizing — see gotcha below.
 
+## Responsive content images (auto-generated)
+
+- Write `<img src="/images/foo.jpeg">` as before. At build time `site.hs` makes
+  width-capped JPEG copies (`foo-480.jpg`, `foo-960.jpg`, …) of every image a post or
+  page embeds and rewrites the rendered `<img>` with a `srcset`/`sizes` that lists
+  them, the original last. A phone then downloads a fraction of a camera original
+  instead of all of it.
+- The copies are **build artifacts** — like the OG cards they live only in `_site/`,
+  never in the source `images/` dir.
+- Only images embedded in content are processed. The icons in
+  `templates/default.html` are left alone: `sizes` describes the article column and
+  would be wrong for them.
+- Copies are JPEG whatever the source is, and transparency is flattened onto white.
+  The site's dark mode inverts the whole page, so white reads correctly in both themes.
+- An image only gets copies that are meaningfully narrower than it is, so small
+  images are served as they are and get no `srcset`.
+- Building the copies is the slow part of a cold build (minutes). `_cache` makes
+  later builds fast, but it does not notice changes to `site.hs`: clear it when the
+  generated markup does not change as expected.
+
 ## Deploy / branches
 
 - Work happens on the **`hakyll`** branch (source). GitHub Actions

@@ -17,5 +17,6 @@ executable site
                        bytestring,
                        filepath,
                        JuicyPixels >= 3.3,
-                       JuicyPixels-extra >= 0.4
+                       JuicyPixels-extra >= 0.4,
+                       tagsoup
   default-language:    Haskell2010
